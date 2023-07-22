@@ -41,13 +41,13 @@ environment always matches what is in git.
   - use to allow for a single helm chart deployment and values file
 
 ## development status
---------------------------------------------------
+|--------|---------------------------------------|
 | active | daytwo-argocd-register-controller     |
 | todo   | daytwo-argocd-addons-controller       |
 | todo   | daytwo-argocd-pinniped-controller     |
 | todo   | daytwo-argocd-external-dns-controller |
 | todo   | daytwo-argocd-trigger-controller      |
---------------------------------------------------
+|--------|---------------------------------------|
 
 ## individual installation
 - use helm chart to install respective controller
