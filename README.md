@@ -18,21 +18,21 @@ environment always matches what is in git.
 - tanzu
 
 ## controllers
-- daytwo-argocd-register-controller
+- [daytwo-argocd-register-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-register-controller)
   - watches for new clusters to reach a ready state and automatically adds them to argocd
 - [daytwo-argocd-addons-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-addons-controller)
   - syncs 'addons-*' labels between cluster.yaml and argocd cluster secrets
   - argocd applications can then target labels, allowing addons to be managed via cluster.yaml
-- daytwo-argocd-pinniped-controller
+- [daytwo-argocd-pinniped-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-pinniped-controller)
   - watches for registered argocd clusters and updates pinniped kubeconfig files
   - hosts a website which can be used to access the pinniped kubeconfig files
-- daytwo-argocd-external-dns-controller
+- [daytwo-argocd-external-dns-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-external-dns-controller)
   - adds a label to the service which provides kubeapi access
   - allows for fqdn access to clusters
   - note: if certificates are not generated w/ fqdn access will be denied, use (-insecure) to get around
     - recommend regenerate certificates
     - research 'insecure-skip-tls-verify' in kubeconfig before deciding to use it
-- daytwo-argocd-trigger-controller
+- [daytwo-argocd-trigger-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-trigger-controller)
   - calls a provided script allowing for daytwo actions to be performed elsewhere
   - use as needed for actions which require more customization (e.g. creating cluster-specific ad groups)
 
