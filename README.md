@@ -22,7 +22,7 @@ environment always matches what is in git.
   - watches for new clusters to reach a ready state and automatically adds them to argocd
 - [daytwo-argocd-addons-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-addons-controller)
   - syncs 'addons-*' labels between cluster.yaml and argocd cluster secrets
-  - argocd applications can then target labels, allowing addons to be managed via cluster.yaml
+  - argocd applicationsets can then target labels, allowing addons to be managed via cluster.yaml
 - [daytwo-argocd-pinniped-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-pinniped-controller)
   - watches for registered argocd clusters and updates pinniped kubeconfig files
   - hosts a website which can be used to access the pinniped kubeconfig files
