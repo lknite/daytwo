@@ -30,7 +30,8 @@ environment always matches what is in git.
   - adds a label to the service which provides kubeapi access
   - allows for fqdn access to clusters
   - note: if certificates are not generated w/ fqdn access will be denied, use (-insecure) to get around
-    - recommend regenerate certificates, research 'insecure-skip-tls-verify' in kubeconfig before deciding to use it
+    - recommend regenerate certificates
+    - research 'insecure-skip-tls-verify' in kubeconfig before deciding to use it
 - daytwo-argocd-trigger-controller
   - calls a provided script allowing for daytwo actions to be performed elsewhere
   - use as needed for actions which require more customization (e.g. creating cluster-specific ad groups)
