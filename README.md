@@ -36,5 +36,16 @@ environment always matches what is in git.
   - calls a provided script allowing for daytwo actions to be performed elsewhere
   - use as needed for actions which require more customization (e.g. creating cluster-specific ad groups)
 
+## operator-controller
+- use to allow for a single helm chart deployment and values file
+
+## individual installation
+- use helm chart to install respective controller
+- by default daytwo controllers install to the argocd namespace
+- use of an alternative namespace, e.g. daytwo, will work as long as two items are defined:
+  - the argocd namespace must be specified
+  - access must be granted to argocd secrets (argocd secrets are how argocd registers clusters)
+
+
 ## reference ##
 [kubernetes daytwo controllers](https://www.travisloyd.xyz/2023/07/08/kubernetes-daytwo-controllers/)
