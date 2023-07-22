@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\daytwo-argocd-register-controller.props" />
+</Project>
