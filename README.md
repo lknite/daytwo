@@ -37,7 +37,8 @@ environment always matches what is in git.
   - use as needed for actions which require more customization (e.g. creating cluster-specific ad groups)
 
 ## operator-controller
-- use to allow for a single helm chart deployment and values file
+- [daytwo-operator](https://github.com/lknite/daytwo/tree/main/daytwo-operator)
+  - use to allow for a single helm chart deployment and values file
 
 ## individual installation
 - use helm chart to install respective controller
