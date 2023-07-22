@@ -1,4 +1,4 @@
-## daytwo
+# daytwo
 A collection of controllers which perform work in response to a new cluster deployment.
 
 In the world of gitops it is preferred to define a kubernetes cluster (number of control plane nodes, number of
@@ -13,11 +13,11 @@ ready then performs additional idempotent actions.  However, this method is not 
 would be a controller which recognizes a new cluster and then takes care of things automatically, that way the
 environment always matches what is in git.
 
-# compatible
+## compatible
 - clusterapi
 - tanzu
 
-# controllers
+## controllers
 - daytwo-argocd-register-controller
   - watches for new clusters to reach a ready state and automatically adds them to argocd
 - daytwo-argocd-addons-controller
