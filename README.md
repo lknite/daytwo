@@ -40,7 +40,7 @@ environment always matches what is in git.
 - [daytwo-operator](https://github.com/lknite/daytwo/tree/main/daytwo-operator)
   - use to allow for a single helm chart deployment and values file
 
-## development status
+## development
 | status | controller                            |
 |--------|---------------------------------------|
 | active | daytwo-argocd-register-controller     |
