@@ -20,7 +20,7 @@ environment always matches what is in git.
 ## controllers
 - daytwo-argocd-register-controller
   - watches for new clusters to reach a ready state and automatically adds them to argocd
-- daytwo-argocd-addons-controller
+- (daytwo-argocd-addons-controller)[https://github.com/lknite/daytwo/tree/main/daytwo-argocd-addons-controller]
   - syncs 'addons-*' labels between cluster.yaml and argocd cluster secrets
   - argocd applications can then target labels, allowing addons to be managed via cluster.yaml
 - daytwo-argocd-pinniped-controller
