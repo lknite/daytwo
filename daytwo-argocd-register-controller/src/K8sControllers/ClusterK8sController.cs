@@ -13,6 +13,7 @@ using System.Buffers.Text;
 using Microsoft.AspNetCore.DataProtection;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Collections.Generic;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace gge.K8sControllers
 {
@@ -142,7 +143,7 @@ namespace gge.K8sControllers
                             Console.WriteLine("    - add cluster to argocd");
 
                             // get new cluster admin kubeconfig
-                            KubernetesClientConfiguration tmpkubeconfig = GetClusterKubeConfig(cluster.Name());
+                            KubernetesClientConfiguration tmpkubeconfig = GetClusterKubeConfig(cluster.Name(), cluster.Namespace());
 
                             // add new cluster to argocd
                         }
@@ -359,8 +360,15 @@ namespace gge.K8sControllers
         /// </summary>
         /// <param name="clusterName"></param>
         /// <returns></returns>
-        public static KubernetesClientConfiguration GetClusterKubeConfig(string clusterName)
+        public static KubernetesClientConfiguration GetClusterKubeConfig(string clusterName, string clusterNamespace)
         {
+            // clusterctl - n vc - test get kubeconfig vc - test
+            // k -n vc-test get secrets vc-test-kubeconfig -o jsonpath='{.data.value}' | base64 -d
+            V1Secret secret = Globals.service.kubeclient.ReadNamespacedSecret(clusterName+"-kubeconfig", clusterNamespace);
+            secret.Data.TryGetValue("value", out byte[] bytes);
+            string kubeconfig = System.Text.Encoding.UTF8.GetString(bytes);
+            Console.WriteLine(kubeconfig);
+
             return null;
         }
     }
