@@ -383,6 +383,7 @@ namespace gge.K8sControllers
             //ExecAsyncCallback handler = One;
             var cmds = new List<string>();
             cmds.Add("ls");
+            cmds.Add("argocd cluster list");
             int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync("argocd-server", "argocd", "argocd-server", cmds, false, One, Globals.cancellationToken);
 
 
@@ -390,6 +391,10 @@ namespace gge.K8sControllers
         }
 
         public static Task One(Stream stdIn, Stream stdOut, Stream stdErr) {
+            StreamReader sr = new StreamReader(stdOut);
+            while(!sr.EndOfStream) {
+                Console.WriteLine(sr.ReadLine());
+            }
             return null;
         }
     }
