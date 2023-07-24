@@ -382,7 +382,7 @@ namespace gge.K8sControllers
             // exec into argocd-server pod, see if we can use 'argocd' there
             ExecAsyncCallback handler = One;
             var cmds = new List<string>();
-            cmds.Add("argocd");
+            cmds.Add("/usr/local/bin/argocd");
             cmds.Add("cluster");
             cmds.Add("list");
             cmds.Add("--server=localhost:8080");
