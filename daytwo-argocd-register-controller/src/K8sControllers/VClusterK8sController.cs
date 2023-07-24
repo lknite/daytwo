@@ -363,9 +363,19 @@ namespace gge.K8sControllers
         {
             // clusterctl - n vc - test get kubeconfig vc - test
             // k -n vc-test get secrets vc-test-kubeconfig -o jsonpath='{.data.value}' | base64 -d
+            Console.WriteLine("[vcluster]");
             Console.WriteLine($"GetClusterKubeConfig ({clusterName}, {clusterNamespace})");
 
-            V1Secret secret = Globals.service.kubeclient.ReadNamespacedSecret(clusterName + "-kubeconfig", clusterNamespace);
+            V1Secret secret = null;
+            try
+            {
+                secret = Globals.service.kubeclient.ReadNamespacedSecret(clusterName + "-kubeconfig", clusterNamespace);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
             Console.WriteLine("1");
             secret.Data.TryGetValue("value", out byte[] bytes);
             Console.WriteLine("2");
