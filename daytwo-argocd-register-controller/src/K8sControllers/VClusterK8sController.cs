@@ -49,7 +49,7 @@ namespace gge.K8sControllers
                 // Prep semaphore (reset in case of exception)
                 semaphore = new SemaphoreSlim(1);
 
-                Console.WriteLine("(" + api +") Listen begins ...");
+                Console.WriteLine("(" + api + ") Listen begins ...");
                 try
                 {
                     await foreach (var (type, item) in generic.WatchNamespacedAsync<CrdVCluster>(""))
@@ -131,7 +131,7 @@ namespace gge.K8sControllers
 
                     foreach (var cluster in t.Items)
                     {
-                        Console.WriteLine("  - namespace: "+ ns.Name() +", tkc: " + cluster.Name());
+                        Console.WriteLine("  - namespace: " + ns.Name() + ", tkc: " + cluster.Name());
 
                         // is this cluster in a ready state?
 
@@ -359,7 +359,7 @@ namespace gge.K8sControllers
         /// </summary>
         /// <param name="clusterName"></param>
         /// <returns></returns>
-        public static KubernetesClientConfiguration GetClusterKubeConfig(string clusterName, string clusterNamespace)
+        public static async Task<KubernetesClientConfiguration> GetClusterKubeConfig(string clusterName, string clusterNamespace)
         {
             // clusterctl - n vc - test get kubeconfig vc - test
             // k -n vc-test get secrets vc-test-kubeconfig -o jsonpath='{.data.value}' | base64 -d
@@ -375,12 +375,18 @@ namespace gge.K8sControllers
                 Console.WriteLine(ex.Message);
                 return null;
             }
-            Console.WriteLine("[vcluster] 1");
             secret.Data.TryGetValue("value", out byte[] bytes);
-            Console.WriteLine("[vcluster] 2");
             string kubeconfig = System.Text.Encoding.UTF8.GetString(bytes);
-            Console.WriteLine("[vcluster] kubeconfig:\n"+ kubeconfig);
+            Console.WriteLine("[vcluster] kubeconfig:\n" + kubeconfig);
 
+            // exec into argocd-server pod, see if we can use 'argocd' there
+            Task<int> asdf = await Globals.service.kubeclient.NamespacedPodExecAsync("argocd-server", "argocd", "argocd-server", "ls", false, ExecAsyncCallback);
+
+
+            return null;
+        }
+
+        public Task ExecAsyncCallback(Stream stdIn, Stream stdOut, Stream stdErr) {
             return null;
         }
     }
