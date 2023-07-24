@@ -363,10 +363,14 @@ namespace gge.K8sControllers
         {
             // clusterctl - n vc - test get kubeconfig vc - test
             // k -n vc-test get secrets vc-test-kubeconfig -o jsonpath='{.data.value}' | base64 -d
+            Console.WriteLine($"GetClusterKubeConfig ({clusterName}, {clusterNamespace})");
+
             V1Secret secret = Globals.service.kubeclient.ReadNamespacedSecret(clusterName + "-kubeconfig", clusterNamespace);
+            Console.WriteLine("1");
             secret.Data.TryGetValue("value", out byte[] bytes);
+            Console.WriteLine("2");
             string kubeconfig = System.Text.Encoding.UTF8.GetString(bytes);
-            Console.WriteLine(kubeconfig);
+            Console.WriteLine("kubeconfig:\n"+ kubeconfig);
 
             return null;
         }
