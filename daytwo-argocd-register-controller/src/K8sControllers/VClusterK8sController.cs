@@ -142,7 +142,7 @@ namespace gge.K8sControllers
                             Console.WriteLine("    - add cluster to argocd");
 
                             // get new cluster admin kubeconfig
-                            KubernetesClientConfiguration tmpkubeconfig = GetClusterKubeConfig(cluster.Name());
+                            KubernetesClientConfiguration tmpkubeconfig = GetClusterKubeConfig(cluster.Name(), cluster.Namespace());
 
                             // add new cluster to argocd
                         }
