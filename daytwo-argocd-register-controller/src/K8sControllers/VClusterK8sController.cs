@@ -142,7 +142,7 @@ namespace gge.K8sControllers
                             Console.WriteLine("    - add cluster to argocd");
 
                             // get new cluster admin kubeconfig
-                            KubernetesClientConfiguration tmpkubeconfig = GetClusterKubeConfig(cluster.Name(), cluster.Namespace());
+                            KubernetesClientConfiguration tmpkubeconfig = await GetClusterKubeConfig(cluster.Name(), cluster.Namespace());
 
                             // add new cluster to argocd
                         }
@@ -380,13 +380,16 @@ namespace gge.K8sControllers
             Console.WriteLine("[vcluster] kubeconfig:\n" + kubeconfig);
 
             // exec into argocd-server pod, see if we can use 'argocd' there
-            Task<int> asdf = await Globals.service.kubeclient.NamespacedPodExecAsync("argocd-server", "argocd", "argocd-server", "ls", false, ExecAsyncCallback);
+            //ExecAsyncCallback handler = One;
+            var cmds = new List<string>();
+            cmds.Add("ls");
+            int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync("argocd-server", "argocd", "argocd-server", cmds, false, One, Globals.cancellationToken);
 
 
             return null;
         }
 
-        public Task ExecAsyncCallback(Stream stdIn, Stream stdOut, Stream stdErr) {
+        public static Task One(Stream stdIn, Stream stdOut, Stream stdErr) {
             return null;
         }
     }
