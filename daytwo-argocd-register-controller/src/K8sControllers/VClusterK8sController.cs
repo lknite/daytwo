@@ -386,7 +386,7 @@ namespace gge.K8sControllers
             cmds.Add("argocd cluster list");
             Console.WriteLine("[vcluster] before exec");
             int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
-                "argocd-server", "argocd", "argocd-server", cmds, true, One, Globals.cancellationToken);
+                "argocd-server", "argocd", "argocd-server", cmds, false, One, Globals.cancellationToken);
             Console.WriteLine("[vcluster] after exec");
 
 
