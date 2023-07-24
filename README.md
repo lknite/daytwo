@@ -48,6 +48,11 @@ environment always matches what is in git.
 | todo   | daytwo-argocd-pinniped-controller     |
 | todo   | daytwo-argocd-external-dns-controller |
 | todo   | daytwo-argocd-trigger-controller      |
+| todo   | add helm charts                       |
+| todo   | daytwo-operator                       |
+| todo   | add daytwo-operator helm chart        |
+| todo   | move builds to use github actions     |
+| todo   | rewrite all controllers using go      |
 
 ## individual installation
 - use helm chart to install respective controller
