@@ -377,16 +377,16 @@ namespace gge.K8sControllers
             }
             secret.Data.TryGetValue("value", out byte[] bytes);
             string kubeconfig = System.Text.Encoding.UTF8.GetString(bytes);
-            Console.WriteLine("[vcluster] kubeconfig:\n" + kubeconfig);
+            //Console.WriteLine("[vcluster] kubeconfig:\n" + kubeconfig);
 
             // exec into argocd-server pod, see if we can use 'argocd' there
             ExecAsyncCallback handler = One;
             var cmds = new List<string>();
-            cmds.Add("pwd");
-            //cmds.Add("argocd cluster list");
+            //cmds.Add("pwd");
+            cmds.Add("argocd cluster list");
             Console.WriteLine("[vcluster] before exec");
             int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
-                "argocd-server-57d9b8db7-64mf6", "argocd", "server", cmds, false, handler, Globals.cancellationToken);
+                "argocd-server-57d9b8db7-64mf6", "argocd", "server", cmds, true, handler, Globals.cancellationToken);
             Console.WriteLine("[vcluster] after exec");
 
 
