@@ -163,6 +163,7 @@ namespace gge.K8sControllers
 
             Console.WriteLine("** add pinniped kubeconfig ...");
 
+            /*
             // locate argocd cluster secret representing this cluster
             Console.WriteLine("** sync 'addons' ...");
             V1Secret? secret = GetClusterArgocdSecret(tkc.Metadata.Name);
@@ -244,6 +245,7 @@ namespace gge.K8sControllers
                     Console.WriteLine("  - " + label.Key + ": " + label.Value);
                 }
             }
+            */
 
             return;
         }
