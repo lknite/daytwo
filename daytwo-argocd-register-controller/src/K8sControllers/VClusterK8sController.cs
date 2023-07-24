@@ -163,6 +163,7 @@ namespace gge.K8sControllers
 
             Console.WriteLine("** add pinniped kubeconfig ...");
 
+            /*
             // locate argocd cluster secret representing this cluster
             Console.WriteLine("** sync 'addons' ...");
             V1Secret? secret = GetClusterArgocdSecret(tkc.Metadata.Name);
@@ -244,6 +245,7 @@ namespace gge.K8sControllers
                     Console.WriteLine("  - " + label.Key + ": " + label.Value);
                 }
             }
+            */
 
             return;
         }
@@ -357,8 +359,15 @@ namespace gge.K8sControllers
         /// </summary>
         /// <param name="clusterName"></param>
         /// <returns></returns>
-        public static KubernetesClientConfiguration GetClusterKubeConfig(string clusterName)
+        public static KubernetesClientConfiguration GetClusterKubeConfig(string clusterName, string clusterNamespace)
         {
+            // clusterctl - n vc - test get kubeconfig vc - test
+            // k -n vc-test get secrets vc-test-kubeconfig -o jsonpath='{.data.value}' | base64 -d
+            V1Secret secret = Globals.service.kubeclient.ReadNamespacedSecret(clusterName + "-kubeconfig", clusterNamespace);
+            secret.Data.TryGetValue("value", out byte[] bytes);
+            string kubeconfig = System.Text.Encoding.UTF8.GetString(bytes);
+            Console.WriteLine(kubeconfig);
+
             return null;
         }
     }
