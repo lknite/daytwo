@@ -382,8 +382,9 @@ namespace gge.K8sControllers
             // exec into argocd-server pod, see if we can use 'argocd' there
             ExecAsyncCallback handler = One;
             var cmds = new List<string>();
-            //cmds.Add("pwd");
-            cmds.Add("argocd cluster list");
+            cmds.Add("ls");
+            cmds.Add("/");
+            //cmds.Add("argocd cluster list");
             Console.WriteLine("[vcluster] before exec");
             int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
                 "argocd-server-57d9b8db7-64mf6", "argocd", "server", cmds, false, handler, Globals.cancellationToken);
