@@ -1,7 +1,7 @@
 # daytwo-argocd-register-controller
 
 - watches for cluster.yaml (tanzu, clusterapi, etc…) and registers clusters with argocd automatically once they are in ‘ready’ state
-- syncs ‘addons’ labels from cluster.yaml to argocd cluster secrets to [auto install addons](https://www.youtube.com/watch?v=bNqljxnV7ZE), including pinniped-concierge, and [pinniped-www](https://www.travisloyd.xyz/2023/07/08/argocd-pinniped/)
+- can watch multiple capi instances on different clusters
 
 ## access ##
 - install in argocd namespace, or configure access to Secrets in namespace where argocd is installed
