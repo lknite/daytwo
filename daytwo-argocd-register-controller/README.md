@@ -45,5 +45,5 @@ done.
 ```
 
 ## reference ##
-[kubernetes daytwo controllers](https://www.travisloyd.xyz/2023/07/08/kubernetes-daytwo-controllers/)
-[Cluster-API cluster auto-registration](https://github.com/argoproj/argo-cd/issues/9033)
+- [kubernetes daytwo controllers](https://www.travisloyd.xyz/2023/07/08/kubernetes-daytwo-controllers/)
+- [Cluster-API cluster auto-registration](https://github.com/argoproj/argo-cd/issues/9033)
