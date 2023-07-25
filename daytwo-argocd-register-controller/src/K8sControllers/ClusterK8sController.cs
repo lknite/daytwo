@@ -130,18 +130,18 @@ namespace gge.K8sControllers
             foreach (var cluster in t.Items)
             {
                 Console.WriteLine("  - namespace: " + cluster.Namespace() + ", cluster: " + cluster.Name());
-                if (cluster.CStatus == null)
+                if (cluster.Status == null)
                 {
                     Console.WriteLine("CStatus is null");
                 }
-                if (cluster.CStatus.phase == null)
+                if (cluster.Status.phase == null)
                 {
                     Console.WriteLine("CStatus.phase is null");
                 }
                 try
                 {
-                    Console.WriteLine("  - phase: " + cluster.CStatus.ToString());
-                    Console.WriteLine("  - phase: " + cluster.CStatus.phase);
+                    Console.WriteLine("  - phase: " + cluster.Status.ToString());
+                    Console.WriteLine("  - phase: " + cluster.Status.phase);
                 }
                 catch(Exception ex)
                 {
@@ -150,9 +150,9 @@ namespace gge.K8sControllers
 
                 // is this cluster in a ready state?
                 if (!(
-                    (cluster.CStatus.phase == "Provisioned")
-                    && cluster.CStatus.infrastructureReady
-                    && cluster.CStatus.controlPlaneReady
+                    (cluster.Status.phase == "Provisioned")
+                    && cluster.Status.infrastructureReady
+                    && cluster.Status.controlPlaneReady
                     ))
                 {
                     // cluster not yet ready

@@ -32,8 +32,8 @@ namespace daytwo.CustomResourceDefinitions
         [JsonPropertyName("spec")]
         public TSpec Spec { get; set; }
 
-        [JsonPropertyName("CStatus")]
-        public TStatus CStatus { get; set; }
+        [JsonPropertyName("status")]
+        public TStatus Status { get; set; }
     }
 
     public class CustomResourceList<T> : KubernetesObject
