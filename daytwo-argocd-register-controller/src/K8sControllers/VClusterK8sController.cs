@@ -395,12 +395,12 @@ namespace gge.K8sControllers
 
             cmds.Add("sh");
             cmds.Add("-c");
-            cmds.Add( $"echo {Convert.ToBase64String(bytes)} > {path};"
-                    + $"cat {path} | base64 -d > {path}.conf;"
+            cmds.Add( $"echo {Convert.ToBase64String(bytes)} > /tmp/{clusterName}.b64;"
+                    + $"cat /tmp/{clusterName}.b64 | base64 -d > /tmp/{clusterName}.conf;"
                     + $"argocd cluster add my-vcluster"
                     + $" -y"
                     + $" --name {clusterName}"
-                    + $" --kubeconfig {path}.conf"
+                    + $" --kubeconfig /tmp/{clusterName}.conf"
                     + $" --server=localhost:8080"
                     + $" --plaintext"
                     + $" --insecure"
