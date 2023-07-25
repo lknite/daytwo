@@ -41,7 +41,7 @@ environment always matches what is in git.
   - use to allow for a single helm chart deployment and values file
 
 ## development
-| status | controller                            |                                 |
+| status | controller                            | detail                          |
 |--------|---------------------------------------|---------------------------------|
 | active | daytwo-argocd-register-controller     | working, todo: cleanup, add tkg |
 | todo   | daytwo-argocd-addons-controller       |                                 |
