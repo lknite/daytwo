@@ -65,9 +65,11 @@ namespace gge.K8sControllers
                         // Handle event type
                         switch (type)
                         {
+                            /*
                             case WatchEventType.Added:
                                 await ProcessAdded(item);
                                 break;
+                            */
                             //case WatchEventType.Bookmark:
                             //    break;
                             case WatchEventType.Deleted:
@@ -129,6 +131,15 @@ namespace gge.K8sControllers
                 Console.WriteLine("  - namespace: " + cluster.Namespace() + ", cluster: " + cluster.Name());
 
                 // is this cluster in a ready state?
+                if (!(
+                    (tkc.CStatus.phase == "Provisioned")
+                    && tkc.CStatus.infrastructureReady
+                    && tkc.CStatus.controlPlaneReady
+                    ))
+                {
+                    // cluster not yet ready
+                    Console.WriteLine("cluster not ready yet");
+                }
 
                 // has this cluster been added to argocd?
                 V1Secret? tmp = GetClusterArgocdSecret(cluster.Name());

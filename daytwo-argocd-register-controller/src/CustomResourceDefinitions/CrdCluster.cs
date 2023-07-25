@@ -42,7 +42,11 @@ namespace daytwo.crd.tanzukubernetescluster
 
     public class CrdClusterStatus : V1Status
     {
-        [JsonPropertyName("state")]
-        public string state { get; set; }
+        [JsonPropertyName("infrastructureReady")]
+        public bool infrastructureReady { get; set; }
+        [JsonPropertyName("controlPlaneReady")]
+        public bool controlPlaneReady { get; set; }
+        [JsonPropertyName("phase")]
+        public string phase { get; set; }
     }
 }
