@@ -445,8 +445,8 @@ namespace gge.K8sControllers
             // test
             Console.WriteLine("[cluster] (test) before exec");
             V1Pod pod = await Globals.service.kubeclient.ReadNamespacedPodAsync("argocd-server-57d9b8db7-v8ldh", "argocd");
-            string output = await ExecInPod(Globals.service.kubeclient, pod, "pwd");
-            Console.WriteLine("[cluster] (test) output:" + output);
+            await ExecInPod(Globals.service.kubeclient, pod, "pwd");
+            //Console.WriteLine("[cluster] (test) output:" + output);
             Console.WriteLine("[cluster] (test) after exec");
 
             cmds = new List<string>();
@@ -483,7 +483,7 @@ namespace gge.K8sControllers
             return null;
         }
 
-        private static async Task<string> ExecInPod(IKubernetes client, V1Pod pod, string cmd)
+        private static async Task ExecInPod(IKubernetes client, V1Pod pod, string cmd)
         {
             var webSocket =
                 await client.WebSocketNamespacedPodExecAsync(pod.Metadata.Name, "default", cmd,
@@ -498,7 +498,7 @@ namespace gge.K8sControllers
             var str = Encoding.Default.GetString(buff);
             Console.WriteLine(str);
 
-            return str;
+            //return str;
         }
     }
 }
