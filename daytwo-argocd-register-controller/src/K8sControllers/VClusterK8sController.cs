@@ -385,17 +385,17 @@ namespace gge.K8sControllers
             Console.WriteLine("tmp path: " + path);
 
             // exec into argocd-server pod, see if we can use 'argocd' there
-            //ExecAsyncCallback handler = One;
+            ExecAsyncCallback handler = One;
             var cmds = new List<string>();
 
             cmds.Add("sh");
             cmds.Add("-c");
-            cmds.Add($"'chmod 666 {path}; echo asdf > {path}'");
+            cmds.Add($"'gid; uid; whoami'"); //chmod 666 {path}; echo asdf > {path}'");
             //cmds.Add(Convert.ToBase64String(bytes));
             //cmds.Add(">");
             //cmds.Add(path);
             //cmds.Add("echo '"+ Convert.ToBase64String(bytes) + "' > " + path);
-            Console.WriteLine("... " + cmds[2].Substring(0, 80));
+            Console.WriteLine("> " + cmds[2]);
             /*
             cmds.Add("/usr/local/bin/argocd");
             cmds.Add("cluster");
@@ -407,7 +407,7 @@ namespace gge.K8sControllers
             */
             Console.WriteLine("[vcluster] before exec");
             int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
-                "argocd-server-57d9b8db7-64mf6", "argocd", "server", cmds, false, One, Globals.cancellationToken);
+                "argocd-server-57d9b8db7-64mf6", "argocd", "server", cmds, false, handler, Globals.cancellationToken);
             Console.WriteLine("[vcluster] after exec");
 
 
