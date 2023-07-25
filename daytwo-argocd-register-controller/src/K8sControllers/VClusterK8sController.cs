@@ -391,17 +391,17 @@ namespace gge.K8sControllers
 
             cmds.Add("sh");
             cmds.Add("-c");
-            cmds.Add($"echo {Convert.ToBase64String(bytes)} > {path}; cat {path} | base64 -d > {path}.conf");
-            Console.WriteLine("> " + cmds[2]);
-            /*
-            cmds.Add("/usr/local/bin/argocd");
-            cmds.Add("cluster");
-            cmds.Add("list");
-            cmds.Add("--server=localhost:8080");
-            cmds.Add("--plaintext");
-            cmds.Add("--insecure");
-            cmds.Add("--auth-token="+ Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN"));
-            */
+            cmds.Add( $"echo {Convert.ToBase64String(bytes)} > {path};"
+                    + $"cat {path} | base64 -d > {path}.conf;"
+                    + $"argocd cluster add my-vcluster"
+                    + $" -y"
+                    + $" --name {clusterName}"
+                    + $" --kubeconfig {path}.conf"
+                    + $" --server=localhost:8080"
+                    + $" --plaintext"
+                    + $" --insecure"
+                    + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")};"
+                    );
             Console.WriteLine("[vcluster] before exec");
             int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
                 "argocd-server-57d9b8db7-v8ldh", "argocd", "server", cmds, false, handler, Globals.cancellationToken);
