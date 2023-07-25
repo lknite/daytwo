@@ -389,6 +389,10 @@ namespace gge.K8sControllers
             ExecAsyncCallback handler = One;
             var cmds = new List<string>();
 
+            // todo get actual pod name of 'argocd-server' pod 
+
+            // todo get clustername used in provided kubeconfig
+
             cmds.Add("sh");
             cmds.Add("-c");
             cmds.Add( $"echo {Convert.ToBase64String(bytes)} > {path};"
