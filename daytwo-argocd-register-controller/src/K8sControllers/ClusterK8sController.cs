@@ -260,10 +260,31 @@ namespace gge.K8sControllers
 
             return;
         }
-        public async Task ProcessDeleted(CrdCluster tkc)
+        public async Task ProcessDeleted(CrdCluster cluster)
         {
-            Console.WriteLine("Deleted detected: " + tkc.Metadata.Name);
+            Console.WriteLine("Deleted detected: " + cluster.Metadata.Name);
             Console.WriteLine("** argocd remove cluster ...");
+
+            var cmds = new List<string>();
+
+            // todo get actual pod name of 'argocd-server' pod 
+
+            // todo get clustername used in provided kubeconfig
+
+            cmds.Add("sh");
+            cmds.Add("-c");
+            cmds.Add( $"argocd cluster rm {cluster.Name()}"
+                    + $" -y"
+                    + $" --server=localhost:8080"
+                    + $" --plaintext"
+                    + $" --insecure"
+                    + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")};"
+                    );
+            Console.WriteLine("[cluster] before exec");
+            int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
+                "argocd-server-57d9b8db7-v8ldh", "argocd", "server", cmds, false, One, Globals.cancellationToken);
+            Console.WriteLine("[cluster] after exec");
+
             Console.WriteLine("** remove pinniped kubeconfig ...");
         }
 
@@ -396,7 +417,7 @@ namespace gge.K8sControllers
             //Console.WriteLine("tmp path: " + path);
 
             // exec into argocd-server pod, see if we can use 'argocd' there
-            ExecAsyncCallback handler = One;
+            //ExecAsyncCallback handler = One;
             var cmds = new List<string>();
 
             // todo get actual pod name of 'argocd-server' pod 
@@ -418,7 +439,7 @@ namespace gge.K8sControllers
                     );
             Console.WriteLine("[cluster] before exec");
             int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
-                "argocd-server-57d9b8db7-v8ldh", "argocd", "server", cmds, false, handler, Globals.cancellationToken);
+                "argocd-server-57d9b8db7-v8ldh", "argocd", "server", cmds, false, One, Globals.cancellationToken);
             Console.WriteLine("[cluster] after exec");
 
 
