@@ -138,7 +138,7 @@ namespace gge.K8sControllers
                     ))
                 {
                     // cluster not yet ready
-                    Console.WriteLine("cluster not ready yet");
+                    Console.WriteLine("    - cluster not ready yet");
                 }
 
                 // has this cluster been added to argocd?
