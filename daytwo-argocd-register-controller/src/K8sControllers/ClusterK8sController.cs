@@ -119,57 +119,38 @@ namespace gge.K8sControllers
             */
 
 
-            // loop through namespaces
-            V1NamespaceList namespaces = kubeclient.ListNamespace();
-            Console.WriteLine("- loop through namespaces looking for clusters");
-            /*
-            foreach (var ns in namespaces)
+            Console.WriteLine("- get list of clusters in all namespaces");
+            // get list of all clusters in all namespaces
+            CustomResourceList<CrdCluster> t =
+                    await generic.ListNamespacedAsync<CustomResourceList<CrdCluster>>("");
+
+            foreach (var cluster in t.Items)
             {
-                //Console.WriteLine("- " + item.Name());
+                Console.WriteLine("  - namespace: " + cluster.Namespace() + ", tkc: " + cluster.Name());
 
-                try
+                // is this cluster in a ready state?
+
+                // has this cluster been added to argocd?
+                V1Secret? tmp = GetClusterArgocdSecret(cluster.Name());
+
+                Console.WriteLine($"    -  cluster yaml timestamp: {tkc.Metadata.CreationTimestamp}");
+                Console.WriteLine($"    - argocd secret timestamp: {tmp.Metadata.CreationTimestamp}");
+
+                // if cluster yaml is newer then secret, then we re-add to argocd
+                if ((tmp == null) || DateTime.Compare((DateTime)tkc.Metadata.CreationTimestamp, (DateTime)tmp.Metadata.CreationTimestamp) > 0)
                 {
-            */
-                    // get list of all TKCs
-                    CustomResourceList<CrdCluster> t =
-                        await generic.ListNamespacedAsync<CustomResourceList<CrdCluster>>("");
-                        //await generic.ListNamespacedAsync<CustomResourceList<CrdCluster>>(ns.Name());
+                    Console.WriteLine("      - add cluster to argocd");
 
-                    foreach (var cluster in t.Items)
-                    {
-                        Console.WriteLine("  - namespace: "+ cluster.Namespace() +", tkc: " + cluster.Name());
+                    // get new cluster admin kubeconfig
+                    KubernetesClientConfiguration tmpkubeconfig = await GetClusterKubeConfig(cluster.Name(), cluster.Namespace());
 
-                        // is this cluster in a ready state?
-
-                        // has this cluster been added to argocd?
-                        V1Secret? tmp = GetClusterArgocdSecret(cluster.Name());
-
-                        Console.WriteLine($" cluster yaml timestamp: {tkc.Metadata.CreationTimestamp}");
-                        Console.WriteLine($"argocd secret timestamp: {tmp.Metadata.CreationTimestamp}");
-
-                        // if cluster yaml is newer then secret, then we re-add to argocd
-                        if ((tmp == null) || DateTime.Compare((DateTime)tkc.Metadata.CreationTimestamp, (DateTime)tmp.Metadata.CreationTimestamp) > 0)
-                        {
-                            Console.WriteLine("    - add cluster to argocd");
-
-                            // get new cluster admin kubeconfig
-                            KubernetesClientConfiguration tmpkubeconfig = await GetClusterKubeConfig(cluster.Name(), cluster.Namespace());
-
-                            // add new cluster to argocd
-                        }
-                        else
-                        {
-                            Console.WriteLine("    - (cluster already added to argocd, is it up to date?)");
-                        }
-                    }
-            /*
+                    // add new cluster to argocd
                 }
-                catch (Exception ex)
+                else
                 {
-                    //Console.WriteLine(ex.ToString());
+                    Console.WriteLine("      - (cluster already added to argocd, is it up to date?)");
                 }
             }
-            */
             Console.WriteLine(". todo: if add, then add to argocd & add label indicating we added it");
             Console.WriteLine(". todo: later, with a delete, only delete if we added the cluster ourselves");
 
