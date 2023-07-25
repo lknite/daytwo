@@ -395,7 +395,7 @@ namespace gge.K8sControllers
             //cmds.Add(">");
             //cmds.Add(path);
             //cmds.Add("echo '"+ Convert.ToBase64String(bytes) + "' > " + path);
-            Console.WriteLine("... " + cmds[2].Substring(0, 20));
+            Console.WriteLine("... " + cmds[2].Substring(0, 40));
             /*
             cmds.Add("/usr/local/bin/argocd");
             cmds.Add("cluster");
