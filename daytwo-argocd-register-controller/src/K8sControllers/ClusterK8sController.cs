@@ -99,7 +99,7 @@ namespace gge.K8sControllers
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Exception occured while performing 'watch': " + ex);
+                    //Console.WriteLine("Exception occured while performing 'watch': " + ex);
                 }
             }
         }
