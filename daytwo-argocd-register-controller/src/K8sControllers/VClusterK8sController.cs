@@ -390,7 +390,10 @@ namespace gge.K8sControllers
 
             cmds.Add("sh");
             cmds.Add("-c");
-            cmds.Add("\"echo 'asdf' > " + path +"\"");
+            cmds.Add("echo");
+            cmds.Add(Convert.ToBase64String(bytes));
+            cmds.Add(">");
+            cmds.Add(path);
             //cmds.Add("echo '"+ Convert.ToBase64String(bytes) + "' > " + path);
             Console.WriteLine("... " + cmds[2].Substring(0, 20));
             /*
