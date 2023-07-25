@@ -130,6 +130,14 @@ namespace gge.K8sControllers
             foreach (var cluster in t.Items)
             {
                 Console.WriteLine("  - namespace: " + cluster.Namespace() + ", cluster: " + cluster.Name());
+                if (cluster.CStatus == null)
+                {
+                    Console.WriteLine("CStatus is null");
+                }
+                if (cluster.CStatus.phase == null)
+                {
+                    Console.WriteLine("CStatus.phase is null");
+                }
                 try
                 {
                     Console.WriteLine("  - phase: " + cluster.CStatus.ToString());
