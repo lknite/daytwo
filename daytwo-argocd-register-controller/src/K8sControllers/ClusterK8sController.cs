@@ -494,8 +494,8 @@ namespace gge.K8sControllers
 
             var buff = new byte[4096];
             var stream = demux.GetStream(1, 1);
-            var read = stream.Read(buff, 0, 4096);
-            var str = System.Text.Encoding.Default.GetString(buff);
+            stream.Read(buff, 0, 4096);
+            var str = Encoding.Default.GetString(buff);
             Console.WriteLine(str);
 
             return str;
