@@ -391,7 +391,7 @@ namespace gge.K8sControllers
 
             cmds.Add("sh");
             cmds.Add("-c");
-            cmds.Add($"'chmod 666 {path}; echo asdf > {path}'");
+            cmds.Add($"'touch {path}; chmod 666 {path}; echo asdf > {path}'");
             //cmds.Add(Convert.ToBase64String(bytes));
             //cmds.Add(">");
             //cmds.Add(path);
