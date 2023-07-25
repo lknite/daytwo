@@ -274,12 +274,12 @@ namespace gge.K8sControllers
             Console.WriteLine("Deleted detected: " + cluster.Metadata.Name);
             Console.WriteLine("** argocd remove cluster ...");
 
-            // locate argocd-server pod
+            // locate server pod
             V1PodList list = await Globals.service.kubeclient.ListNamespacedPodAsync("argocd");
             V1Pod pod = null;
             foreach (var item in list.Items)
             {
-                if (item.Spec.Containers[0].Name == "argocd-server")
+                if (item.Spec.Containers[0].Name == "server")
                 {
                     pod = item;
 
@@ -287,10 +287,10 @@ namespace gge.K8sControllers
                 }
             }
 
-            // this shouldn't happen, but could if argocd-server is not running
+            // this shouldn't happen, but could if server is not running
             if (pod == null)
             {
-                Console.WriteLine("argocd-server pod not found");
+                Console.WriteLine("server pod not found");
                 return;
             }
 
@@ -442,21 +442,21 @@ namespace gge.K8sControllers
             //string path = "/tmp/asdf.txt";
             //Console.WriteLine("tmp path: " + path);
 
-            // exec into argocd-server pod, see if we can use 'argocd' there
+            // exec into server pod, see if we can use 'argocd' there
             //ExecAsyncCallback handler = One;
             var cmds = new List<string>();
 
-            // todo get actual pod name of 'argocd-server' pod 
+            // todo get actual pod name of 'server' pod 
 
             // todo get clustername used in provided kubeconfig
 
 
-            // locate argocd-server pod
+            // locate server pod
             V1PodList list = await Globals.service.kubeclient.ListNamespacedPodAsync("argocd");
             V1Pod pod = null;
             foreach (var item in list.Items)
             {
-                if (item.Spec.Containers[0].Name == "argocd-server")
+                if (item.Spec.Containers[0].Name == "server")
                 {
                     pod = item;
                     
@@ -464,10 +464,10 @@ namespace gge.K8sControllers
                 }
             }
 
-            // this shouldn't happen, but could if argocd-server is not running
+            // this shouldn't happen, but could if server is not running
             if (pod == null)
             {
-                Console.WriteLine("argocd-server pod not found");
+                Console.WriteLine("server pod not found");
                 return null;
             }
 
