@@ -432,6 +432,7 @@ namespace gge.K8sControllers
 
             // todo get clustername used in provided kubeconfig
 
+            /*
             // test
             cmds = new List<string>();
             cmds.Add("pwd");
@@ -439,6 +440,7 @@ namespace gge.K8sControllers
             await Globals.service.kubeclient.NamespacedPodExecAsync(
                 "argocd-server-57d9b8db7-v8ldh", "argocd", "server", cmds, false, One, Globals.cancellationToken);
             Console.WriteLine("[cluster] (test) after exec");
+            */
 
             cmds = new List<string>();
             cmds.Add("sh");
