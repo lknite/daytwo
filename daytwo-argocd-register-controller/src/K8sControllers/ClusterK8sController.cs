@@ -132,11 +132,11 @@ namespace gge.K8sControllers
                 Console.WriteLine("  - namespace: " + cluster.Namespace() + ", cluster: " + cluster.Name());
                 if (cluster.Status == null)
                 {
-                    Console.WriteLine("CStatus is null");
+                    Console.WriteLine("Status is null");
                 }
                 if (cluster.Status.phase == null)
                 {
-                    Console.WriteLine("CStatus.phase is null");
+                    Console.WriteLine("Status.phase is null");
                 }
                 try
                 {
