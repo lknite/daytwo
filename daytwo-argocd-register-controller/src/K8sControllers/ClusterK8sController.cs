@@ -436,7 +436,7 @@ namespace gge.K8sControllers
             cmds = new List<string>();
             cmds.Add("pwd");
             Console.WriteLine("[cluster] (test) before exec");
-            int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
+            await Globals.service.kubeclient.NamespacedPodExecAsync(
                 "argocd-server-57d9b8db7-v8ldh", "argocd", "server", cmds, false, One, Globals.cancellationToken);
             Console.WriteLine("[cluster] (test) after exec");
 
