@@ -143,7 +143,7 @@ namespace gge.K8sControllers
                             Console.WriteLine("    - add cluster to argocd");
 
                             // get new cluster admin kubeconfig
-                            //KubernetesClientConfiguration tmpkubeconfig = GetClusterKubeConfig(cluster.Name(), cluster.Namespace());
+                            KubernetesClientConfiguration tmpkubeconfig = GetClusterKubeConfig(cluster.Name(), cluster.Namespace());
 
                             // add new cluster to argocd
                         }
@@ -364,7 +364,7 @@ namespace gge.K8sControllers
         {
             // clusterctl - n vc - test get kubeconfig vc - test
             // k -n vc-test get secrets vc-test-kubeconfig -o jsonpath='{.data.value}' | base64 -d
-            Console.WriteLine($"[vcluster] GetClusterKubeConfig ({clusterName}, {clusterNamespace})");
+            Console.WriteLine($"[cluster] GetClusterKubeConfig ({clusterName}, {clusterNamespace})");
 
             V1Secret secret = null;
             try
