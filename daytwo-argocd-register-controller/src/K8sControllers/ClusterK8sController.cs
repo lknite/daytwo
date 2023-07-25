@@ -360,14 +360,68 @@ namespace gge.K8sControllers
         /// </summary>
         /// <param name="clusterName"></param>
         /// <returns></returns>
-        public static KubernetesClientConfiguration GetClusterKubeConfig(string clusterName, string clusterNamespace)
+        public static async Task<KubernetesClientConfiguration> GetClusterKubeConfig(string clusterName, string clusterNamespace)
         {
             // clusterctl - n vc - test get kubeconfig vc - test
             // k -n vc-test get secrets vc-test-kubeconfig -o jsonpath='{.data.value}' | base64 -d
-            V1Secret secret = Globals.service.kubeclient.ReadNamespacedSecret(clusterName+"-kubeconfig", clusterNamespace);
+            Console.WriteLine($"[vcluster] GetClusterKubeConfig ({clusterName}, {clusterNamespace})");
+
+            V1Secret secret = null;
+            try
+            {
+                secret = Globals.service.kubeclient.ReadNamespacedSecret(clusterName + "-kubeconfig", clusterNamespace);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
             secret.Data.TryGetValue("value", out byte[] bytes);
             string kubeconfig = System.Text.Encoding.UTF8.GetString(bytes);
-            Console.WriteLine(kubeconfig);
+            //Console.WriteLine("[vcluster] kubeconfig:\n" + kubeconfig);
+
+            // save kubeconfig to a temporary file
+            //string path = Path.GetTempFileName();
+            //string path = "/tmp/asdf.txt";
+            //Console.WriteLine("tmp path: " + path);
+
+            // exec into argocd-server pod, see if we can use 'argocd' there
+            ExecAsyncCallback handler = One;
+            var cmds = new List<string>();
+
+            // todo get actual pod name of 'argocd-server' pod 
+
+            // todo get clustername used in provided kubeconfig
+
+            cmds.Add("sh");
+            cmds.Add("-c");
+            cmds.Add($"echo {Convert.ToBase64String(bytes)} > /tmp/{clusterName}.b64;"
+                    + $"cat /tmp/{clusterName}.b64 | base64 -d > /tmp/{clusterName}.conf;"
+                    + $"argocd cluster add my-vcluster"
+                    + $" -y"
+                    + $" --name {clusterName}"
+                    + $" --kubeconfig /tmp/{clusterName}.conf"
+                    + $" --server=localhost:8080"
+                    + $" --plaintext"
+                    + $" --insecure"
+                    + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")};"
+                    );
+            Console.WriteLine("[vcluster] before exec");
+            int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
+                "argocd-server-57d9b8db7-v8ldh", "argocd", "server", cmds, false, handler, Globals.cancellationToken);
+            Console.WriteLine("[vcluster] after exec");
+
+
+            return null;
+        }
+
+        public static Task One(Stream stdIn, Stream stdOut, Stream stdErr)
+        {
+            StreamReader sr = new StreamReader(stdOut);
+            while (!sr.EndOfStream)
+            {
+                Console.WriteLine(sr.ReadLine());
+            }
 
             return null;
         }

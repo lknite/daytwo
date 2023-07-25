@@ -65,9 +65,9 @@ namespace daytwo
 
             // Start up all the k8s controllers
             clusterController.Listen();
-            vclusterController.Listen();
+            //vclusterController.Listen();
 
-            tkcController.Listen();
+            //tkcController.Listen();
 
             return Task.CompletedTask;
         }

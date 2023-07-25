@@ -382,8 +382,8 @@ namespace gge.K8sControllers
 
             // save kubeconfig to a temporary file
             //string path = Path.GetTempFileName();
-            string path = "/tmp/asdf.txt";
-            Console.WriteLine("tmp path: " + path);
+            //string path = "/tmp/asdf.txt";
+            //Console.WriteLine("tmp path: " + path);
 
             // exec into argocd-server pod, see if we can use 'argocd' there
             ExecAsyncCallback handler = One;
