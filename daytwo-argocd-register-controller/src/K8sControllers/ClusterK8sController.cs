@@ -485,7 +485,7 @@ namespace gge.K8sControllers
         private static async Task ExecInPod(IKubernetes client, V1Pod pod)
         {
             var webSocket =
-                await client.WebSocketNamespacedPodExecAsync(pod.Metadata.Name, "default", "ls",
+                await client.WebSocketNamespacedPodExecAsync(pod.Metadata.Name, "default", "ls /",
                     pod.Spec.Containers[0].Name).ConfigureAwait(false);
 
             var demux = new StreamDemuxer(webSocket);
