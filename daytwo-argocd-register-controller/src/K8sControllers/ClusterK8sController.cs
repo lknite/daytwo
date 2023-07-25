@@ -130,23 +130,7 @@ namespace gge.K8sControllers
             foreach (var cluster in t.Items)
             {
                 Console.WriteLine("  - namespace: " + cluster.Namespace() + ", cluster: " + cluster.Name());
-                if (cluster.Status == null)
-                {
-                    Console.WriteLine("Status is null");
-                }
-                if (cluster.Status.phase == null)
-                {
-                    Console.WriteLine("Status.phase is null");
-                }
-                try
-                {
-                    Console.WriteLine("  - phase: " + cluster.Status.ToString());
-                    Console.WriteLine("  - phase: " + cluster.Status.phase);
-                }
-                catch(Exception ex)
-                {
-                    Console.WriteLine("Exception caught: " + ex.Message);
-                }
+                Console.WriteLine("  - phase: " + cluster.Status.phase);
 
                 // is this cluster in a ready state?
                 if (!(
