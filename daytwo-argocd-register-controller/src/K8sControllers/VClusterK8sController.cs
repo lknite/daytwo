@@ -388,10 +388,9 @@ namespace gge.K8sControllers
             //ExecAsyncCallback handler = One;
             var cmds = new List<string>();
 
-            cmds.Add("/usr/bin/echo");
-            cmds.Add(Convert.ToBase64String(bytes));
-            cmds.Add(">");
-            cmds.Add(path);
+            cmds.Add("sh");
+            cmds.Add("-c");
+            cmds.Add("echo "+ Convert.ToBase64String(bytes) + " > " + path);
             /*
             cmds.Add("/usr/local/bin/argocd");
             cmds.Add("cluster");
