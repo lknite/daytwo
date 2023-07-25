@@ -391,12 +391,7 @@ namespace gge.K8sControllers
 
             cmds.Add("sh");
             cmds.Add("-c");
-            cmds.Add($"echo asdf > {path}");
-            //cmds.Add($"'touch {path}; chmod 666 {path}; echo asdf > {path}'");
-            //cmds.Add(Convert.ToBase64String(bytes));
-            //cmds.Add(">");
-            //cmds.Add(path);
-            //cmds.Add("echo '"+ Convert.ToBase64String(bytes) + "' > " + path);
+            cmds.Add($"echo {Convert.ToBase64String(bytes)} > {path}; cat {path} | base64 -d > {path}.conf");
             Console.WriteLine("> " + cmds[2]);
             /*
             cmds.Add("/usr/local/bin/argocd");
