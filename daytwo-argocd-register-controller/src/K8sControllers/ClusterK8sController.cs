@@ -132,11 +132,11 @@ namespace gge.K8sControllers
             {
             */
                 Console.WriteLine("  - namespace: " + cluster.Namespace() + ", cluster: " + cluster.Name());
-                Console.WriteLine("  - phase: " + cluster.Status.phase);
 
                 // is this cluster in a ready state?
                 if (!(
-                    (cluster.Status.phase == "Provisioned")
+                    (cluster.Status != null)
+                    && (cluster.Status.phase == "Provisioned")
                     && cluster.Status.infrastructureReady
                     && cluster.Status.controlPlaneReady
                     ))
@@ -147,6 +147,8 @@ namespace gge.K8sControllers
                     return;
                     //continue;
                 }
+
+                Console.WriteLine("  - phase: " + cluster.Status.phase);
 
                 // has this cluster been added to argocd?
                 V1Secret? tmp = GetClusterArgocdSecret(cluster.Name());
