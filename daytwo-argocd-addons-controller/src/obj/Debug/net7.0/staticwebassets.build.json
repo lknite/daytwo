@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "l3n3yMWijTHTI9BJytaECx6lqpSrd322T3PlFrFArXw=",
+  "Source": "daytwo-argocd-addons-controller",
+  "BasePath": "_content/daytwo-argocd-addons-controller",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
