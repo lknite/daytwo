@@ -126,7 +126,7 @@ namespace gge.K8sControllers
 
             foreach (var cluster in t.Items)
             {
-                Console.WriteLine("  - namespace: " + cluster.Namespace() + ", tkc: " + cluster.Name());
+                Console.WriteLine("  - namespace: " + cluster.Namespace() + ", cluster: " + cluster.Name());
 
                 // is this cluster in a ready state?
 
@@ -148,7 +148,7 @@ namespace gge.K8sControllers
                 }
                 else
                 {
-                    Console.WriteLine("      - (cluster already added to argocd, is it up to date?)");
+                    Console.WriteLine("      - cluster already added to argocd, is it up to date?");
                 }
             }
             Console.WriteLine(". todo: if add, then add to argocd & add label indicating we added it");
