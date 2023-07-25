@@ -400,12 +400,10 @@ namespace gge.K8sControllers
         }
 
         public static Task One(Stream stdIn, Stream stdOut, Stream stdErr) {
-            /*
             StreamReader sr = new StreamReader(stdOut);
             while(!sr.EndOfStream) {
                 Console.WriteLine(sr.ReadLine());
             }
-            */
 
             return null;
         }
