@@ -129,6 +129,7 @@ namespace gge.K8sControllers
             foreach (var cluster in t.Items)
             {
                 Console.WriteLine("  - namespace: " + cluster.Namespace() + ", cluster: " + cluster.Name());
+                Console.WriteLine("  - phase: " + cluster.CStatus.phase);
 
                 // is this cluster in a ready state?
                 if (!(
