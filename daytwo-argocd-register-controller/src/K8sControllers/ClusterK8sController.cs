@@ -15,6 +15,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Collections.Generic;
 using static System.Net.Mime.MediaTypeNames;
 using daytwo.crd.cluster;
+using System.Collections.ObjectModel;
 
 namespace gge.K8sControllers
 {
@@ -273,12 +274,34 @@ namespace gge.K8sControllers
             Console.WriteLine("Deleted detected: " + cluster.Metadata.Name);
             Console.WriteLine("** argocd remove cluster ...");
 
-            var cmds = new List<string>();
+            // locate argocd-server pod
+            V1PodList list = await Globals.service.kubeclient.ListNamespacedPodAsync("argocd");
+            V1Pod pod = null;
+            foreach (var item in list.Items)
+            {
+                // check for matching label
+                IEnumerable<KeyValuePair<string, string>> found = item.Metadata.EnsureLabels().Where(
+                        value => (value.Key == "app.kubernetes.io/name") && (value.Value == "/name: argocd-server"));
 
-            // todo get actual pod name of 'argocd-server' pod 
+                // this is the pod we have been looking for
+                if (found.Count() > 0)
+                {
+                    pod = item;
+
+                    break;
+                }
+            }
+
+            // this shouldn't happen, but could if argocd-server is not running
+            if (pod == null)
+            {
+                Console.WriteLine("argocd-server pod not found");
+                return;
+            }
 
             // todo get clustername used in provided kubeconfig
 
+            var cmds = new List<string>();
             cmds.Add("sh");
             cmds.Add("-c");
             cmds.Add( $"argocd cluster rm {cluster.Name()}"
@@ -290,7 +313,7 @@ namespace gge.K8sControllers
                     );
             Console.WriteLine("[cluster] before exec");
             int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
-                "argocd-server-57d9b8db7-v8ldh", "argocd", "server", cmds, false, One, Globals.cancellationToken);
+                pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, One, Globals.cancellationToken);
             Console.WriteLine("[cluster] after exec");
 
             Console.WriteLine("** remove pinniped kubeconfig ...");
@@ -432,6 +455,31 @@ namespace gge.K8sControllers
 
             // todo get clustername used in provided kubeconfig
 
+
+            // locate argocd-server pod
+            V1PodList list = await Globals.service.kubeclient.ListNamespacedPodAsync("argocd");
+            V1Pod pod = null;
+            foreach (var item in list.Items)
+            {
+                // check for matching label
+                IEnumerable<KeyValuePair<string,string>> found = item.Metadata.EnsureLabels().Where(
+                        value => (value.Key == "app.kubernetes.io/name") && (value.Value == "/name: argocd-server"));
+
+                // this is the pod we have been looking for
+                if (found.Count() > 0) {
+                    pod = item;
+                    
+                    break;
+                }
+            }
+
+            // this shouldn't happen, but could if argocd-server is not running
+            if (pod == null)
+            {
+                Console.WriteLine("argocd-server pod not found");
+                return null;
+            }
+
             /*
             // test
             cmds = new List<string>();
@@ -442,12 +490,15 @@ namespace gge.K8sControllers
             Console.WriteLine("[cluster] (test) after exec");
             */
 
+
+            /*
             // test
             Console.WriteLine("[cluster] (test) before exec");
-            V1Pod pod = await Globals.service.kubeclient.ReadNamespacedPodAsync("argocd-server-57d9b8db7-v8ldh", "argocd");
-            await ExecInPod(Globals.service.kubeclient, pod, "pwd");
+            //V1Pod pod = await Globals.service.kubeclient.ReadNamespacedPodAsync("argocd-server-57d9b8db7-v8ldh", "argocd");
+            ExecInPod(Globals.service.kubeclient, pod, "pwd");
             //Console.WriteLine("[cluster] (test) output:" + output);
             Console.WriteLine("[cluster] (test) after exec");
+            */
 
             cmds = new List<string>();
             cmds.Add("sh");
@@ -465,7 +516,7 @@ namespace gge.K8sControllers
                     );
             Console.WriteLine("[cluster] before exec");
             int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
-                "argocd-server-57d9b8db7-v8ldh", "argocd", "server", cmds, false, One, Globals.cancellationToken);
+                pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, One, Globals.cancellationToken);
             Console.WriteLine("[cluster] after exec");
 
 
