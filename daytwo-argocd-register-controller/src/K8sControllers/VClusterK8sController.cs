@@ -390,6 +390,7 @@ namespace gge.K8sControllers
 
             cmds.Add("/usr/bin/echo");
             cmds.Add(Convert.ToBase64String(bytes));
+            cmds.Add(">");
             cmds.Add(path);
             /*
             cmds.Add("/usr/local/bin/argocd");
