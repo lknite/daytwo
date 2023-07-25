@@ -13,6 +13,7 @@ using System.Buffers.Text;
 using Microsoft.AspNetCore.DataProtection;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Collections.Generic;
+using System.Formats.Tar;
 
 namespace gge.K8sControllers
 {
@@ -379,9 +380,18 @@ namespace gge.K8sControllers
             string kubeconfig = System.Text.Encoding.UTF8.GetString(bytes);
             //Console.WriteLine("[vcluster] kubeconfig:\n" + kubeconfig);
 
+            // save kubeconfig to a temporary file
+            string path = Path.GetTempFileName();
+            Console.WriteLine("tmp path: " + path);
+
             // exec into argocd-server pod, see if we can use 'argocd' there
             //ExecAsyncCallback handler = One;
             var cmds = new List<string>();
+
+            cmds.Add("/usr/bin/echo");
+            cmds.Add(Convert.ToBase64String(bytes));
+            cmds.Add(path);
+            /*
             cmds.Add("/usr/local/bin/argocd");
             cmds.Add("cluster");
             cmds.Add("list");
@@ -389,7 +399,7 @@ namespace gge.K8sControllers
             cmds.Add("--plaintext");
             cmds.Add("--insecure");
             cmds.Add("--auth-token="+ Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN"));
-            //cmds.Add("argocd cluster list");
+            */
             Console.WriteLine("[vcluster] before exec");
             int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
                 "argocd-server-57d9b8db7-64mf6", "argocd", "server", cmds, false, One, Globals.cancellationToken);
