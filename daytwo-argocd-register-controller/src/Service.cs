@@ -14,8 +14,6 @@ namespace daytwo
 
         //
         public ClusterK8sController clusterController;
-        public VClusterK8sController vclusterController;
-
         public TanzuKubernetesClusterK8sController tkcController;
 
         public Service()
@@ -38,8 +36,6 @@ namespace daytwo
 
             // Now that we have our kubeconfig, go ahead and instantiate the k8s controllers
             clusterController = new ClusterK8sController();
-            vclusterController = new VClusterK8sController();
-
             tkcController = new TanzuKubernetesClusterK8sController();
 
             // Check for required environment variable(s)
