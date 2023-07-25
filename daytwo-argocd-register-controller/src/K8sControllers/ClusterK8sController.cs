@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.DataProtection;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Collections.Generic;
 using static System.Net.Mime.MediaTypeNames;
+using daytwo.crd.cluster;
 
 namespace gge.K8sControllers
 {
@@ -131,6 +132,7 @@ namespace gge.K8sControllers
                 Console.WriteLine("  - namespace: " + cluster.Namespace() + ", cluster: " + cluster.Name());
                 try
                 {
+                    Console.WriteLine("  - phase: " + cluster.CStatus.ToString());
                     Console.WriteLine("  - phase: " + cluster.CStatus.phase);
                 }
                 catch(Exception ex)

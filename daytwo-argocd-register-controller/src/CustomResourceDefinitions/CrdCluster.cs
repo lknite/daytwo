@@ -1,7 +1,7 @@
 ﻿using k8s.Models;
 using System.Text.Json.Serialization;
 
-namespace daytwo.crd.tanzukubernetescluster
+namespace daytwo.crd.cluster
 {
     public class CrdCluster : CustomResourceDefinitions.CustomResource<CrdClusterSpec, CrdClusterStatus>
     {

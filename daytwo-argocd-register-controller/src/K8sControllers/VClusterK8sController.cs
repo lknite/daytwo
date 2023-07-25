@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.DataProtection;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Collections.Generic;
 using System.Formats.Tar;
+using daytwo.crd.vcluster;
 
 namespace gge.K8sControllers
 {
