@@ -279,12 +279,7 @@ namespace gge.K8sControllers
             V1Pod pod = null;
             foreach (var item in list.Items)
             {
-                // check for matching label
-                IEnumerable<KeyValuePair<string, string>> found = item.Metadata.EnsureLabels().Where(
-                        value => (value.Key == "app.kubernetes.io/name") && (value.Value == "/name: argocd-server"));
-
-                // this is the pod we have been looking for
-                if (found.Count() > 0)
+                if (item.Spec.Containers[0].Name == "argocd-server")
                 {
                     pod = item;
 
@@ -461,12 +456,8 @@ namespace gge.K8sControllers
             V1Pod pod = null;
             foreach (var item in list.Items)
             {
-                // check for matching label
-                IEnumerable<KeyValuePair<string,string>> found = item.Metadata.EnsureLabels().Where(
-                        value => (value.Key == "app.kubernetes.io/name") && (value.Value == "/name: argocd-server"));
-
-                // this is the pod we have been looking for
-                if (found.Count() > 0) {
+                if (item.Spec.Containers[0].Name == "argocd-server")
+                {
                     pod = item;
                     
                     break;
