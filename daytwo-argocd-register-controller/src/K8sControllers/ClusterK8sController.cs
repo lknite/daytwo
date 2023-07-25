@@ -147,8 +147,11 @@ namespace gge.K8sControllers
                 // has this cluster been added to argocd?
                 V1Secret? tmp = GetClusterArgocdSecret(cluster.Name());
 
-                Console.WriteLine($"    -  cluster yaml timestamp: {tkc.Metadata.CreationTimestamp}");
-                Console.WriteLine($"    - argocd secret timestamp: {tmp.Metadata.CreationTimestamp}");
+                if (tmp != null)
+                {
+                    Console.WriteLine($"    -  cluster yaml timestamp: {tkc.Metadata.CreationTimestamp}");
+                    Console.WriteLine($"    - argocd secret timestamp: {tmp.Metadata.CreationTimestamp}");
+                }
 
                 // if cluster yaml is newer then secret, then we re-add to argocd
                 if ((tmp == null) || DateTime.Compare((DateTime)tkc.Metadata.CreationTimestamp, (DateTime)tmp.Metadata.CreationTimestamp) > 0)
