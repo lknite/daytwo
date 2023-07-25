@@ -113,26 +113,31 @@ namespace gge.K8sControllers
             Dictionary<string, string> data = new Dictionary<string, string>();
             string patchStr = string.Empty;
 
+            /*
             Console.WriteLine("Addition/Modify detected: " + tkc.Metadata.Name);
             Console.WriteLine("** argocd add cluster ...");
+            */
 
 
             // loop through namespaces
             V1NamespaceList namespaces = kubeclient.ListNamespace();
-            Console.WriteLine("- list clusters:");
+            Console.WriteLine("- loop through namespaces looking for clusters");
+            /*
             foreach (var ns in namespaces)
             {
                 //Console.WriteLine("- " + item.Name());
 
                 try
                 {
+            */
                     // get list of all TKCs
                     CustomResourceList<CrdCluster> t =
-                        await generic.ListNamespacedAsync<CustomResourceList<CrdCluster>>(ns.Name());
+                        await generic.ListNamespacedAsync<CustomResourceList<CrdCluster>>("");
+                        //await generic.ListNamespacedAsync<CustomResourceList<CrdCluster>>(ns.Name());
 
                     foreach (var cluster in t.Items)
                     {
-                        Console.WriteLine("  - namespace: "+ ns.Name() +", tkc: " + cluster.Name());
+                        Console.WriteLine("  - namespace: "+ cluster.Namespace() +", tkc: " + cluster.Name());
 
                         // is this cluster in a ready state?
 
@@ -143,7 +148,7 @@ namespace gge.K8sControllers
                         Console.WriteLine($"argocd secret timestamp: {tmp.Metadata.CreationTimestamp}");
 
                         // if cluster yaml is newer then secret, then we re-add to argocd
-                        if (DateTime.Compare((DateTime)tkc.Metadata.CreationTimestamp, (DateTime)tmp.Metadata.CreationTimestamp) > 0)
+                        if ((tmp == null) || DateTime.Compare((DateTime)tkc.Metadata.CreationTimestamp, (DateTime)tmp.Metadata.CreationTimestamp) > 0)
                         {
                             Console.WriteLine("    - add cluster to argocd");
 
@@ -157,12 +162,14 @@ namespace gge.K8sControllers
                             Console.WriteLine("    - (cluster already added to argocd, is it up to date?)");
                         }
                     }
+            /*
                 }
                 catch (Exception ex)
                 {
                     //Console.WriteLine(ex.ToString());
                 }
             }
+            */
             Console.WriteLine(". todo: if add, then add to argocd & add label indicating we added it");
             Console.WriteLine(". todo: later, with a delete, only delete if we added the cluster ourselves");
 
