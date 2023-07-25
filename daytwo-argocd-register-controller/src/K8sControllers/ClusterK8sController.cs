@@ -388,7 +388,7 @@ namespace gge.K8sControllers
             }
             secret.Data.TryGetValue("value", out byte[] bytes);
             string kubeconfig = System.Text.Encoding.UTF8.GetString(bytes);
-            //Console.WriteLine("[vcluster] kubeconfig:\n" + kubeconfig);
+            //Console.WriteLine("[cluster] kubeconfig:\n" + kubeconfig);
 
             // save kubeconfig to a temporary file
             //string path = Path.GetTempFileName();
@@ -416,10 +416,10 @@ namespace gge.K8sControllers
                     + $" --insecure"
                     + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")};"
                     );
-            Console.WriteLine("[vcluster] before exec");
+            Console.WriteLine("[cluster] before exec");
             int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
                 "argocd-server-57d9b8db7-v8ldh", "argocd", "server", cmds, false, handler, Globals.cancellationToken);
-            Console.WriteLine("[vcluster] after exec");
+            Console.WriteLine("[cluster] after exec");
 
 
             return null;
