@@ -132,9 +132,9 @@ namespace gge.K8sControllers
 
                 // is this cluster in a ready state?
                 if (!(
-                    (tkc.CStatus.phase == "Provisioned")
-                    && tkc.CStatus.infrastructureReady
-                    && tkc.CStatus.controlPlaneReady
+                    (cluster.CStatus.phase == "Provisioned")
+                    && cluster.CStatus.infrastructureReady
+                    && cluster.CStatus.controlPlaneReady
                     ))
                 {
                     // cluster not yet ready
