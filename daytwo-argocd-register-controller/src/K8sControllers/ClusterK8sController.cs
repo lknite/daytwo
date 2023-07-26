@@ -52,7 +52,7 @@ namespace gge.K8sControllers
                 // Prep semaphore (reset in case of exception)
                 semaphore = new SemaphoreSlim(1);
 
-                Console.WriteLine("(" + api +") Listen begins ...");
+                Console.WriteLine(DateTime.UtcNow +" (" + api +") Listen begins ...");
                 try
                 {
                     await foreach (var (type, item) in generic.WatchNamespacedAsync<CrdCluster>(""))
