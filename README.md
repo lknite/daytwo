@@ -44,7 +44,7 @@ environment always matches what is in git.
 | status | controller                            | detail                          |
 |--------|---------------------------------------|---------------------------------|
 | active | daytwo-argocd-register-controller     | working, todo: cleanup, add tkg |
-| todo   | daytwo-argocd-addons-controller       |                                 |
+| active | daytwo-argocd-addons-controller       |                                 |
 | todo   | daytwo-argocd-pinniped-controller     |                                 |
 | todo   | daytwo-argocd-external-dns-controller |                                 |
 | todo   | daytwo-argocd-trigger-controller      |                                 |
