@@ -469,15 +469,13 @@ namespace gge.K8sControllers
                 return null;
             }
 
-            /*
             // test
             cmds = new List<string>();
             cmds.Add("pwd");
             Console.WriteLine("[cluster] (test) before exec");
             await Globals.service.kubeclient.NamespacedPodExecAsync(
-                "argocd-server-57d9b8db7-v8ldh", "argocd", "server", cmds, false, One, Globals.cancellationToken);
+                "argocd-server-57d9b8db7-v8ldh", "argocd", "server", cmds, false, One, Globals.cancellationToken).ConfigureAwait(false);
             Console.WriteLine("[cluster] (test) after exec");
-            */
 
 
             /*
@@ -505,7 +503,7 @@ namespace gge.K8sControllers
                     );
             Console.WriteLine("[cluster] before exec");
             int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
-                pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, One, Globals.cancellationToken);
+                pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, One, Globals.cancellationToken).ConfigureAwait(false);
             Console.WriteLine("[cluster] after exec");
 
 
