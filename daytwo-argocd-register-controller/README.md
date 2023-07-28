@@ -12,8 +12,14 @@
   - check status of a new cluster and know when it is ready to be added to argocd
   - obtain 'kubeconfig' from newly created cluster
 
+## possible configuration items (or just enable by default) ##
+- ADD_LABEL_WORKLOAD_CLUSTER_NAME
+- ADD_LABEL_MANAGEMENT_CLUSTER_NAME
+- COPY_CLUSTER_LABELS
+
 ## status ##
-- currently in initial development
+- testing ...
+- working with one management cluster, after testing add working with many
 
 ## work in progress ##
 ```
