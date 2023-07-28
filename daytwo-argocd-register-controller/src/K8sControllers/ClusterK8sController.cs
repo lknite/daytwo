@@ -441,9 +441,7 @@ namespace gge.K8sControllers
             //Console.WriteLine("tmp path: " + path);
 
             // exec into server pod, see if we can use 'argocd' there
-            //ExecAsyncCallback handler = One;
-            //var cmds = new List<string>();
-            string[] cmds = null;
+            var cmds = new List<string>();
 
             // todo get actual pod name of 'server' pod 
 
@@ -473,34 +471,23 @@ namespace gge.K8sControllers
             // test
             try
             {
-                /*
-                cmds = new string[] { "pwd" };
+                cmds = new List<string>();
+                cmds.Add("pwd");
                 //cmds = new List<string>();
                 //cmds.Add("pwd");
                 Console.WriteLine("[cluster] (test) before exec");
                 await Globals.service.kubeclient.NamespacedPodExecAsync(
                     pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, One, Globals.cancellationToken).ConfigureAwait(false);
                 Console.WriteLine("[cluster] (test) after exec");
-                */
 
-                await ExecInPod(Globals.service.kubeclient, pod, "pwd");
+                //await ExecInPod(Globals.service.kubeclient, pod, "pwd");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                Console.WriteLine("exception caught when performing 'exec', cmd ran though, ignoring exception for now");
+                //Console.WriteLine(ex.ToString());
             }
 
-
-            /*
-            // test
-            Console.WriteLine("[cluster] (test) before exec");
-            //V1Pod pod = await Globals.service.kubeclient.ReadNamespacedPodAsync("argocd-server-57d9b8db7-v8ldh", "argocd");
-            ExecInPod(Globals.service.kubeclient, pod, "pwd");
-            //Console.WriteLine("[cluster] (test) output:" + output);
-            Console.WriteLine("[cluster] (test) after exec");
-            */
-
-            /*
             try
             {
                 cmds = new List<string>();
@@ -519,14 +506,14 @@ namespace gge.K8sControllers
                         );
                 Console.WriteLine("[cluster] before exec");
                 int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
-                    pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, handler, Globals.cancellationToken).ConfigureAwait(false);
+                    pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, One, Globals.cancellationToken).ConfigureAwait(false);
                 Console.WriteLine("[cluster] after exec");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                Console.WriteLine("exception caught when performing 'exec', cmd ran though, ignoring exception for now");
+                //Console.WriteLine(ex.ToString());
             }
-            */
 
 
             return null;
@@ -543,6 +530,7 @@ namespace gge.K8sControllers
             return null;
         }
 
+        /*
         private static async Task ExecInPod(IKubernetes client, V1Pod pod, string cmd)
         {
             var webSocket =
@@ -560,5 +548,6 @@ namespace gge.K8sControllers
 
             //return str;
         }
+        */
     }
 }
