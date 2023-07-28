@@ -140,7 +140,15 @@ namespace gge.K8sControllers
                 Console.WriteLine($"    -  cluster yaml timestamp: {cluster.Metadata.CreationTimestamp}");
                 Console.WriteLine($"    - argocd secret timestamp: {tmp.Metadata.CreationTimestamp}");
                 Console.WriteLine($"    -          cluster yaml resourceVersion: {cluster.Metadata.ResourceVersion}");
-                Console.WriteLine($"    - argocd secret cluster-resourceVersion: {tmp.Metadata.EnsureLabels()["daytwo.aarr.xyz/cluster-resourceVersion"]}");
+                try
+                {
+                    Console.WriteLine($"    - argocd secret cluster-resourceVersion: {tmp.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/cluster-resourceVersion"]}");
+                }
+                catch
+                {
+                    Console.WriteLine($"    - argocd secret cluster-resourceVersion: daytwo annotation missing, ignoring cluster");
+                    return;
+                }
             }
 
             // if cluster yaml is newer then secret, then we re-add to argocd
