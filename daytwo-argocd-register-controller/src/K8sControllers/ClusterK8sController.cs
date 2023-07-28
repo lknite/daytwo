@@ -441,7 +441,7 @@ namespace gge.K8sControllers
             //Console.WriteLine("tmp path: " + path);
 
             // exec into server pod, see if we can use 'argocd' there
-            //ExecAsyncCallback handler = One;
+            ExecAsyncCallback handler = One;
             var cmds = new List<string>();
 
             // todo get actual pod name of 'server' pod 
@@ -476,12 +476,12 @@ namespace gge.K8sControllers
                 cmds.Add("pwd");
                 Console.WriteLine("[cluster] (test) before exec");
                 await Globals.service.kubeclient.NamespacedPodExecAsync(
-                    pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, One, Globals.cancellationToken).ConfigureAwait(false);
+                    pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, handler, Globals.cancellationToken).ConfigureAwait(false);
                 Console.WriteLine("[cluster] (test) after exec");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                Console.WriteLine(ex.ToString());
             }
 
 
@@ -512,7 +512,7 @@ namespace gge.K8sControllers
                         );
                 Console.WriteLine("[cluster] before exec");
                 int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
-                    pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, One, Globals.cancellationToken).ConfigureAwait(false);
+                    pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, handler, Globals.cancellationToken).ConfigureAwait(false);
                 Console.WriteLine("[cluster] after exec");
             }
             catch (Exception ex)
