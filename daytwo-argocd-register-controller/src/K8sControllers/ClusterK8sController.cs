@@ -205,7 +205,7 @@ namespace gge.K8sControllers
                 tmp = GetClusterArgocdSecret(cluster.Name());
                 if (tmp == null)
                 {
-                    Console.WriteLine("unable to add argocd secret, check ARGOCD_AUTH_TOKEN");
+                    Console.WriteLine("unable to add argocd secret");
                     return;
                 }
 
