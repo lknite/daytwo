@@ -322,8 +322,6 @@ namespace gge.K8sControllers
         }
         public async Task ProcessDeleted(CrdCluster cluster)
         {
-            Console.WriteLine("Deleted detected: " + cluster.Metadata.Name);
-
             // check if we should remove this from argocd
             V1Secret tmp = GetClusterArgocdSecret(cluster.Name());
             if (tmp == null)
@@ -340,10 +338,12 @@ namespace gge.K8sControllers
                 Console.WriteLine("** (don't delete cluster) **");
                 return;
             }
+            /*
             else
             {
                 Console.WriteLine("** annotation is: "+ annotation);
             }
+            */
 
             Console.WriteLine("** argocd remove cluster ...");
 
