@@ -519,6 +519,10 @@ namespace gge.K8sControllers
             return null;
         }
 
+        public static void PrintEvenNumbers()
+        {
+            Console.WriteLine("all is done");
+        }
         public static Task One(Stream stdIn, Stream stdOut, Stream stdErr)
         {
             StreamReader sr = new StreamReader(stdOut);
@@ -526,7 +530,7 @@ namespace gge.K8sControllers
             {
                 Console.WriteLine(sr.ReadLine());
             }
-            return new Task();
+            return new Task(PrintEvenNumbers);
         }
 
         /*
