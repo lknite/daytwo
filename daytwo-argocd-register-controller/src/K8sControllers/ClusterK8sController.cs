@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using static System.Net.Mime.MediaTypeNames;
 using daytwo.crd.cluster;
 using System.Collections.ObjectModel;
+using System.Xml.Linq;
 
 namespace gge.K8sControllers
 {
@@ -163,6 +164,18 @@ namespace gge.K8sControllers
                 // store cluster resourceVersion, we use this later to check for changes
                 tmp.SetAnnotation("daytwo.aarr.xyz/cluster-resourceVersion", cluster.Metadata.ResourceVersion);
 
+                // set cluster name label
+                tmp.SetLabel("daytwo.aarr.xyz/cluster-name", cluster.Name());
+
+                // copy over all labels
+                foreach (var next in cluster.Labels())
+                {
+                    tmp.SetLabel(next.Key, next.Value);
+                }
+
+                //
+                Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
+                    new V1Patch(tmp, V1Patch.PatchType.MergePatch), tmp.Name(), tmp.Namespace());
             }
             // has the cluster resourceVersion changed since we last updated?  if so, update argocd secret
             else if (cluster.Metadata.ResourceVersion != tmp.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/cluster-resourceVersion"])
@@ -185,6 +198,19 @@ namespace gge.K8sControllers
 
                 // store cluster resourceVersion, we use this later to check for changes
                 tmp.SetAnnotation("daytwo.aarr.xyz/cluster-resourceVersion", cluster.Metadata.ResourceVersion);
+
+                // set cluster name label
+                tmp.SetLabel("daytwo.aarr.xyz/cluster-name", cluster.Name());
+
+                // copy over all labels
+                foreach (var next in cluster.Labels())
+                {
+                    tmp.SetLabel(next.Key, next.Value);
+                }
+
+                //
+                Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
+                    new V1Patch(tmp, V1Patch.PatchType.MergePatch), tmp.Name(), tmp.Namespace());
             }
             else
             {
