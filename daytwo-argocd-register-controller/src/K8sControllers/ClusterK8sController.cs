@@ -530,7 +530,10 @@ namespace gge.K8sControllers
             {
                 Console.WriteLine(sr.ReadLine());
             }
-            return new Task(PrintEvenNumbers);
+
+            // returning null will cause an exception, but it also let's us return back to the processing
+            return null;
+            //return new Task(PrintEvenNumbers);
         }
 
         private static async Task ExecInPod(IKubernetes client, V1Pod pod, string cmd)
