@@ -248,7 +248,7 @@ namespace gge.K8sControllers
                 {
                     // if not, start monitoring
                     ProviderK8sController provider = new ProviderK8sController(
-                            Globals.service.kubeclient, _api, _group, _version, _plural);
+                            _api, _group, _version, _plural);
 
                     // add to list of providers we are monitoring
                     providers.Add(provider);
