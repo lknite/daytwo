@@ -246,9 +246,15 @@ namespace gge.K8sControllers
                 ProviderK8sController? item = providers.Find(item => (item.api == _api) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));
                 if (item == null)
                 {
-                    // if not, start listening
-                    providers.Add(new ProviderK8sController(
-                            Globals.service.kubeclient, _api, _group, _version, _plural));
+                    // if not, start monitoring
+                    ProviderK8sController provider = new ProviderK8sController(
+                            Globals.service.kubeclient, _api, _group, _version, _plural);
+
+                    // add to list of providers we are monitoring
+                    providers.Add(provider);
+
+                    // start listening
+                    provider.Listen(Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
                 }
                 /*
                 // copy over labels by provider

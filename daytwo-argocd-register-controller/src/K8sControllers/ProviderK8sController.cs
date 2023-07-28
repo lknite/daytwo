@@ -46,38 +46,33 @@ namespace gge.K8sControllers
         public string version; // = "v1alpha2";
         public string plural; // = api + "s";
 
-        public GenericClient generic = null;// new GenericClient(Globals.service.kubeclient, group, version, plural);
+        public string managementCluster;
+
         public Kubernetes kubeclient = null;
         public KubernetesClientConfiguration kubeconfig = null;
 
+        public GenericClient generic = null;
 
-        public ProviderK8sController(Kubernetes kubeclient, string api, string group, string version, string plural)
+
+        public ProviderK8sController(string api, string group, string version, string plural)
         {
             // initialize properties
-            this.kubeclient = kubeclient;
             this.api = api;
             this.group = group;
             this.version = version;
             this.plural = plural;
 
-            // initialize generic
-            generic = new GenericClient(kubeclient, group, version, plural);
-
             // start listening
-            Console.WriteLine($"**** Start listening to: {api}s.{group}.{version}");
+            Console.WriteLine($"**** Provider.Add({api}s.{group}.{version})");
         }
 
-        /*
-        public void Add(Kubernetes kubeclient, string api, string group, string version, string plural)
+        public async Task Listen(string managementCluster)
         {
-            providers.Add(new Provider(kubeclient, api, group, version, plural));
-        }
-        */
+            // remember which management cluster is using this provider type
+            this.managementCluster = managementCluster;
 
-        public async Task Listen()
-        {
             // locate the provisioning cluster argocd secret
-            V1Secret? secret = GetClusterArgocdSecret(Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
+            V1Secret? secret = GetClusterArgocdSecret(managementCluster);
             // use secret to create kubeconfig
             kubeconfig = BuildConfigFromArgocdSecret(secret);
             // use kubeconfig to create client
@@ -150,17 +145,20 @@ namespace gge.K8sControllers
             }
         }
 
-        public async Task ProcessAdded(CrdProviderCluster tkc)
+        public async Task ProcessAdded(CrdProviderCluster provider)
         {
-            ProcessModified(tkc);
+            ProcessModified(provider);
         }
-        public async Task ProcessModified(CrdProviderCluster tkc)
+        public async Task ProcessModified(CrdProviderCluster provider)
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
             string patchStr = string.Empty;
 
-            Console.WriteLine("Addition/Modify detected: " + tkc.Metadata.Name);
+            Console.WriteLine("Addition/Modify detected: " + provider.Metadata.Name);
             Console.WriteLine("** argocd add cluster ...");
+
+            //debug
+            return;
 
 
             // loop through namespaces
@@ -291,11 +289,9 @@ namespace gge.K8sControllers
 
             return;
         }
-        public async Task ProcessDeleted(CrdProviderCluster tkc)
+        public async Task ProcessDeleted(CrdProviderCluster provider)
         {
-            Console.WriteLine("Deleted detected: " + tkc.Metadata.Name);
-            Console.WriteLine("** argocd remove cluster ...");
-            Console.WriteLine("** remove pinniped kubeconfig ...");
+            Console.WriteLine("Deleted detected: " + provider.Metadata.Name);
         }
 
         public static string Base64Encode(string text)
