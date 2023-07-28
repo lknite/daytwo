@@ -137,8 +137,9 @@ namespace gge.K8sControllers
 
             if (tmp != null)
             {
-                Console.WriteLine($"    -  cluster yaml timestamp: {cluster.Metadata.CreationTimestamp}");
-                Console.WriteLine($"    - argocd secret timestamp: {tmp.Metadata.CreationTimestamp}");
+                // timestamp was old technique, using resourceVersion now
+                //Console.WriteLine($"    -  cluster yaml timestamp: {cluster.Metadata.CreationTimestamp}");
+                //Console.WriteLine($"    - argocd secret timestamp: {tmp.Metadata.CreationTimestamp}");
                 Console.WriteLine($"    -          cluster yaml resourceVersion: {cluster.Metadata.ResourceVersion}");
                 try
                 {
