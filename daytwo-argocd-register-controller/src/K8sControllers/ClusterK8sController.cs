@@ -375,7 +375,7 @@ namespace gge.K8sControllers
             cmds.Add("sh");
             cmds.Add("-c");
             cmds.Add( $"argocd cluster rm {cluster.Name()}"
-                    + $" --y"
+                    + $" -y"
                     + $" --server=localhost:8080"
                     + $" --plaintext"
                     + $" --insecure"
@@ -583,7 +583,7 @@ namespace gge.K8sControllers
                 cmds.Add($"echo {Convert.ToBase64String(bytes)} > /tmp/{clusterName}.b64;"
                         + $"cat /tmp/{clusterName}.b64 | base64 -d > /tmp/{clusterName}.conf;"
                         + $"argocd cluster add my-vcluster"
-                        + $" --y"
+                        + $" -y"
                         + $" --upsert"
                         + $" --name {clusterName}"
                         + $" --kubeconfig /tmp/{clusterName}.conf"
