@@ -190,7 +190,10 @@ namespace gge.K8sControllers
             else if (cluster.Metadata.ResourceVersion != tmp.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/cluster-resourceVersion"])
             //else if (DateTime.Compare((DateTime)cluster.Metadata.CreationTimestamp, (DateTime)tmp.Metadata.CreationTimestamp) > 0)
             {
-                Console.WriteLine("      - delete argocd cluster secret & then add cluster to argocd");
+                Console.WriteLine("      - remove cluster from argocd & then add it back in again");
+
+                // remove cluster from argocd
+                ProcessDeleted(cluster);
 
                 // get new cluster admin kubeconfig
                 KubernetesClientConfiguration tmpkubeconfig = await GetClusterKubeConfig(cluster.Name(), cluster.Namespace());
