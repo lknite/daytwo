@@ -234,8 +234,6 @@ namespace gge.K8sControllers
             }
 
 
-            Console.WriteLine("** add pinniped kubeconfig ...");
-
             /*
             // locate argocd cluster secret representing this cluster
             Console.WriteLine("** sync 'addons' ...");
@@ -392,8 +390,6 @@ namespace gge.K8sControllers
             {
             }
             Console.WriteLine("[cluster] after exec (2)");
-
-            Console.WriteLine("** remove pinniped kubeconfig ...");
         }
 
         public static string Base64Encode(string text)

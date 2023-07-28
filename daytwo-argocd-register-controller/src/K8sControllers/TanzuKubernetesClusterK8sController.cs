@@ -157,11 +157,6 @@ namespace gge.K8sControllers
                     //Console.WriteLine(ex.ToString());
                 }
             }
-            Console.WriteLine(". todo: if add, then add to argocd & add label indicating we added it");
-            Console.WriteLine(". todo: later, with a delete, only delete if we added the cluster ourselves");
-
-
-            Console.WriteLine("** add pinniped kubeconfig ...");
 
             /*
             // locate argocd cluster secret representing this cluster
