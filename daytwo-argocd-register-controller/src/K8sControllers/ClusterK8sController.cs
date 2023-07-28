@@ -34,7 +34,7 @@ namespace gge.K8sControllers
         public async Task Listen()
         {
             // locate the provisioning cluster argocd secret
-            V1Secret? secret = GetClusterArgocdSecret(Environment.GetEnvironmentVariable("CLUSTER_PROVISIONING_SERVER"));
+            V1Secret? secret = GetClusterArgocdSecret(Environment.GetEnvironmentVariable("CLUSTER_PROVISIONING_SERVERS"));
             // use secret to create kubeconfig
             kubeconfig = BuildConfigFromArgocdSecret(secret);
             // use kubeconfig to create client
