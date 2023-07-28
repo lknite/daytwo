@@ -53,6 +53,17 @@ namespace gge.K8sControllers
 
         public ProviderK8sController(Kubernetes kubeclient, string api, string group, string version, string plural)
         {
+            // initialize properties
+            this.kubeclient = kubeclient;
+            this.api = api;
+            this.group = group;
+            this.version = version;
+            this.plural = plural;
+
+            // initialize generic
+            generic = new GenericClient(kubeclient, group, version, plural);
+
+            // start listening
             Console.WriteLine($"**** Start listening to: {api}s.{group}.{version}");
         }
 
