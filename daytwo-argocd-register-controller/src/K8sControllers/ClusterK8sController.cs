@@ -533,7 +533,6 @@ namespace gge.K8sControllers
             return new Task(PrintEvenNumbers);
         }
 
-        /*
         private static async Task ExecInPod(IKubernetes client, V1Pod pod, string cmd)
         {
             var webSocket =
@@ -549,8 +548,7 @@ namespace gge.K8sControllers
             var str = Encoding.Default.GetString(buff);
             Console.WriteLine(str);
 
-            //return str;
+            //return new Task(PrintEvenNumbers);
         }
-        */
     }
 }
