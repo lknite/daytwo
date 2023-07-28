@@ -23,21 +23,41 @@ namespace daytwo.crd.cluster
         }
     }
 
-    /*
-    public class Token
+    public class ControlPlaneRef
     {
-        [JsonPropertyName("email")]
-        public string email { get; set; }
-        [JsonPropertyName("claims")]
-        public string claims { get; set; }
-        [JsonPropertyName("api_key")]
-        public string api_key { get; set; }
+        [JsonPropertyName("apiVersion")]
+        public string apiVersion { get; set; }
+        [JsonPropertyName("kind")]
+        public string kind { get; set; }
+        [JsonPropertyName("name")]
+        public string name { get; set; }
     }
-    */
+    public class InfrastructureRef
+    {
+        [JsonPropertyName("apiVersion")]
+        public string apiVersion { get; set; }
+        [JsonPropertyName("kind")]
+        public string kind { get; set; }
+        [JsonPropertyName("name")]
+        public string name { get; set; }
+    }
     public class CrdClusterSpec
     {
-        [JsonPropertyName("asdf")]
-        public string asdf { get; set; }
+        [JsonPropertyName("controlPlaneRef")]
+        public ControlPlaneRef controlPlaneRef { get; set; }
+        [JsonPropertyName("infrastructureRef")]
+        public InfrastructureRef infrastructureRef { get; set; }
+        /*
+          controlPlaneRef:
+            apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+            kind: VCluster
+            name: vc-test
+          infrastructureRef:
+            apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+            kind: VCluster
+            name: vc-test
+
+         */
     }
 
     public class CrdClusterStatus : V1Status

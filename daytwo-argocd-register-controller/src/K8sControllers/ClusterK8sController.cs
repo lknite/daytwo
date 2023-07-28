@@ -227,6 +227,22 @@ namespace gge.K8sControllers
                 //
                 Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
                     new V1Patch(tmp, V1Patch.PatchType.MergePatch), tmp.Name(), tmp.Namespace());
+
+                // copy over labels by provider
+                string provider_api = "cluster";
+                string provider_group = cluster.Spec.controlPlaneRef.apiVersion.Substring(0, cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/"));
+                string provider_version = cluster.Spec.controlPlaneRef.apiVersion.Substring(cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/") + 1);
+                string provider_plural = provider_api + "s";
+                GenericClient provider = new GenericClient(kubeclient, provider_group, provider_version, provider_plural);
+
+                // create provider class instance on the fly
+                CrdTanzuKubernetesCluster asdf = await provider.ReadNamespacedAsync<CrdTanzuKubernetesCluster>(cluster.Namespace(), cluster.Name(), Globals.cancellationToken);
+                Console.WriteLine("provider labels:");
+                foreach (var next in asdf.Labels())
+                {
+                    Console.WriteLine(next.Key + ": " + next.Value);
+                    tmp.SetLabel(next.Key, next.Value);
+                }
             }
             else
             {
