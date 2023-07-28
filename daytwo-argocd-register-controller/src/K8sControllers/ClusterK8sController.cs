@@ -292,6 +292,7 @@ namespace gge.K8sControllers
             {
                 Console.WriteLine("** annotation is null **");
                 Console.WriteLine("** (don't delete cluster) **");
+                return;
             }
             else
             {
