@@ -321,9 +321,17 @@ namespace gge.K8sControllers
         public async Task ProcessDeleted(CrdCluster cluster)
         {
             Console.WriteLine("Deleted detected: " + cluster.Metadata.Name);
-            Console.WriteLine("** argocd remove cluster ...");
 
-            string annotation = cluster.GetAnnotation("daytwo.aarr.xyz/cluster-resourceVersion");
+            // check if we should remove this from argocd
+            V1Secret tmp = GetClusterArgocdSecret(cluster.Name());
+            if (tmp == null)
+            {
+                Console.WriteLine("argocd is not managing this cluster, no need to remove it");
+                return;
+            }
+
+            // only remove from argocd if we added this cluster to argocd
+            string annotation = tmp.GetAnnotation("daytwo.aarr.xyz/cluster-resourceVersion");
             if (annotation == null)
             {
                 Console.WriteLine("** annotation is null **");
@@ -334,6 +342,8 @@ namespace gge.K8sControllers
             {
                 Console.WriteLine("** annotation is: "+ annotation);
             }
+
+            Console.WriteLine("** argocd remove cluster ...");
 
             // locate server pod
             V1PodList list = await Globals.service.kubeclient.ListNamespacedPodAsync("argocd");
@@ -351,7 +361,7 @@ namespace gge.K8sControllers
             // this shouldn't happen, but could if server is not running
             if (pod == null)
             {
-                Console.WriteLine("server pod not found");
+                Console.WriteLine("server pod not found, unable to remove cluster from argocd");
                 return;
             }
 
