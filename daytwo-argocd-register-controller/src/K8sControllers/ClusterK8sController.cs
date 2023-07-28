@@ -174,7 +174,7 @@ namespace gge.K8sControllers
                 tmp.SetAnnotation("daytwo.aarr.xyz/cluster-resourceVersion", cluster.Metadata.ResourceVersion);
 
                 // set cluster name label
-                tmp.SetLabel("cluster-name", cluster.Name());
+                tmp.SetLabel("daytwo.aarr.xyz/cluster-name", cluster.Name());
 
                 // copy over all labels
                 foreach (var next in cluster.Labels())
@@ -209,7 +209,7 @@ namespace gge.K8sControllers
                 tmp.SetAnnotation("daytwo.aarr.xyz/cluster-resourceVersion", cluster.Metadata.ResourceVersion);
 
                 // set cluster name label
-                tmp.SetLabel("cluster-name", cluster.Name());
+                tmp.SetLabel("daytwo.aarr.xyz/cluster-name", cluster.Name());
 
                 // copy over all labels
                 foreach (var next in cluster.Labels())
