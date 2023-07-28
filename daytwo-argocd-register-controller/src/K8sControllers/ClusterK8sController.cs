@@ -470,12 +470,19 @@ namespace gge.K8sControllers
             }
 
             // test
-            cmds = new List<string>();
-            cmds.Add("pwd");
-            Console.WriteLine("[cluster] (test) before exec");
-            await Globals.service.kubeclient.NamespacedPodExecAsync(
-                pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, One, Globals.cancellationToken).ConfigureAwait(false);
-            Console.WriteLine("[cluster] (test) after exec");
+            try
+            {
+                cmds = new List<string>();
+                cmds.Add("pwd");
+                Console.WriteLine("[cluster] (test) before exec");
+                await Globals.service.kubeclient.NamespacedPodExecAsync(
+                    pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, One, Globals.cancellationToken).ConfigureAwait(false);
+                Console.WriteLine("[cluster] (test) after exec");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
 
 
             /*
@@ -487,24 +494,31 @@ namespace gge.K8sControllers
             Console.WriteLine("[cluster] (test) after exec");
             */
 
-            cmds = new List<string>();
-            cmds.Add("sh");
-            cmds.Add("-c");
-            cmds.Add($"echo {Convert.ToBase64String(bytes)} > /tmp/{clusterName}.b64;"
-                    + $"cat /tmp/{clusterName}.b64 | base64 -d > /tmp/{clusterName}.conf;"
-                    + $"argocd cluster add my-vcluster"
-                    + $" -y"
-                    + $" --name {clusterName}"
-                    + $" --kubeconfig /tmp/{clusterName}.conf"
-                    + $" --server=localhost:8080"
-                    + $" --plaintext"
-                    + $" --insecure"
-                    + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")};"
-                    );
-            Console.WriteLine("[cluster] before exec");
-            int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
-                pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, One, Globals.cancellationToken).ConfigureAwait(false);
-            Console.WriteLine("[cluster] after exec");
+            try
+            {
+                cmds = new List<string>();
+                cmds.Add("sh");
+                cmds.Add("-c");
+                cmds.Add($"echo {Convert.ToBase64String(bytes)} > /tmp/{clusterName}.b64;"
+                        + $"cat /tmp/{clusterName}.b64 | base64 -d > /tmp/{clusterName}.conf;"
+                        + $"argocd cluster add my-vcluster"
+                        + $" -y"
+                        + $" --name {clusterName}"
+                        + $" --kubeconfig /tmp/{clusterName}.conf"
+                        + $" --server=localhost:8080"
+                        + $" --plaintext"
+                        + $" --insecure"
+                        + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")};"
+                        );
+                Console.WriteLine("[cluster] before exec");
+                int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
+                    pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, One, Globals.cancellationToken).ConfigureAwait(false);
+                Console.WriteLine("[cluster] after exec");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
 
 
             return null;
