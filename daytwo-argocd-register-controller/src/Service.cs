@@ -40,7 +40,7 @@ namespace daytwo
 
             // Check for required environment variable(s)
             List<string> required = new List<string>();
-            required.Add("CLUSTER_PROVISIONING_SERVERS");
+            required.Add("MANAGEMENT_CLUSTERS");
             required.Add("ARGOCD_AUTH_TOKEN");
             foreach (string req in required)
             {

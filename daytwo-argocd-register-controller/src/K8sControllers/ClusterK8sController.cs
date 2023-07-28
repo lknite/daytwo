@@ -34,7 +34,7 @@ namespace gge.K8sControllers
         public async Task Listen()
         {
             // locate the provisioning cluster argocd secret
-            V1Secret? secret = GetClusterArgocdSecret(Environment.GetEnvironmentVariable("CLUSTER_PROVISIONING_SERVERS"));
+            V1Secret? secret = GetClusterArgocdSecret(Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
             // use secret to create kubeconfig
             kubeconfig = BuildConfigFromArgocdSecret(secret);
             // use kubeconfig to create client
@@ -143,11 +143,11 @@ namespace gge.K8sControllers
                 Console.WriteLine($"    -          cluster yaml resourceVersion: {cluster.Metadata.ResourceVersion}");
                 try
                 {
-                    Console.WriteLine($"    - argocd secret cluster-resourceVersion: {tmp.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/cluster-resourceVersion"]}");
+                    Console.WriteLine($"    - argocd secret cluster resourceVersion: {tmp.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/resourceVersion"]}");
                 }
                 catch
                 {
-                    Console.WriteLine($"    - argocd secret cluster-resourceVersion: daytwo annotation missing, ignoring cluster");
+                    Console.WriteLine($"    - argocd secret cluster resourceVersion: daytwo annotation missing, ignoring cluster");
                     return;
                 }
             }
@@ -171,10 +171,11 @@ namespace gge.K8sControllers
                 }
 
                 // store cluster resourceVersion, we use this later to check for changes
-                tmp.SetAnnotation("daytwo.aarr.xyz/cluster-resourceVersion", cluster.Metadata.ResourceVersion);
+                tmp.SetAnnotation("daytwo.aarr.xyz/resourceVersion", cluster.Metadata.ResourceVersion);
 
                 // set cluster name label
-                tmp.SetLabel("daytwo.aarr.xyz/cluster-name", cluster.Name());
+                tmp.SetLabel("daytwo.aarr.xyz/name", cluster.Name());
+                tmp.SetLabel("daytwo.aarr.xyz/management-cluster", Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
 
                 // copy over all labels
                 foreach (var next in cluster.Labels())
@@ -187,7 +188,7 @@ namespace gge.K8sControllers
                     new V1Patch(tmp, V1Patch.PatchType.MergePatch), tmp.Name(), tmp.Namespace());
             }
             // has the cluster resourceVersion changed since we last updated?  if so, update argocd secret
-            else if (cluster.Metadata.ResourceVersion != tmp.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/cluster-resourceVersion"])
+            else if (cluster.Metadata.ResourceVersion != tmp.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/resourceVersion"])
             //else if (DateTime.Compare((DateTime)cluster.Metadata.CreationTimestamp, (DateTime)tmp.Metadata.CreationTimestamp) > 0)
             {
                 Console.WriteLine("      - remove cluster from argocd & then add it back in again");
@@ -209,10 +210,11 @@ namespace gge.K8sControllers
                 }
 
                 // store cluster resourceVersion, we use this later to check for changes
-                tmp.SetAnnotation("daytwo.aarr.xyz/cluster-resourceVersion", cluster.Metadata.ResourceVersion);
+                tmp.SetAnnotation("daytwo.aarr.xyz/resourceVersion", cluster.Metadata.ResourceVersion);
 
                 // set cluster name label
-                tmp.SetLabel("daytwo.aarr.xyz/cluster-name", cluster.Name());
+                tmp.SetLabel("daytwo.aarr.xyz/name", cluster.Name());
+                tmp.SetLabel("daytwo.aarr.xyz/management-cluster", Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
 
                 // copy over all labels
                 foreach (var next in cluster.Labels())
@@ -331,7 +333,7 @@ namespace gge.K8sControllers
             }
 
             // only remove from argocd if we added this cluster to argocd
-            string annotation = tmp.GetAnnotation("daytwo.aarr.xyz/cluster-resourceVersion");
+            string annotation = tmp.GetAnnotation("daytwo.aarr.xyz/resourceVersion");
             if (annotation == null)
             {
                 Console.WriteLine("** annotation is null **");
