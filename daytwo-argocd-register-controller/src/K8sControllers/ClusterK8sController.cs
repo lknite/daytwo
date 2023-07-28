@@ -526,8 +526,7 @@ namespace gge.K8sControllers
             {
                 Console.WriteLine(sr.ReadLine());
             }
-
-            return null;
+            return new Task();
         }
 
         /*
