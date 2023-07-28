@@ -14,7 +14,6 @@ namespace daytwo
 
         //
         public ClusterK8sController clusterController;
-        public List<ProviderK8sController> providers;
 
         public Service()
         {
@@ -36,7 +35,6 @@ namespace daytwo
 
             // Now that we have our kubeconfig, go ahead and instantiate the k8s controllers
             clusterController = new ClusterK8sController();
-            providers = new List<ProviderK8sController>();
 
             // Check for required environment variable(s)
             List<string> required = new List<string>();

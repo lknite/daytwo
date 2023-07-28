@@ -31,6 +31,10 @@ namespace gge.K8sControllers
         static Kubernetes kubeclient = null;
         static KubernetesClientConfiguration kubeconfig = null;
 
+
+        // providers here as they are associated with each management cluster
+        public List<ProviderK8sController> providers = new List<ProviderK8sController>();
+
         public async Task Listen()
         {
             // locate the provisioning cluster argocd secret
@@ -238,12 +242,12 @@ namespace gge.K8sControllers
                 string _version = cluster.Spec.controlPlaneRef.apiVersion.Substring(cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/") + 1);
                 string _plural = _api + "s";
 
-                // check if provider already present
-                ProviderK8sController? item = Globals.service.providers.Find(item => (item.api == _api) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));
+                // check if provider is already present
+                ProviderK8sController? item = providers.Find(item => (item.api == _api) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));
                 if (item == null)
                 {
                     // if not, start listening
-                    Globals.service.providers.Add(new ProviderK8sController(
+                    providers.Add(new ProviderK8sController(
                             Globals.service.kubeclient, _api, _group, _version, _plural));
                 }
                 /*
