@@ -13,6 +13,7 @@ using System.Buffers.Text;
 using Microsoft.AspNetCore.DataProtection;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Collections.Generic;
+using k8s.KubeConfigModels;
 
 namespace gge.K8sControllers
 {
@@ -155,62 +156,28 @@ namespace gge.K8sControllers
             string patchStr = string.Empty;
 
             Console.WriteLine("Addition/Modify detected: " + provider.Metadata.Name);
-            Console.WriteLine("** argocd add cluster ...");
 
-            //debug
-            return;
-
-
-            // loop through namespaces
-            V1NamespaceList namespaces = kubeclient.ListNamespace();
-            Console.WriteLine("- list clusters:");
-            foreach (var ns in namespaces)
+            // acquire argocd cluster secret to so we can sync labels
+            V1Secret? secret = GetClusterArgocdSecret(provider.Name());
+            if (secret == null)
             {
-                //Console.WriteLine("- " + item.Name());
-
-                try
-                {
-                    // get list of all TKCs
-                    CustomResourceList<CrdProviderCluster> t =
-                        await generic.ListNamespacedAsync<CustomResourceList<CrdProviderCluster>>(ns.Name());
-
-                    foreach (var cluster in t.Items)
-                    {
-                        Console.WriteLine("  - namespace: "+ ns.Name() +", tkc: " + cluster.Name());
-
-                        // is this cluster in a ready state?
-
-                        // has this cluster been added to argocd?
-                        V1Secret? tmp = GetClusterArgocdSecret(cluster.Name());
-                        if (tmp == null)
-                        {
-                            Console.WriteLine("    - add cluster to argocd");
-
-                            // get new cluster admin kubeconfig
-                            KubernetesClientConfiguration tmpkubeconfig = GetClusterKubeConfig(cluster.Name(), cluster.Namespace());
-
-                            // add new cluster to argocd
-                        }
-                        else
-                        {
-                            Console.WriteLine("    - (cluster already added to argocd, is it up to date?)");
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    //Console.WriteLine(ex.ToString());
-                }
+                Console.WriteLine("(vcluster) unable to locate argocd secret");
+                return;
             }
 
-            /*
+            // check if daytwo is managing this secret
+            if (secret.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/resourceVersion"] == null)
+            {
+                Console.WriteLine("(vcluster) secret is not managed by daytwo, ignoring");
+                return;
+            }
+
             // locate argocd cluster secret representing this cluster
             Console.WriteLine("** sync 'addons' ...");
-            V1Secret? secret = GetClusterArgocdSecret(tkc.Metadata.Name);
 
             // add missing labels to argocd cluster secret
             Console.WriteLine("- add missing labels to argocd cluster secret:");
-            foreach (var l in tkc.Metadata.Labels)
+            foreach (var l in provider.Metadata.Labels)
             {
                 // only process labels starting with 'addons-'
                 if (!l.Key.StartsWith("addons-"))
@@ -225,12 +192,14 @@ namespace gge.K8sControllers
                 // use try catch to avoid listing labels on a secret without labels
                 foreach (var label in secret.Labels())
                 {
+                    /*
                     // only process labels starting with 'addons-'
                     if (!label.Key.StartsWith("addons-"))
                     {
                         // skip
                         continue;
                     }
+                    */
 
                     //
                     if ((l.Key == label.Key) && (l.Value == label.Value))
@@ -262,14 +231,16 @@ namespace gge.K8sControllers
                 bool found = false;
 
                 // use try catch to avoid listing labels on a secret without labels
-                foreach (var l in tkc.Metadata.Labels)
+                foreach (var l in provider.Metadata.Labels)
                 {
+                    /*
                     // only process labels starting with 'addons-'
                     if (!l.Key.StartsWith("addons-"))
                     {
                         // skip
                         continue;
                     }
+                    */
 
                     //
                     if ((l.Key == label.Key) && (l.Value == label.Value))
@@ -285,7 +256,6 @@ namespace gge.K8sControllers
                     Console.WriteLine("  - " + label.Key + ": " + label.Value);
                 }
             }
-            */
 
             return;
         }
