@@ -41,18 +41,18 @@ environment always matches what is in git.
   - use to allow for a single helm chart deployment and values file
 
 ## development
-| status | controller                            | detail                          |
-|--------|---------------------------------------|---------------------------------|
-| active | daytwo-argocd-register-controller     | working, todo: cleanup, add tkg |
-| active | daytwo-argocd-addons-controller       |                                 |
-| todo   | daytwo-argocd-pinniped-controller     |                                 |
-| todo   | daytwo-argocd-external-dns-controller |                                 |
-| todo   | daytwo-argocd-trigger-controller      |                                 |
-| todo   | add helm charts                       |                                 |
-| todo   | daytwo-operator                       |                                 |
-| todo   | add daytwo-operator helm chart        |                                 |
-| todo   | move builds to use github actions     |                                 |
-| todo   | rewrite all controllers using go      |                                 |
+| status  | controller                            | detail                          |
+|---------|---------------------------------------|---------------------------------|
+| active  | daytwo-argocd-register-controller     | working, todo: cleanup, add tkg |
+| testing | daytwo-argocd-addons-controller       | functionality added to register |
+| todo    | daytwo-argocd-pinniped-controller     |                                 |
+| todo    | daytwo-argocd-external-dns-controller |                                 |
+| todo    | daytwo-argocd-trigger-controller      |                                 |
+| todo    | add helm charts                       |                                 |
+| todo    | daytwo-operator                       |                                 |
+| todo    | add daytwo-operator helm chart        |                                 |
+| todo    | move builds to use github actions     |                                 |
+| todo    | rewrite all controllers using go      |                                 |
 
 ## individual installation
 - use helm chart to install respective controller
