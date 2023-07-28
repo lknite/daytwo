@@ -484,6 +484,7 @@ namespace gge.K8sControllers
 
             return kubeconfig;
         }
+
         /// <summary>
         /// With knowledge of the innerworkings of the cluster provisioning process,
         /// obtain the default admin kubeconfig '/etc/kubernetes/admin.conf'.
@@ -543,6 +544,7 @@ namespace gge.K8sControllers
                 return null;
             }
 
+            /*
             // test
             try
             {
@@ -562,6 +564,7 @@ namespace gge.K8sControllers
                 Console.WriteLine("exception caught when performing 'exec', cmd ran though, ignoring exception for now");
                 //Console.WriteLine(ex.ToString());
             }
+            */
 
             try
             {
@@ -586,9 +589,10 @@ namespace gge.K8sControllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine("exception caught when performing 'exec', cmd ran though, ignoring exception for now");
+                //Console.WriteLine("exception caught when performing 'exec', cmd ran though, ignoring exception for now");
                 //Console.WriteLine(ex.ToString());
             }
+            Console.WriteLine("[cluster] after exec (2)");
 
 
             return null;
