@@ -191,10 +191,12 @@ namespace gge.K8sControllers
             else if (cluster.Metadata.ResourceVersion != tmp.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/resourceVersion"])
             //else if (DateTime.Compare((DateTime)cluster.Metadata.CreationTimestamp, (DateTime)tmp.Metadata.CreationTimestamp) > 0)
             {
-                Console.WriteLine("      - remove cluster from argocd & then add it back in again");
+                Console.WriteLine("      - update argocd cluster secret");
 
+                /*
                 // remove cluster from argocd
                 await ProcessDeleted(cluster);
+                */
 
                 // get new cluster admin kubeconfig
                 KubernetesClientConfiguration tmpkubeconfig = await GetClusterKubeConfig(cluster.Name(), cluster.Namespace());
@@ -373,7 +375,7 @@ namespace gge.K8sControllers
             cmds.Add("sh");
             cmds.Add("-c");
             cmds.Add( $"argocd cluster rm {cluster.Name()}"
-                    + $" -y"
+                    + $" --y"
                     + $" --server=localhost:8080"
                     + $" --plaintext"
                     + $" --insecure"
@@ -581,7 +583,8 @@ namespace gge.K8sControllers
                 cmds.Add($"echo {Convert.ToBase64String(bytes)} > /tmp/{clusterName}.b64;"
                         + $"cat /tmp/{clusterName}.b64 | base64 -d > /tmp/{clusterName}.conf;"
                         + $"argocd cluster add my-vcluster"
-                        + $" -y"
+                        + $" --y"
+                        + $" --upsert"
                         + $" --name {clusterName}"
                         + $" --kubeconfig /tmp/{clusterName}.conf"
                         + $" --server=localhost:8080"
