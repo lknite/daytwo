@@ -191,7 +191,6 @@ namespace gge.K8sControllers
                 Console.WriteLine("      - cluster already added to argocd");
             }
 
-            Console.WriteLine(". todo: if add, then add to argocd & add label indicating we added it");
             Console.WriteLine(". todo: later, with a delete, only delete if we added the cluster ourselves");
 
 
@@ -287,6 +286,17 @@ namespace gge.K8sControllers
         {
             Console.WriteLine("Deleted detected: " + cluster.Metadata.Name);
             Console.WriteLine("** argocd remove cluster ...");
+
+            string annotation = cluster.GetAnnotation("daytwo.aarr.xyz/cluster-resourceVersion");
+            if (annotation == null)
+            {
+                Console.WriteLine("** annotation is null **");
+                Console.WriteLine("** (don't delete cluster) **");
+            }
+            else
+            {
+                Console.WriteLine("** annotation is: "+ annotation);
+            }
 
             // locate server pod
             V1PodList list = await Globals.service.kubeclient.ListNamespacedPodAsync("argocd");
