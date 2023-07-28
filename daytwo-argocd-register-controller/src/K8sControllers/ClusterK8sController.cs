@@ -194,7 +194,7 @@ namespace gge.K8sControllers
                 Console.WriteLine("      - remove cluster from argocd & then add it back in again");
 
                 // remove cluster from argocd
-                ProcessDeleted(cluster);
+                await ProcessDeleted(cluster);
 
                 // get new cluster admin kubeconfig
                 KubernetesClientConfiguration tmpkubeconfig = await GetClusterKubeConfig(cluster.Name(), cluster.Namespace());
