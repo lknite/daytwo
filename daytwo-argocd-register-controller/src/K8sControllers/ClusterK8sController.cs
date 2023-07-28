@@ -229,8 +229,6 @@ namespace gge.K8sControllers
                 Console.WriteLine("      - cluster already added to argocd");
             }
 
-            Console.WriteLine(". todo: later, with a delete, only delete if we added the cluster ourselves");
-
 
             Console.WriteLine("** add pinniped kubeconfig ...");
 
