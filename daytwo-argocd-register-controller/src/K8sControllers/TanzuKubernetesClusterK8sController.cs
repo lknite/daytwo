@@ -52,7 +52,7 @@ namespace gge.K8sControllers
                 Console.WriteLine("(" + api +") Listen begins ...");
                 try
                 {
-                    await foreach (var (type, item) in generic.WatchNamespacedAsync<CrdTanzuKubernetesCluster>(""))
+                    await foreach (var (type, item) in generic.WatchNamespacedAsync<CrdProviderCluster>(""))
                     {
                         Console.WriteLine("");
                         Console.WriteLine("(event) [" + type + "] " + plural + "." + group + "/" + version + ": " + item.Metadata.Name);
@@ -103,11 +103,11 @@ namespace gge.K8sControllers
             }
         }
 
-        public async Task ProcessAdded(CrdTanzuKubernetesCluster tkc)
+        public async Task ProcessAdded(CrdProviderCluster tkc)
         {
             ProcessModified(tkc);
         }
-        public async Task ProcessModified(CrdTanzuKubernetesCluster tkc)
+        public async Task ProcessModified(CrdProviderCluster tkc)
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
             string patchStr = string.Empty;
@@ -126,8 +126,8 @@ namespace gge.K8sControllers
                 try
                 {
                     // get list of all TKCs
-                    CustomResourceList<CrdTanzuKubernetesCluster> t =
-                        await generic.ListNamespacedAsync<CustomResourceList<CrdTanzuKubernetesCluster>>(ns.Name());
+                    CustomResourceList<CrdProviderCluster> t =
+                        await generic.ListNamespacedAsync<CustomResourceList<CrdProviderCluster>>(ns.Name());
 
                     foreach (var cluster in t.Items)
                     {
@@ -244,7 +244,7 @@ namespace gge.K8sControllers
 
             return;
         }
-        public async Task ProcessDeleted(CrdTanzuKubernetesCluster tkc)
+        public async Task ProcessDeleted(CrdProviderCluster tkc)
         {
             Console.WriteLine("Deleted detected: " + tkc.Metadata.Name);
             Console.WriteLine("** argocd remove cluster ...");

@@ -177,11 +177,13 @@ namespace gge.K8sControllers
                 tmp.SetLabel("daytwo.aarr.xyz/name", cluster.Name());
                 tmp.SetLabel("daytwo.aarr.xyz/management-cluster", Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
 
+                /*
                 // copy over all labels
                 foreach (var next in cluster.Labels())
                 {
                     tmp.SetLabel(next.Key, next.Value);
                 }
+                */
 
                 //
                 Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
@@ -218,16 +220,19 @@ namespace gge.K8sControllers
                 tmp.SetLabel("daytwo.aarr.xyz/name", cluster.Name());
                 tmp.SetLabel("daytwo.aarr.xyz/management-cluster", Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
 
+                /*
                 // copy over all labels
                 foreach (var next in cluster.Labels())
                 {
                     tmp.SetLabel(next.Key, next.Value);
                 }
+                */
 
                 //
                 Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
                     new V1Patch(tmp, V1Patch.PatchType.MergePatch), tmp.Name(), tmp.Namespace());
 
+                /*
                 // copy over labels by provider
                 string provider_api = cluster.Spec.controlPlaneRef.kind.ToLower();
                 string provider_group = cluster.Spec.controlPlaneRef.apiVersion.Substring(0, cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/"));
@@ -241,13 +246,14 @@ namespace gge.K8sControllers
                 Console.WriteLine($"provider_plural: {provider_plural}");
 
                 // create provider class instance on the fly
-                CrdTanzuKubernetesCluster asdf = await provider.ReadNamespacedAsync<CrdTanzuKubernetesCluster>(cluster.Namespace(), cluster.Name(), Globals.cancellationToken);
+                CrdProviderCluster asdf = await provider.ReadNamespacedAsync<CrdProviderCluster>(cluster.Namespace(), cluster.Name(), Globals.cancellationToken);
                 Console.WriteLine("provider labels:");
                 foreach (var next in asdf.Labels())
                 {
                     Console.WriteLine(next.Key + ": " + next.Value);
                     tmp.SetLabel(next.Key, next.Value);
                 }
+                */
             }
             else
             {
