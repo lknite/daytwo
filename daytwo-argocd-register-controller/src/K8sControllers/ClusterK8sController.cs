@@ -162,7 +162,7 @@ namespace gge.K8sControllers
 
                 // add new cluster to argocd
 
-                // add resourceVersion annotation
+                // acquire argocd cluster secret to so we can add annotation and labels
                 tmp = GetClusterArgocdSecret(cluster.Name());
                 if (tmp == null)
                 {
@@ -201,7 +201,7 @@ namespace gge.K8sControllers
 
                 // add new cluster to argocd
 
-                // add resourceVersion annotation
+                // acquire argocd cluster secret to so we can add annotation and labels
                 tmp = GetClusterArgocdSecret(cluster.Name());
                 if (tmp == null)
                 {
