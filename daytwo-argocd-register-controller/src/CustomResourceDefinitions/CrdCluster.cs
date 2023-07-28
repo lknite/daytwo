@@ -47,17 +47,6 @@ namespace daytwo.crd.cluster
         public ControlPlaneRef controlPlaneRef { get; set; }
         [JsonPropertyName("infrastructureRef")]
         public InfrastructureRef infrastructureRef { get; set; }
-        /*
-          controlPlaneRef:
-            apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
-            kind: VCluster
-            name: vc-test
-          infrastructureRef:
-            apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
-            kind: VCluster
-            name: vc-test
-
-         */
     }
 
     public class CrdClusterStatus : V1Status

@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace daytwo.crd.tanzukubernetescluster
 {
-    public class CrdTanzuKubernetesCluster : CustomResourceDefinitions.CustomResource<CrdTkcSpec, CrdTkcStatus>
+    public class CrdProviderCluster : CustomResourceDefinitions.CustomResource<CrdProviderSpec, CrdProviderStatus>
     {
         public override string ToString()
         {
@@ -34,13 +34,13 @@ namespace daytwo.crd.tanzukubernetescluster
         public string api_key { get; set; }
     }
     */
-    public class CrdTkcSpec
+    public class CrdProviderSpec
     {
         [JsonPropertyName("asdf")]
         public string asdf { get; set; }
     }
 
-    public class CrdTkcStatus : V1Status
+    public class CrdProviderStatus : V1Status
     {
         [JsonPropertyName("state")]
         public string state { get; set; }
