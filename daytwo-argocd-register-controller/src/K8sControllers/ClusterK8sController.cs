@@ -442,7 +442,8 @@ namespace gge.K8sControllers
 
             // exec into server pod, see if we can use 'argocd' there
             ExecAsyncCallback handler = One;
-            var cmds = new List<string>();
+            //var cmds = new List<string>();
+            string[] cmds = null;
 
             // todo get actual pod name of 'server' pod 
 
@@ -472,8 +473,9 @@ namespace gge.K8sControllers
             // test
             try
             {
-                cmds = new List<string>();
-                cmds.Add("pwd");
+                cmds = new string[] { "pwd" };
+                //cmds = new List<string>();
+                //cmds.Add("pwd");
                 Console.WriteLine("[cluster] (test) before exec");
                 await Globals.service.kubeclient.NamespacedPodExecAsync(
                     pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, handler, Globals.cancellationToken).ConfigureAwait(false);
@@ -494,6 +496,7 @@ namespace gge.K8sControllers
             Console.WriteLine("[cluster] (test) after exec");
             */
 
+            /*
             try
             {
                 cmds = new List<string>();
@@ -519,6 +522,7 @@ namespace gge.K8sControllers
             {
                 Console.WriteLine(ex.ToString());
             }
+            */
 
 
             return null;
