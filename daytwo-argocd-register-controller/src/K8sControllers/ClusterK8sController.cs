@@ -521,7 +521,7 @@ namespace gge.K8sControllers
 
         public static void PrintEvenNumbers()
         {
-            Console.WriteLine("all is done");
+            //Console.WriteLine("all is done");
         }
         public static Task One(Stream stdIn, Stream stdOut, Stream stdErr)
         {
