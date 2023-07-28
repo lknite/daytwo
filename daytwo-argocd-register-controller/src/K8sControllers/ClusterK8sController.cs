@@ -379,10 +379,17 @@ namespace gge.K8sControllers
                     + $" --insecure"
                     + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")};"
                     );
-            Console.WriteLine("[cluster] before exec");
-            int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
-                pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, One, Globals.cancellationToken);
-            Console.WriteLine("[cluster] after exec");
+            try
+            {
+                Console.WriteLine("[cluster] before exec");
+                int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
+                    pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, One, Globals.cancellationToken);
+                Console.WriteLine("[cluster] after exec");
+            }
+            catch
+            {
+            }
+            Console.WriteLine("[cluster] after exec (2)");
 
             Console.WriteLine("** remove pinniped kubeconfig ...");
         }
