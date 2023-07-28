@@ -115,66 +115,82 @@ namespace gge.K8sControllers
             Dictionary<string, string> data = new Dictionary<string, string>();
             string patchStr = string.Empty;
 
-            /*
-            Console.WriteLine("Addition/Modify detected: " + tkc.Metadata.Name);
-            Console.WriteLine("** argocd add cluster ...");
-            */
+            Console.WriteLine("  - namespace: " + cluster.Namespace() + ", cluster: " + cluster.Name());
 
-
-            /*
-            Console.WriteLine("- get list of clusters in all namespaces");
-            // get list of all clusters in all namespaces
-            CustomResourceList<CrdCluster> t =
-                    await generic.ListNamespacedAsync<CustomResourceList<CrdCluster>>("");
-
-            foreach (var cluster in t.Items)
+            // is this cluster in a ready state?
+            if (!(
+                (cluster.Status != null)
+                && (cluster.Status.phase == "Provisioned")
+                && cluster.Status.infrastructureReady
+                && cluster.Status.controlPlaneReady
+                ))
             {
-            */
-                Console.WriteLine("  - namespace: " + cluster.Namespace() + ", cluster: " + cluster.Name());
+                // cluster not yet ready
+                Console.WriteLine("    - cluster not ready yet");
 
-                // is this cluster in a ready state?
-                if (!(
-                    (cluster.Status != null)
-                    && (cluster.Status.phase == "Provisioned")
-                    && cluster.Status.infrastructureReady
-                    && cluster.Status.controlPlaneReady
-                    ))
-                {
-                    // cluster not yet ready
-                    Console.WriteLine("    - cluster not ready yet");
-
-                    return;
-                    //continue;
-                }
-
-                Console.WriteLine("  - phase: " + cluster.Status.phase);
-
-                // has this cluster been added to argocd?
-                V1Secret? tmp = GetClusterArgocdSecret(cluster.Name());
-
-                if (tmp != null)
-                {
-                    Console.WriteLine($"    -  cluster yaml timestamp: {cluster.Metadata.CreationTimestamp}");
-                    Console.WriteLine($"    - argocd secret timestamp: {tmp.Metadata.CreationTimestamp}");
-                }
-
-                // if cluster yaml is newer then secret, then we re-add to argocd
-                if ((tmp == null) || DateTime.Compare((DateTime)cluster.Metadata.CreationTimestamp, (DateTime)tmp.Metadata.CreationTimestamp) > 0)
-                {
-                    Console.WriteLine("      - add cluster to argocd");
-
-                    // get new cluster admin kubeconfig
-                    KubernetesClientConfiguration tmpkubeconfig = await GetClusterKubeConfig(cluster.Name(), cluster.Namespace());
-
-                    // add new cluster to argocd
-                }
-                else
-                {
-                    Console.WriteLine("      - cluster already added to argocd, is it up to date?");
-                }
-            /*
+                return;
             }
-            */
+
+            // has this cluster been added to argocd?
+            V1Secret? tmp = GetClusterArgocdSecret(cluster.Name());
+
+            if (tmp != null)
+            {
+                Console.WriteLine($"    -  cluster yaml timestamp: {cluster.Metadata.CreationTimestamp}");
+                Console.WriteLine($"    - argocd secret timestamp: {tmp.Metadata.CreationTimestamp}");
+                Console.WriteLine($"    -          cluster yaml resourceVersion: {cluster.Metadata.ResourceVersion}");
+                Console.WriteLine($"    - argocd secret cluster-resourceVersion: {tmp.Metadata.EnsureLabels()["daytwo.aarr.xyz/cluster-resourceVersion"]}");
+            }
+
+            // if cluster yaml is newer then secret, then we re-add to argocd
+            if (tmp == null)
+            {
+                Console.WriteLine("      - add cluster to argocd");
+
+                // get new cluster admin kubeconfig
+                KubernetesClientConfiguration tmpkubeconfig = await GetClusterKubeConfig(cluster.Name(), cluster.Namespace());
+
+                // add new cluster to argocd
+
+                // add resourceVersion annotation
+                tmp = GetClusterArgocdSecret(cluster.Name());
+                if (tmp == null)
+                {
+                    Console.WriteLine("unable to add argocd secret, check ARGOCD_AUTH_TOKEN");
+                    return;
+                }
+
+                // store cluster resourceVersion, we use this later to check for changes
+                tmp.SetAnnotation("daytwo.aarr.xyz/cluster-resourceVersion", cluster.Metadata.ResourceVersion);
+
+            }
+            // has the cluster resourceVersion changed since we last updated?  if so, update argocd secret
+            else if (cluster.Metadata.ResourceVersion != tmp.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/cluster-resourceVersion"])
+            //else if (DateTime.Compare((DateTime)cluster.Metadata.CreationTimestamp, (DateTime)tmp.Metadata.CreationTimestamp) > 0)
+            {
+                Console.WriteLine("      - delete argocd cluster secret & then add cluster to argocd");
+
+                // get new cluster admin kubeconfig
+                KubernetesClientConfiguration tmpkubeconfig = await GetClusterKubeConfig(cluster.Name(), cluster.Namespace());
+
+                // add new cluster to argocd
+
+                // add resourceVersion annotation
+                tmp = GetClusterArgocdSecret(cluster.Name());
+                if (tmp == null)
+                {
+                    Console.WriteLine("unable to add argocd secret, check ARGOCD_AUTH_TOKEN");
+                    return;
+                }
+
+                // store cluster resourceVersion, we use this later to check for changes
+                tmp.SetAnnotation("daytwo.aarr.xyz/cluster-resourceVersion", cluster.Metadata.ResourceVersion);
+            }
+            else
+            {
+                Console.WriteLine("      - cluster already added to argocd");
+            }
+
             Console.WriteLine(". todo: if add, then add to argocd & add label indicating we added it");
             Console.WriteLine(". todo: later, with a delete, only delete if we added the cluster ourselves");
 
