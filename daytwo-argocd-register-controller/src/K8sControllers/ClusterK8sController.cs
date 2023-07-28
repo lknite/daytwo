@@ -232,6 +232,20 @@ namespace gge.K8sControllers
                 Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
                     new V1Patch(tmp, V1Patch.PatchType.MergePatch), tmp.Name(), tmp.Namespace());
 
+                //
+                string _api = cluster.Spec.controlPlaneRef.kind.ToLower();
+                string _group = cluster.Spec.controlPlaneRef.apiVersion.Substring(0, cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/"));
+                string _version = cluster.Spec.controlPlaneRef.apiVersion.Substring(cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/") + 1);
+                string _plural = _api + "s";
+
+                // check if provider already present
+                ProviderK8sController? item = Globals.service.providers.Find(item => (item.api == _api) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));
+                if (item == null)
+                {
+                    // if not, start listening
+                    Globals.service.providers.Add(new ProviderK8sController(
+                            Globals.service.kubeclient, _api, _group, _version, _plural));
+                }
                 /*
                 // copy over labels by provider
                 string provider_api = cluster.Spec.controlPlaneRef.kind.ToLower();

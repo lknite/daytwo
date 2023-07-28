@@ -16,16 +16,52 @@ using System.Collections.Generic;
 
 namespace gge.K8sControllers
 {
-    public class TanzuKubernetesClusterK8sController
+    /*
+    public class Provider : IComparable<Provider>
     {
-        static string api = "tanzukubernetescluster";
-        static string group = "run.tanzu.vmware.com";
-        static string version = "v1alpha2";
-        static string plural = api + "s";
+        string api;
+        string group;
+        string version;
+        string plural;
 
-        static GenericClient generic = null;// new GenericClient(Globals.service.kubeclient, group, version, plural);
-        static Kubernetes kubeclient = null;
-        static KubernetesClientConfiguration kubeconfig = null;
+        public GenericClient generic = null;// new GenericClient(Globals.service.kubeclient, group, version, plural);
+        public Kubernetes kubeclient = null;
+        //public KubernetesClientConfiguration kubeconfig = null;
+
+        public Provider(Kubernetes kubeclient, string api, string group, string version, string plural)
+        {
+            generic = new GenericClient(kubeclient, group, version, plural);
+        }
+
+        public int CompareTo(Provider? other)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    */
+    public class ProviderK8sController
+    {
+        public string api; // = "tanzukubernetescluster";
+        public string group; // = "run.tanzu.vmware.com";
+        public string version; // = "v1alpha2";
+        public string plural; // = api + "s";
+
+        public GenericClient generic = null;// new GenericClient(Globals.service.kubeclient, group, version, plural);
+        public Kubernetes kubeclient = null;
+        public KubernetesClientConfiguration kubeconfig = null;
+
+
+        public ProviderK8sController(Kubernetes kubeclient, string api, string group, string version, string plural)
+        {
+            Console.WriteLine($"**** Start listening to: {api}s.{group}.{version}");
+        }
+
+        /*
+        public void Add(Kubernetes kubeclient, string api, string group, string version, string plural)
+        {
+            providers.Add(new Provider(kubeclient, api, group, version, plural));
+        }
+        */
 
         public async Task Listen()
         {
