@@ -19,32 +19,31 @@ namespace daytwo.Helpers
                                     Base64Decode(o.GetProperty("tlsClientConfig").GetProperty("caData").GetString()).AsSpan()
                             ));
 
-                        return $@"
-            apiVersion: v1
-            kind: Config
-            clusters:
-            - cluster:
-                certificate-authority-data: {kubeconfig.ClientCertificateData}
-                server: {kubeconfig.Host}
-              name: k-ceph
-            contexts:
-            - context:
-                cluster: k-root-b
-                namespace: argocd
-                user: k-root-b-admin
-              name: k-argocd-admin
-            current-context: k-argocd-admin
-
-            preferences: {{}}
-            users:
-            - name: k-ceph-admin
-              user:
-                client-certificate-data:
-            ";
-
-                        return kubeconfig;
             */
-            return "";
+
+            Console.WriteLine(kubeconfig.SslCaCerts[0].ToString());
+
+            return $@"
+apiVersion: v1
+kind: Config
+clusters:
+- cluster:
+    certificate-authority-data: {kubeconfig.ClientCertificateData}
+    server: {kubeconfig.Host}
+  name: cluster
+contexts:
+- context:
+    cluster: cluster
+    namespace: default
+    user: user
+  name: context
+current-context: context
+users:
+- name: user
+  user:
+    client-certificate-data: {kubeconfig.ClientCertificateData}
+    client-key-data: {kubeconfig.ClientCertificateKeyData}
+";
         }
     }
 }
