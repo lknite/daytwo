@@ -4,7 +4,7 @@ namespace daytwo.Helpers
 {
     public partial class Main
     {
-        public static string? SerializeKubernetesClientConfig(KubernetesClientConfiguration kubeconfig)
+        public static string? SerializeKubernetesClientConfig(KubernetesClientConfiguration kubeconfig, string name)
         {
             string pem = kubeconfig.SslCaCerts[0].ExportCertificatePem();
             //Console.WriteLine(pem);
@@ -17,10 +17,10 @@ clusters:
 - cluster:
     certificate-authority-data: {Base64Encode(pem.ToString())}
     server: {kubeconfig.Host}
-  name: cluster
+  name: {name}
 contexts:
 - context:
-    cluster: cluster
+    cluster: {name}
     namespace: default
     user: user
   name: context
