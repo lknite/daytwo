@@ -300,6 +300,8 @@ namespace gge.K8sControllers
                 NamingStrategy = new CamelCaseNamingStrategy()
             };
             patchStr = Newtonsoft.Json.JsonConvert.SerializeObject(patch);
+            Console.WriteLine("patch:");
+            Console.WriteLine(patchStr);
             try
             {
                 Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
