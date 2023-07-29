@@ -145,7 +145,8 @@ namespace gge.K8sControllers
             }
             Console.WriteLine("try serialize (2)");
             */
-            string json = Main.SerializeKubernetesClientConfig(kubeconfig);
+            string json = Main.SerializeKubernetesClientConfig(
+                    kubeconfig, Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length));
             Console.WriteLine(json);
 
             // generate pinniped kubeconfig
