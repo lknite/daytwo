@@ -295,10 +295,12 @@ namespace gge.K8sControllers
             */
             var patch = new JsonPatchDocument<V1Secret>();
             patch.Replace(x => x.Metadata.Labels, secret.Labels());
+            /*
             patch.ContractResolver = new DefaultContractResolver
             {
                 NamingStrategy = new CamelCaseNamingStrategy()
             };
+            */
             patchStr = Newtonsoft.Json.JsonConvert.SerializeObject(patch);
             Console.WriteLine("patch:");
             Console.WriteLine(patchStr);
