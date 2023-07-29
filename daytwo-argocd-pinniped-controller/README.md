@@ -1,12 +1,13 @@
 # daytwo-argocd-pinniped-controller
 
 ## features ##
--
+- watches for updates to argocd cluster secrets and updates a configmap with pinniped kubeconfig files
+- hosts a website which serves the pinniped kubeconfig files
+  - a website may then be added to each clusters in order to obtain the related pinniped kubeconfig file
 
 ## rbac ##
-todo
 - role get/list/watch to 'secrets' in argocd namespace
-  - 
+  - why
 
 ## installation ##
 todo
@@ -17,13 +18,10 @@ todo
   - NAME: value
 
 ### optional ###
--
   
 ## status ##
 - initial development
 - todo:
-  -
-  -
 
 ## reference ##
 - [kubernetes daytwo controllers](https://www.travisloyd.xyz/2023/07/08/kubernetes-daytwo-controllers/)
