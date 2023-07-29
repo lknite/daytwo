@@ -284,7 +284,7 @@ namespace gge.K8sControllers
 
             // patch secret without removed labels
             Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
-                    new V1Patch(secret.Metadata, V1Patch.PatchType.JsonPatch), secret.Name(), secret.Namespace());
+                    new V1Patch(secret.Metadata.Labels, V1Patch.PatchType.JsonPatch), secret.Name(), secret.Namespace());
 
             return;
         }
