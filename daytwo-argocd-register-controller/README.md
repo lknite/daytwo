@@ -11,7 +11,7 @@
   - used to communicate with management servers, which must already be added argocd
   - used to add/update/delete provisioned clusters
 - role exec to 'pods' in argocd namespace
-  - used to run 'arocd cluster add' within the argocd server pod
+  - used to run 'argocd cluster add' within the argocd server pod
     - by using this method we are guaranteed the correct argocd version is used
 - clusterrole clusterapi secrets
   - used to access workload cluster kubeconfig via namespaced secrets managed by clusterapi
