@@ -1,54 +1,40 @@
 # daytwo-argocd-register-controller
 
-- watches for cluster.yaml (tanzu, clusterapi, etc…) and registers clusters with argocd automatically once they are in ‘ready’ state
-- can watch multiple capi instances on different clusters
+## features ##
+- adds/updates argocd secrets automatically in response to new clusters provisioned via clusterapi
+- event driven
+- able to watch multiple management clusters
+- syncs all labels on provider resources with argocd secret
 
-## access ##
-- install in argocd namespace, or configure access to Secrets in namespace where argocd is installed
-- uses the argocd cluster secrets to communicate with clusterapi (or similar) server
-  - this makes sense, because argocd is already setup in order to pass cluster.yaml to clusterapi (or similar)
-  - also makes sense for needed access to add clusters to argocd, remove clusters from argocd, and update cluster secrets
-- for each clusterapi (or similar) must be able to:
-  - check status of a new cluster and know when it is ready to be added to argocd
-  - obtain 'kubeconfig' from newly created cluster
+## rbac ##
+- role add/get/list/update to 'secrets' in argocd namespace
+  - used to communicate with management servers, which must already be added argocd
+  - used to add/update/delete provisioned clusters
+- role exec to 'pods' in argocd namespace
+  - used to run 'arocd cluster add' within the argocd server pod
+    - by using this method we are guaranteed the correct argocd version is used
+- clusterrole clusterapi secrets
+  - used to access workload cluster kubeconfig via namespaced secrets managed by clusterapi
 
-## possible configuration items (or just enable by default) ##
-- ADD_LABEL_WORKLOAD_CLUSTER_NAME
-- ADD_LABEL_MANAGEMENT_CLUSTER_NAME
-- COPY_CLUSTER_LABELS
+## installation ##
 
+## configuration environment variables ##
+- (required) Comma separated list of management clusters to sync w/ argocd
+  name: MANAGEMENT_CLUSTERS
+  value: clusters
+- (required) Argocd auth token of account which will be used to add clusters to argocd
+  name: ARGOCD_AUTH_TOKEN
+  value: ...
+- (optional) To disable the label copy feature (enabled by default):
+  name: OPTION_DISABLE_LABEL_COPY
+  value: true
+  
 ## status ##
-- testing ...
-- working with one management cluster, after testing add working with many
-
-## work in progress ##
-```
-(cluster) Listen begins ...
-(vcluster) Listen begins ...
-(tanzukubernetescluster) Listen begins ...
-
-(event) [Added] tanzukubernetesclusters.run.tanzu.vmware.com/v1alpha2: exp
-Addition/Modify detected: exp
-** argocd add cluster ...
-- list clusters:
-  - namespace: daytwo, tkc: exp
-    - (cluster already added to argocd, is it up to date?)
-. todo: if add, then add to argocd & add label indicating we added it
-. todo: later, with a delete, only delete if we added the cluster ourselves
-** add pinniped kubeconfig ...
-** sync 'addons' ...
-- add missing labels to argocd cluster secret:
-  - addons-adcs-issuer-system: true
-  - addons-cert-manager: true
-- remove deleted labels from argocd cluster secret:
-
-(event) [Deleted] tanzukubernetesclusters.run.tanzu.vmware.com/v1alpha2: k-demo
-[k-demo]
-Deleted detected: k-demo
-** argocd remove cluster ...
-** remove pinniped kubeconfig ...
-done.
-```
+- main functionality implemented
+- todo:
+  - add cluster name conflict when working with multiple management clusters
+  - add periodic check for orphaned argocd secrets and delete
+  - cleanup/improve logging
 
 ## reference ##
 - [kubernetes daytwo controllers](https://www.travisloyd.xyz/2023/07/08/kubernetes-daytwo-controllers/)
