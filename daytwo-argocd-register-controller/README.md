@@ -33,10 +33,10 @@ todo
   - OPTION_DISABLE_LABEL_COPY: true
 
 ## auth token: how to generate? ##
-- Basic steps to generate token (your implementation may vary):
-  - kubectl -n argocd edit argocd-cm
-  - add 'data.accounts.admin: apiKey, login'
-  - argocd account generate-token --account admin
+Basic steps to generate token (your implementation may vary):
+- kubectl -n argocd edit argocd-cm
+- add 'data.accounts.admin: apiKey, login'
+- argocd account generate-token --account admin
   
 ## status ##
 - main functionality implemented
