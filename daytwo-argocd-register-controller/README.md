@@ -3,7 +3,9 @@
 ## features ##
 - adds/updates argocd secrets automatically in response to new clusters provisioned via clusterapi
 - event driven
-- able to watch multiple management clusters (mangement clusters must have different names)
+- able to watch multiple management clusters
+  - mangement clusters must have different names
+  - able to handle workload clusters having the same name on different management servers
 - syncs all labels on provider resources with argocd secret
   - including 'cluster.x-k8s.io/cluster-name', which is nice, allows for applicationsets to target by cluster name
 
