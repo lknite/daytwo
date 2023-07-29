@@ -178,6 +178,7 @@ namespace gge.K8sControllers
 
             // locate argocd cluster secret representing this cluster
             Console.WriteLine("** sync 'addons' ...");
+            Console.WriteLine(provider.Metadata.ResourceVersion);
 
             //
             var before = JsonSerializer.SerializeToDocument(secret);
