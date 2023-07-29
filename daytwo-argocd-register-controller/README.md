@@ -3,7 +3,7 @@
 ## features ##
 - adds/updates argocd secrets automatically in response to new clusters provisioned via clusterapi
 - event driven
-- able to watch multiple management clusters
+- able to watch multiple management clusters (mangement clusters must have different names)
 - syncs all labels on provider resources with argocd secret
   - including 'cluster.x-k8s.io/cluster-name', which is nice, allows for applicationsets to target by cluster name
 
@@ -43,7 +43,6 @@ Basic steps to generate token (your implementation may vary):
 ## status ##
 - main functionality implemented
 - todo:
-  - add cluster name conflict when working with multiple management clusters
   - add periodic check for orphaned argocd secrets and delete
   - cleanup/improve logging
 

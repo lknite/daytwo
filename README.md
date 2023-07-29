@@ -30,7 +30,7 @@ environment always matches what is in git.
 ## development
 | status  | controller                            | detail                                  |
 |---------|---------------------------------------|-----------------------------------------|
-| active  | daytwo-argocd-register-controller     | working, todo: improve logging, delete orphaned secrets, handle cluster name conflicts between multiple management clusters |
+| active  | daytwo-argocd-register-controller     | working, todo: improve logging, delete orphaned secrets |
 | active  | daytwo-argocd-pinniped-controller     |                                         |
 | todo    | add helm charts                       |                                         |
 | todo    | move builds to use github actions     |                                         |
