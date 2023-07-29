@@ -181,6 +181,33 @@ namespace gge.K8sControllers
                 //
                 Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
                     new V1Patch(tmp, V1Patch.PatchType.MergePatch), tmp.Name(), tmp.Namespace());
+
+                //
+                string _api = cluster.Spec.controlPlaneRef.kind.ToLower();
+                string _group = cluster.Spec.controlPlaneRef.apiVersion.Substring(0, cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/"));
+                string _version = cluster.Spec.controlPlaneRef.apiVersion.Substring(cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/") + 1);
+                string _plural = _api + "s";
+
+                // check if provider is already present
+                ProviderK8sController? item = providers.Find(item => (item.api == _api) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));
+                if (item != null)
+                {
+                    // provider already exists, nudge it to recheck this cluster which just had its secret updated
+                    CrdProviderCluster crd = await item.generic.ReadNamespacedAsync<CrdProviderCluster>(cluster.Namespace(), cluster.Name());
+                    item.ProcessModified(crd);
+                }
+                else //if (item == null)
+                {
+                    // if not, start monitoring
+                    ProviderK8sController provider = new ProviderK8sController(
+                            _api, _group, _version, _plural);
+
+                    // add to list of providers we are monitoring
+                    providers.Add(provider);
+
+                    // start listening
+                    provider.Listen(Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
+                }
             }
             // has the cluster resourceVersion changed since we last updated?  if so, update argocd secret
             else if (cluster.Metadata.ResourceVersion != tmp.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/resourceVersion"])
@@ -208,38 +235,40 @@ namespace gge.K8sControllers
                 //
                 Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
                     new V1Patch(tmp, V1Patch.PatchType.MergePatch), tmp.Name(), tmp.Namespace());
+
+                //
+                string _api = cluster.Spec.controlPlaneRef.kind.ToLower();
+                string _group = cluster.Spec.controlPlaneRef.apiVersion.Substring(0, cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/"));
+                string _version = cluster.Spec.controlPlaneRef.apiVersion.Substring(cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/") + 1);
+                string _plural = _api + "s";
+
+                // check if provider is already present
+                ProviderK8sController? item = providers.Find(item => (item.api == _api) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));
+                if (item != null)
+                {
+                    // provider already exists, nudge it to recheck this cluster which just had its secret updated
+                    CrdProviderCluster crd = await item.generic.ReadNamespacedAsync<CrdProviderCluster>(cluster.Namespace(), cluster.Name());
+                    item.ProcessModified(crd);
+                }
+                else //if (item == null)
+                {
+                    // if not, start monitoring
+                    ProviderK8sController provider = new ProviderK8sController(
+                            _api, _group, _version, _plural);
+
+                    // add to list of providers we are monitoring
+                    providers.Add(provider);
+
+                    // start listening
+                    provider.Listen(Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
+                }
             }
             else
             {
                 Console.WriteLine("      - cluster already added to argocd");
             }
 
-            //
-            string _api = cluster.Spec.controlPlaneRef.kind.ToLower();
-            string _group = cluster.Spec.controlPlaneRef.apiVersion.Substring(0, cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/"));
-            string _version = cluster.Spec.controlPlaneRef.apiVersion.Substring(cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/") + 1);
-            string _plural = _api + "s";
-
-            // check if provider is already present
-            ProviderK8sController? item = providers.Find(item => (item.api == _api) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));
-            if (item != null)
-            {
-                // provider already exists, nudge it to recheck this cluster which just had its secret updated
-                CrdProviderCluster crd = await item.generic.ReadNamespacedAsync<CrdProviderCluster>(cluster.Namespace(), cluster.Name());
-                item.ProcessModified(crd);
-            }
-            else //if (item == null)
-            {
-                // if not, start monitoring
-                ProviderK8sController provider = new ProviderK8sController(
-                        _api, _group, _version, _plural);
-
-                // add to list of providers we are monitoring
-                providers.Add(provider);
-
-                // start listening
-                provider.Listen(Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
-            }
+            
 
 
             return;
