@@ -282,7 +282,7 @@ namespace gge.K8sControllers
             // if no changes then return now without patching
             if (!isChange)
             {
-                Console.WriteLine("no changes detected, update complete");
+                Console.WriteLine("- no changes detected, update complete");
                 return;
             }
 
