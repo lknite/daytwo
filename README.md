@@ -35,7 +35,7 @@ environment always matches what is in git.
 | status  | controller                            | detail                                  |
 |---------|---------------------------------------|-----------------------------------------|
 | active  | daytwo-argocd-register-controller     | working, todo: improve logging, delete orphaned secrets, handle cluster name conflicts between multiple management clusters |
-| todo    | daytwo-argocd-pinniped-controller     |                                         |
+| active  | daytwo-argocd-pinniped-controller     |                                         |
 | todo    | add helm charts                       |                                         |
 | todo    | daytwo-operator                       |                                         |
 | todo    | add daytwo-operator helm chart        |                                         |
