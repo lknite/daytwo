@@ -143,7 +143,8 @@ namespace gge.K8sControllers
                 Console.WriteLine(ex);
             }
             Console.WriteLine("try serialize (2)");
-            Main.SerializeKubernetesClientConfig(kubeconfig);
+            string json = Main.SerializeKubernetesClientConfig(kubeconfig);
+            Console.WriteLine(json);
 
             // generate pinniped kubeconfig
             var p = new Process

@@ -20,8 +20,9 @@ namespace daytwo.Helpers
                             ));
 
             */
-
-            Console.WriteLine(kubeconfig.SslCaCerts[0].ToString());
+            Span<char> span = new Span<char>();
+            kubeconfig.SslCaCerts[0].TryExportCertificatePem(span, out int count);
+            Console.WriteLine(span.ToString());
 
             return $@"
 apiVersion: v1
