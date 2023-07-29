@@ -6,13 +6,9 @@ namespace daytwo.Helpers
     {
         public static string? SerializeKubernetesClientConfig(KubernetesClientConfiguration kubeconfig)
         {
-            Span<char> span = new Span<char>();
-            if (!kubeconfig.SslCaCerts[0].TryExportCertificatePem(span, out int count))
-            {
-                Console.WriteLine("unable to serialize kubeconfig");
-                return null;
-            }
-            Console.WriteLine(Base64Encode(span.ToString()));
+            string pem = kubeconfig.SslCaCerts[0].ExportCertificatePem();
+            Console.WriteLine(pem);
+            Console.WriteLine(Base64Encode(pem.ToString()));
 
             return $@"
 apiVersion: v1
