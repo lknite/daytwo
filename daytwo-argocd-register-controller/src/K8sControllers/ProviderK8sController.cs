@@ -220,9 +220,11 @@ namespace gge.K8sControllers
                 }
             }
 
+            /*
             // patch secret with new labels
             Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
                     new V1Patch(secret, V1Patch.PatchType.MergePatch), secret.Name(), secret.Namespace());
+            */
 
             // remove deleted labels from argocd cluster secret
             Console.WriteLine("- remove deleted labels from argocd cluster secret:");
@@ -282,7 +284,7 @@ namespace gge.K8sControllers
 
             // patch secret without removed labels
             Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
-                    new V1Patch(secret, V1Patch.PatchType.ApplyPatch), secret.Name(), secret.Namespace());
+                    new V1Patch(secret, V1Patch.PatchType.MergePatch), secret.Name(), secret.Namespace());
 
             return;
         }
