@@ -3,7 +3,6 @@ using daytwo.Helpers;
 using k8s.Models;
 using k8s;
 using System.Text.Json;
-using daytwo.K8sHelpers;
 using daytwo.CustomResourceDefinitions;
 using daytwo.crd.tanzukubernetescluster;
 using System.Text.RegularExpressions;
