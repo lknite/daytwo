@@ -1,5 +1,4 @@
 ﻿using daytwo;
-using daytwo.Helpers;
 using k8s.Models;
 using k8s;
 using System.Text.Json;
@@ -125,7 +124,7 @@ namespace gge.K8sControllers
 
             return;
         }
-        public async Task ProcessDeleted(CrdCluster cluster)
+        public async Task ProcessDeleted(V1Secret secret)
         {
             Console.WriteLine("ProcessDeleted");
 
