@@ -134,7 +134,7 @@ namespace gge.K8sControllers
 
             //
             KubernetesClientConfiguration kubeconfig = Main.BuildConfigFromArgocdSecret(secret);
-            Console.WriteLine(kubeconfig);
+            Console.WriteLine(JsonSerializer.Serialize(kubeconfig));
 
             // generate pinniped kubeconfig
             var p = new Process
