@@ -178,17 +178,6 @@ namespace gge.K8sControllers
                 tmp.SetAnnotation("daytwo.aarr.xyz/resourceVersion", cluster.Metadata.ResourceVersion);
                 tmp.SetAnnotation("daytwo.aarr.xyz/management-cluster", Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
 
-                // set cluster name label
-                //tmp.SetLabel("daytwo.aarr.xyz/name", cluster.Name());
-
-                /*
-                // copy over all labels
-                foreach (var next in cluster.Labels())
-                {
-                    tmp.SetLabel(next.Key, next.Value);
-                }
-                */
-
                 //
                 Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
                     new V1Patch(tmp, V1Patch.PatchType.MergePatch), tmp.Name(), tmp.Namespace());
@@ -198,11 +187,6 @@ namespace gge.K8sControllers
             //else if (DateTime.Compare((DateTime)cluster.Metadata.CreationTimestamp, (DateTime)tmp.Metadata.CreationTimestamp) > 0)
             {
                 Console.WriteLine("      - update argocd cluster secret");
-
-                /*
-                // remove cluster from argocd
-                await ProcessDeleted(cluster);
-                */
 
                 // get new cluster admin kubeconfig
                 KubernetesClientConfiguration tmpkubeconfig = await GetClusterKubeConfig(cluster.Name(), cluster.Namespace());
@@ -221,153 +205,42 @@ namespace gge.K8sControllers
                 tmp.SetAnnotation("daytwo.aarr.xyz/resourceVersion", cluster.Metadata.ResourceVersion);
                 tmp.SetAnnotation("daytwo.aarr.xyz/management-cluster", Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
 
-                // set cluster name label
-                //tmp.SetLabel("daytwo.aarr.xyz/name", cluster.Name());
-
-                /*
-                // copy over all labels
-                foreach (var next in cluster.Labels())
-                {
-                    tmp.SetLabel(next.Key, next.Value);
-                }
-                */
-
                 //
                 Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
                     new V1Patch(tmp, V1Patch.PatchType.MergePatch), tmp.Name(), tmp.Namespace());
-
-                //
-                string _api = cluster.Spec.controlPlaneRef.kind.ToLower();
-                string _group = cluster.Spec.controlPlaneRef.apiVersion.Substring(0, cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/"));
-                string _version = cluster.Spec.controlPlaneRef.apiVersion.Substring(cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/") + 1);
-                string _plural = _api + "s";
-
-                // check if provider is already present
-                ProviderK8sController? item = providers.Find(item => (item.api == _api) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));
-                if (item == null)
-                {
-                    // if not, start monitoring
-                    ProviderK8sController provider = new ProviderK8sController(
-                            _api, _group, _version, _plural);
-
-                    // add to list of providers we are monitoring
-                    providers.Add(provider);
-
-                    // start listening
-                    provider.Listen(Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
-                }
-                /*
-                // copy over labels by provider
-                string provider_api = cluster.Spec.controlPlaneRef.kind.ToLower();
-                string provider_group = cluster.Spec.controlPlaneRef.apiVersion.Substring(0, cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/"));
-                string provider_version = cluster.Spec.controlPlaneRef.apiVersion.Substring(cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/") + 1);
-                string provider_plural = provider_api + "s";
-                GenericClient provider = new GenericClient(kubeclient, provider_group, provider_version, provider_plural);
-
-                Console.WriteLine($"provider_api: {provider_api}");
-                Console.WriteLine($"provider_group: {provider_group}");
-                Console.WriteLine($"provider_version: {provider_version}");
-                Console.WriteLine($"provider_plural: {provider_plural}");
-
-                // create provider class instance on the fly
-                CrdProviderCluster asdf = await provider.ReadNamespacedAsync<CrdProviderCluster>(cluster.Namespace(), cluster.Name(), Globals.cancellationToken);
-                Console.WriteLine("provider labels:");
-                foreach (var next in asdf.Labels())
-                {
-                    Console.WriteLine(next.Key + ": " + next.Value);
-                    tmp.SetLabel(next.Key, next.Value);
-                }
-                */
             }
             else
             {
                 Console.WriteLine("      - cluster already added to argocd");
             }
 
+            //
+            string _api = cluster.Spec.controlPlaneRef.kind.ToLower();
+            string _group = cluster.Spec.controlPlaneRef.apiVersion.Substring(0, cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/"));
+            string _version = cluster.Spec.controlPlaneRef.apiVersion.Substring(cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/") + 1);
+            string _plural = _api + "s";
 
-            /*
-            // locate argocd cluster secret representing this cluster
-            Console.WriteLine("** sync 'addons' ...");
-            V1Secret? secret = GetClusterArgocdSecret(tkc.Metadata.Name);
-
-            // add missing labels to argocd cluster secret
-            Console.WriteLine("- add missing labels to argocd cluster secret:");
-            foreach (var l in tkc.Metadata.Labels)
+            // check if provider is already present
+            ProviderK8sController? item = providers.Find(item => (item.api == _api) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));
+            if (item != null)
             {
-                // only process labels starting with 'addons-'
-                if (!l.Key.StartsWith("addons-"))
-                {
-                    // skip
-                    continue;
-                }
+                // provider already exists, nudge it to recheck this cluster which just had its secret updated
+                CrdProviderCluster crd = await item.generic.ReadNamespacedAsync<CrdProviderCluster>(cluster.Namespace(), cluster.Name());
+                item.ProcessModified(crd);
+            }
+            else //if (item == null)
+            {
+                // if not, start monitoring
+                ProviderK8sController provider = new ProviderK8sController(
+                        _api, _group, _version, _plural);
 
-                // is this label already on the secret?
-                bool found = false;
+                // add to list of providers we are monitoring
+                providers.Add(provider);
 
-                // use try catch to avoid listing labels on a secret without labels
-                foreach (var label in secret.Labels())
-                {
-                    // only process labels starting with 'addons-'
-                    if (!label.Key.StartsWith("addons-"))
-                    {
-                        // skip
-                        continue;
-                    }
-
-                    //
-                    if ((l.Key == label.Key) && (l.Value == label.Value))
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-
-                // if not found, add to cluster secret
-                if (!found)
-                {
-                    Console.WriteLine("  - " + l.Key + ": " + l.Value);
-                }
+                // start listening
+                provider.Listen(Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
             }
 
-            // remove deleted labels from argocd cluster secret
-            Console.WriteLine("- remove deleted labels from argocd cluster secret:");
-            foreach (var label in secret.Labels())
-            {
-                // only process labels starting with 'addons-'
-                if (!label.Key.StartsWith("addons-"))
-                {
-                    // skip
-                    continue;
-                }
-
-                // is this label already on the secret?
-                bool found = false;
-
-                // use try catch to avoid listing labels on a secret without labels
-                foreach (var l in tkc.Metadata.Labels)
-                {
-                    // only process labels starting with 'addons-'
-                    if (!l.Key.StartsWith("addons-"))
-                    {
-                        // skip
-                        continue;
-                    }
-
-                    //
-                    if ((l.Key == label.Key) && (l.Value == label.Value))
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-
-                // if not found, add to cluster secret
-                if (!found)
-                {
-                    Console.WriteLine("  - " + label.Key + ": " + label.Value);
-                }
-            }
-            */
 
             return;
         }
