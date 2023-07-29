@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using k8s.KubeConfigModels;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.JsonPatch;
+using Newtonsoft.Json.Serialization;
 
 namespace gge.K8sControllers
 {
@@ -294,6 +295,10 @@ namespace gge.K8sControllers
             */
             var patch = new JsonPatchDocument<V1Secret>();
             patch.Replace(x => x.Metadata.Labels, secret.Labels());
+            patch.ContractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new CamelCaseNamingStrategy()
+            };
             patchStr = Newtonsoft.Json.JsonConvert.SerializeObject(patch);
             try
             {
