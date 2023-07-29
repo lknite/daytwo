@@ -154,9 +154,10 @@ namespace gge.K8sControllers
             var p = new Process
             {
                 StartInfo = {
-                    FileName = "cat",
+                    // pinniped get kubeconfig --kubeconfig /tmp/kubeconfig
+                    FileName = "pinniped",
                     WorkingDirectory = @"/tmp",
-                    Arguments = "kubeconfig"
+                    Arguments = "get kubeconfig --kubeconfig /tmp/kubeconfig"
                     /*
                     FileName = "pinniped",
                     WorkingDirectory = @"/usr/local/bin",
