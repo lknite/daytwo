@@ -15,6 +15,7 @@ using static System.Net.Mime.MediaTypeNames;
 using daytwo.crd.cluster;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
+using System.Net.Sockets;
 
 namespace gge.K8sControllers
 {
@@ -62,6 +63,20 @@ namespace gge.K8sControllers
                         // Acquire Semaphore
                         semaphore.Wait(Globals.cancellationToken);
                         //Console.WriteLine("[" + item.Metadata.Name + "]");
+
+                        // check that this secret is an argocd cluster secret
+                        if (item.Labels() == null)
+                        {
+                            continue;
+                        }
+                        if (!item.Labels().TryGetValue("argocd.argoproj.io/secret-type", out var value))
+                        {
+                            continue;
+                        }
+                        if (value != "cluster")
+                        {
+                            continue;
+                        }
 
                         // Handle event type
                         switch (type)
