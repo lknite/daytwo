@@ -15,6 +15,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Collections.Generic;
 using k8s.KubeConfigModels;
 using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace gge.K8sControllers
 {
@@ -175,7 +176,6 @@ namespace gge.K8sControllers
 
             // locate argocd cluster secret representing this cluster
             Console.WriteLine("** sync 'addons' ...");
-            //JsonDocument before = JsonSerializer.SerializeToDocument(secret);
 
             // add missing labels to argocd cluster secret
             Console.WriteLine("- add missing labels to argocd cluster secret:");
@@ -220,12 +220,6 @@ namespace gge.K8sControllers
                     secret.SetLabel(l.Key, l.Value);
                 }
             }
-
-            /*
-            // patch secret with new labels
-            Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
-                    new V1Patch(secret, V1Patch.PatchType.MergePatch), secret.Name(), secret.Namespace());
-            */
 
             // remove deleted labels from argocd cluster secret
             Console.WriteLine("- remove deleted labels from argocd cluster secret:");
@@ -298,10 +292,13 @@ namespace gge.K8sControllers
             Console.WriteLine("patch:");
             Console.WriteLine(patch);
             */
+            var patch = new JsonPatchDocument<V1Secret>();
+            patch.Replace(x => x.Metadata.Labels, secret.Labels());
+            patchStr = Newtonsoft.Json.JsonConvert.SerializeObject(patch);
             try
             {
                 Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
-                        new V1Patch(Newtonsoft.Json.JsonConvert.SerializeObject(secret), V1Patch.PatchType.JsonPatch), secret.Name(), secret.Namespace());
+                        new V1Patch(patchStr, V1Patch.PatchType.JsonPatch), secret.Name(), secret.Namespace());
             }
             catch (Exception e) {
                 Console.WriteLine(e.Message);
