@@ -7,7 +7,7 @@
 
 ## rbac ##
 - role get/list/watch to 'secrets' in argocd namespace
-  - why
+  - todo
 
 ## installation ##
 todo
