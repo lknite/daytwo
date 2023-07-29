@@ -294,6 +294,7 @@ namespace gge.K8sControllers
             catch (Exception e) {
                 Console.WriteLine(e.Message);
             }
+            Console.WriteLine("afterpatch");
 
             return;
         }
