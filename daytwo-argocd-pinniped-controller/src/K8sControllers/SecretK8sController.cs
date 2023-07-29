@@ -134,6 +134,7 @@ namespace gge.K8sControllers
 
             //
             KubernetesClientConfiguration kubeconfig = Main.BuildConfigFromArgocdSecret(secret);
+            /*
             try
             {
                 Console.WriteLine(JsonSerializer.Serialize(kubeconfig));
@@ -143,6 +144,7 @@ namespace gge.K8sControllers
                 Console.WriteLine(ex);
             }
             Console.WriteLine("try serialize (2)");
+            */
             string json = Main.SerializeKubernetesClientConfig(kubeconfig);
             Console.WriteLine(json);
 
