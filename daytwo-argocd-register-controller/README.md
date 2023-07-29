@@ -22,7 +22,7 @@ todo
 ## configuration environment variables ##
 ### required ###
 - Comma separated list of management clusters to sync w/ argocd
-  - MANAGEMENT_CLUSTERS: clusters1
+  - MANAGEMENT_CLUSTERS: clusters
 - Argocd auth token of account which will be used to add clusters to argocd
   - ARGOCD_AUTH_TOKEN: ...
 ### optional ###
