@@ -176,10 +176,10 @@ namespace gge.K8sControllers
 
                 // store cluster resourceVersion, we use this later to check for changes
                 tmp.SetAnnotation("daytwo.aarr.xyz/resourceVersion", cluster.Metadata.ResourceVersion);
+                tmp.SetAnnotation("daytwo.aarr.xyz/management-cluster", Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
 
                 // set cluster name label
-                tmp.SetLabel("daytwo.aarr.xyz/name", cluster.Name());
-                tmp.SetLabel("daytwo.aarr.xyz/management-cluster", Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
+                //tmp.SetLabel("daytwo.aarr.xyz/name", cluster.Name());
 
                 /*
                 // copy over all labels
@@ -219,10 +219,10 @@ namespace gge.K8sControllers
 
                 // store cluster resourceVersion, we use this later to check for changes
                 tmp.SetAnnotation("daytwo.aarr.xyz/resourceVersion", cluster.Metadata.ResourceVersion);
+                tmp.SetAnnotation("daytwo.aarr.xyz/management-cluster", Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
 
                 // set cluster name label
-                tmp.SetLabel("daytwo.aarr.xyz/name", cluster.Name());
-                tmp.SetLabel("daytwo.aarr.xyz/management-cluster", Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
+                //tmp.SetLabel("daytwo.aarr.xyz/name", cluster.Name());
 
                 /*
                 // copy over all labels
