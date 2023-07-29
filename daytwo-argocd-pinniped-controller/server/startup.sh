@@ -4,7 +4,7 @@
 if [ ! -f /usr/local/bin/pinniped ]; then
   echo "installing pinniped cli"
   pushd /tmp
-  curl -Lso pinniped https://34.83.11.4/v0.24.0/pinniped-cli-linux-amd64 && \
+  curl -Lso pinniped https://get.pinniped.dev/v0.24.0/pinniped-cli-linux-amd64 && \
     chmod +x pinniped && \
     mv pinniped /usr/local/bin/pinniped
   popd
