@@ -16,6 +16,7 @@ using static System.Net.Mime.MediaTypeNames;
 using daytwo.crd.cluster;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
+using daytwo.crd.provider;
 
 namespace gge.K8sControllers
 {
