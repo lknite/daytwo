@@ -181,6 +181,7 @@ namespace gge.K8sControllers
 
             //
             var before = JsonSerializer.SerializeToDocument(secret);
+            bool isChange = false;
 
             // add missing labels to argocd cluster secret
             Console.WriteLine("- add missing labels to argocd cluster secret:");
@@ -223,6 +224,7 @@ namespace gge.K8sControllers
                 {
                     Console.WriteLine("  - " + l.Key + ": " + l.Value);
                     secret.SetLabel(l.Key, l.Value);
+                    isChange = true;
                 }
             }
 
@@ -273,16 +275,25 @@ namespace gge.K8sControllers
                 {
                     Console.WriteLine("  - " + label.Key + ": " + label.Value);
                     secret.SetLabel(label.Key, null);
+                    isChange = true;
                 }
             }
 
+            // if no changes then return now without patching
+            if (!isChange)
+            {
+                Console.WriteLine("no changes detected, update complete");
+                return;
+            }
+
+            // display adjusted label list
             Console.WriteLine("resulting label list:");
             foreach (var next in secret.Labels())
             {
                 Console.WriteLine("- "+ next.Key +": "+ next.Value);
             }
 
-            //
+            // generate json patch
             var patch = before.CreatePatch(secret);
 
             /*
