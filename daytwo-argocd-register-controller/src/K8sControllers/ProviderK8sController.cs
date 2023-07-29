@@ -255,7 +255,7 @@ namespace gge.K8sControllers
                     }
                 }
 
-                // if not found, add to cluster secret
+                // if not found, remove to cluster secret
                 if (!found)
                 {
                     Console.WriteLine("  - " + label.Key + ": " + label.Value);
