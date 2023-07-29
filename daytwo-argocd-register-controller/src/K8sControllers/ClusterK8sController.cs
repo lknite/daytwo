@@ -27,18 +27,36 @@ namespace gge.K8sControllers
         static string version = "v1beta1";
         static string plural = api + "s";
 
-        static GenericClient generic = null;// new GenericClient(Globals.service.kubeclient, group, version, plural);
-        static Kubernetes kubeclient = null;
-        static KubernetesClientConfiguration kubeconfig = null;
 
+        public string managementCluster;
+
+        public Kubernetes kubeclient = null;
+        public KubernetesClientConfiguration kubeconfig = null;
+
+        public GenericClient generic = null;
 
         // providers here as they are associated with each management cluster
         public List<ProviderK8sController> providers = new List<ProviderK8sController>();
 
-        public async Task Listen()
+
+        public ClusterK8sController() //string api, string group, string version, string plural)
+        {
+            /*
+            // initialize properties
+            this.api = api;
+            this.group = group;
+            this.version = version;
+            this.plural = plural;
+            */
+
+            // start listening
+            Console.WriteLine($"**** Cluster.Add({api}s.{group}.{version})");
+        }
+
+        public async Task Listen(string managementCluster)
         {
             // locate the provisioning cluster argocd secret
-            V1Secret? secret = GetClusterArgocdSecret(Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
+            V1Secret? secret = GetClusterArgocdSecret(managementCluster);
             // use secret to create kubeconfig
             kubeconfig = BuildConfigFromArgocdSecret(secret);
             // use kubeconfig to create client
