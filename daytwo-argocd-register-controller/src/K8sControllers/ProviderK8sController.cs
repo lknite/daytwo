@@ -17,6 +17,8 @@ using k8s.KubeConfigModels;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.JsonPatch;
 using Newtonsoft.Json.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
+using System.Reflection.Emit;
 
 namespace gge.K8sControllers
 {
@@ -298,10 +300,11 @@ namespace gge.K8sControllers
             /*
             patch.ContractResolver = new DefaultContractResolver
             {
-                NamingStrategy = new CamelCaseNamingStrategy()
+                NamingStrategy =  new CamelCaseNamingStrategy()
             };
             */
             patchStr = Newtonsoft.Json.JsonConvert.SerializeObject(patch);
+            patchStr = patchStr.Replace("/Metadata/Labels", "/metadata/labels");
             Console.WriteLine("patch:");
             Console.WriteLine(patchStr);
             try
