@@ -30,8 +30,8 @@ environment always matches what is in git.
 ## development
 | status  | controller                            | detail                                  |
 |---------|---------------------------------------|-----------------------------------------|
-| active  | daytwo-argocd-register-controller     | working, todo: improve logging, delete orphaned secrets |
-| active  | daytwo-argocd-pinniped-controller     |                                         |
+| active  | [daytwo-argocd-register-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-register-controller)     | working, todo: improve logging, delete orphaned secrets |
+| active  | [daytwo-argocd-pinniped-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-pinniped-controller)     |                                         |
 | todo    | add helm charts                       |                                         |
 | todo    | move builds to use github actions     |                                         |
 | todo    | rewrite all controllers using go      |                                         |
