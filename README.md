@@ -13,8 +13,8 @@ ready then performs additional idempotent actions.  However, this method is not 
 would be a controller which recognizes a new cluster and then takes care of things automatically, that way the
 environment always matches what is in git.
 
-## capi compatible
-- clusterapi
+## compatible
+- clusterapi (a.k.a. capi)
 - tanzu (which uses capi)
 
 ## controllers
