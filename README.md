@@ -20,7 +20,7 @@ environment always matches what is in git.
 ## controllers
 - [daytwo-argocd-register-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-register-controller)
   - watches for new clusters to reach a ready state and automatically adds them to argocd
-  - syncs labels between capi provider.yaml and argocd cluster secrets
+  - syncs labels between capi provider resources and argocd cluster secrets
     - argocd applicationsets can then target labels, allowing addons to be managed via provider.yaml
     - the 'cluster.x-k8s.io/cluster-name' is included in the label copy allowing for targeting the cluster name
 - [daytwo-argocd-pinniped-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-pinniped-controller)
