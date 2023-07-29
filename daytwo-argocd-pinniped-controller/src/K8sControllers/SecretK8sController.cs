@@ -63,14 +63,17 @@ namespace gge.K8sControllers
                         // check that this secret is an argocd cluster secret
                         if (item.Labels() == null)
                         {
+                            Console.WriteLine("- ignoring, not a cluster secret");
                             continue;
                         }
                         if (!item.Labels().TryGetValue("argocd.argoproj.io/secret-type", out var value))
                         {
+                            Console.WriteLine("- ignoring, not a cluster secret");
                             continue;
                         }
                         if (value != "cluster")
                         {
+                            Console.WriteLine("- ignoring, not a cluster secret");
                             continue;
                         }
 
