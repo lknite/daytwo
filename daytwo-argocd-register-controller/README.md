@@ -5,6 +5,7 @@
 - event driven
 - able to watch multiple management clusters
 - syncs all labels on provider resources with argocd secret
+  - including 'cluster.x-k8s.io/cluster-name', which is nice, allowing for applicationsets to target by cluster name
 
 ## rbac ##
 - role add/get/list/update to 'secrets' in argocd namespace
