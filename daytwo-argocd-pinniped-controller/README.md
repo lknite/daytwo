@@ -13,11 +13,12 @@
 todo
 
 ## configuration environment variables ##
-### required ###
-- Comma separated list of management clusters to sync w/ argocd
-  - NAME: value
 
 ### optional ###
+- To specify an alternative location for argocd ('argocd' by default):
+  - ARGOCD_NAMESPACE: argocd
+- To disable the website hosting the kubeconfig files (enabled by default):
+  - OPTION_DISABLE_HOSTING: true
   
 ## status ##
 - initial development
