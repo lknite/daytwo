@@ -26,7 +26,7 @@ COPY src/bin $TARGET_PATH/bin
 
 # copy over startup script
 COPY server /opt/server
-RUN chmod 755 /opt/server/start.sh
+RUN chmod 755 /opt/server/startup.sh
 
 WORKDIR $TARGET_PATH/bin/Debug/net7.0/linux-x64/publish
 RUN chmod 755 $TARGET_BIN
