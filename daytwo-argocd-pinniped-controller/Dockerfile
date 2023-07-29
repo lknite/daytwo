@@ -26,12 +26,12 @@ COPY src/bin $TARGET_PATH/bin
 
 # copy over startup script
 COPY server /opt
-RUN chmod 755 /opt/server/start.sh
+#RUN chmod 755 /opt/server/start.sh
 
 WORKDIR $TARGET_PATH/bin/Debug/net7.0/linux-x64/publish
 RUN chmod 755 $TARGET_BIN
 RUN ln -s $TARGET_BIN -s entrypoint
 
-ENTRYPOINT ["/opt/server/startup.sh"]
-#ENTRYPOINT ["./entrypoint","--urls","http://*:80"]
+#ENTRYPOINT ["/opt/server/startup.sh"]
+ENTRYPOINT ["./entrypoint","--urls","http://*:80"]
 #ENTRYPOINT ["tail", "-f", "/dev/null"]
