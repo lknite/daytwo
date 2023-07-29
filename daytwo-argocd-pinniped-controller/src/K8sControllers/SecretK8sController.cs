@@ -60,10 +60,6 @@ namespace gge.K8sControllers
                         Console.WriteLine("");
                         Console.WriteLine("(event) [" + type + "] " + plural + "." + group + "/" + version + ": " + item.Metadata.Name);
 
-                        // Acquire Semaphore
-                        semaphore.Wait(Globals.cancellationToken);
-                        //Console.WriteLine("[" + item.Metadata.Name + "]");
-
                         // check that this secret is an argocd cluster secret
                         if (item.Labels() == null)
                         {
@@ -77,6 +73,9 @@ namespace gge.K8sControllers
                         {
                             continue;
                         }
+
+                        // Acquire Semaphore
+                        semaphore.Wait(Globals.cancellationToken);
 
                         // Handle event type
                         switch (type)
