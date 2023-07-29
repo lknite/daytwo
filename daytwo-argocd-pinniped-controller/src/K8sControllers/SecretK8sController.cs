@@ -57,9 +57,6 @@ namespace gge.K8sControllers
                 {
                     await foreach (var (type, item) in generic.WatchNamespacedAsync<V1Secret>(Globals.service.argocdNamespace))
                     {
-                        Console.WriteLine("");
-                        Console.WriteLine("(event) [" + type + "] " + plural + "." + group + "/" + version + ": " + item.Metadata.Name);
-
                         // check that this secret is an argocd cluster secret
                         if (item.Labels() == null)
                         {
@@ -76,6 +73,9 @@ namespace gge.K8sControllers
                             Console.WriteLine("- ignoring, not a cluster secret");
                             continue;
                         }
+
+                        Console.WriteLine("");
+                        Console.WriteLine("(event) [" + type + "] " + plural + "." + group + "/" + version + ": " + item.Metadata.Name);
 
                         // Acquire Semaphore
                         semaphore.Wait(Globals.cancellationToken);
@@ -124,14 +124,10 @@ namespace gge.K8sControllers
 
         public async Task ProcessAdded(V1Secret secret)
         {
-            Console.WriteLine("ProcessAdded");
-
             ProcessModified(secret);
         }
         public async Task ProcessModified(V1Secret secret)
         {
-            Console.WriteLine("ProcessModified");
-
             /*
             Dictionary<string, string> data = new Dictionary<string, string>();
             string patchStr = string.Empty;
@@ -143,7 +139,6 @@ namespace gge.K8sControllers
         }
         public async Task ProcessDeleted(V1Secret secret)
         {
-            Console.WriteLine("ProcessDeleted");
 
             return;
         }

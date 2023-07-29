@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "xesg1OeeaFpttIprizRxU8QFZwz61Eb3HzXuEB11Pb4=",
+  "Source": "daytwo-argocd-pinniped-controller",
+  "BasePath": "_content/daytwo-argocd-pinniped-controller",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
