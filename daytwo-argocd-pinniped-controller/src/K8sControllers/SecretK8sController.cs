@@ -147,15 +147,21 @@ namespace gge.K8sControllers
             */
             string json = Main.SerializeKubernetesClientConfig(
                     kubeconfig, Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length));
-            Console.WriteLine(json);
+            //Console.WriteLine(json);
+            File.WriteAllText("/tmp/kubeconfig", json);
 
             // generate pinniped kubeconfig
             var p = new Process
             {
                 StartInfo = {
+                    FileName = "cat",
+                    WorkingDirectory = @"/tmp",
+                    Arguments = "kubeconfig"
+                    /*
                     FileName = "pinniped",
                     WorkingDirectory = @"/usr/local/bin",
                     Arguments = "version"
+                    */
                 }
             };
             p.Start();

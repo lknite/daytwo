@@ -7,8 +7,6 @@ namespace daytwo.Helpers
         public static string? SerializeKubernetesClientConfig(KubernetesClientConfiguration kubeconfig, string name)
         {
             string pem = kubeconfig.SslCaCerts[0].ExportCertificatePem();
-            //Console.WriteLine(pem);
-            //Console.WriteLine(Base64Encode(pem.ToString()));
 
             return $@"
 apiVersion: v1
