@@ -286,8 +286,14 @@ namespace gge.K8sControllers
             string patch = JsonSerializer.Serialize(secret);
             Console.WriteLine("patch:");
             Console.WriteLine(patch);
-            Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
-                    new V1Patch(patch, V1Patch.PatchType.JsonPatch), secret.Name(), secret.Namespace());
+            try
+            {
+                Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
+                        new V1Patch(patch, V1Patch.PatchType.JsonPatch), secret.Name(), secret.Namespace());
+            }
+            catch (Exception e) {
+                Console.WriteLine(e.Message);
+            }
 
             return;
         }
