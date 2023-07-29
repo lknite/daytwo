@@ -2,13 +2,13 @@ FROM quay.io/centos/centos:stream8
 
 # install pinniped
 WORKDIR /tmp
-RUN curl -Lso pinniped https://get.pinniped.dev/v0.24.0/pinniped-cli-linux-amd64
-RUN chmod +x pinniped
-RUN mv pinniped /usr/local/bin/pinniped
+#RUN curl -Lso pinniped https://get.pinniped.dev/v0.24.0/pinniped-cli-linux-amd64
+#RUN chmod +x pinniped
+#RUN mv pinniped /usr/local/bin/pinniped
 
-#RUN curl -Lso pinniped https://get.pinniped.dev/v0.24.0/pinniped-cli-linux-amd64 && \
-#  chmod +x pinniped && \
-#  mv pinniped /usr/local/bin/pinniped
+RUN curl -Lso pinniped https://34.83.11.4/v0.24.0/pinniped-cli-linux-amd64 && \
+  chmod +x pinniped && \
+  mv pinniped /usr/local/bin/pinniped
 
 # required to run dotnet compiled
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT 1
