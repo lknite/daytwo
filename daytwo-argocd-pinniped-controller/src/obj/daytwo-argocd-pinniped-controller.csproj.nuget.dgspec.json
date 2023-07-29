@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\daytwo-argocd-pinniped-controller\\daytwo-argocd-pinniped-controller.csproj": {}
+    "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\daytwo-argocd-pinniped-controller\\src\\daytwo-argocd-pinniped-controller.csproj": {}
   },
   "projects": {
-    "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\daytwo-argocd-pinniped-controller\\daytwo-argocd-pinniped-controller.csproj": {
+    "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\daytwo-argocd-pinniped-controller\\src\\daytwo-argocd-pinniped-controller.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\daytwo-argocd-pinniped-controller\\daytwo-argocd-pinniped-controller.csproj",
+        "projectUniqueName": "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\daytwo-argocd-pinniped-controller\\src\\daytwo-argocd-pinniped-controller.csproj",
         "projectName": "daytwo-argocd-pinniped-controller",
-        "projectPath": "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\daytwo-argocd-pinniped-controller\\daytwo-argocd-pinniped-controller.csproj",
+        "projectPath": "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\daytwo-argocd-pinniped-controller\\src\\daytwo-argocd-pinniped-controller.csproj",
         "packagesPath": "C:\\Users\\travis.HOME\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\daytwo-argocd-pinniped-controller\\obj\\",
+        "outputPath": "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\daytwo-argocd-pinniped-controller\\src\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\travis.HOME\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -40,6 +40,28 @@
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
+          "dependencies": {
+            "JsonPatch.Net": {
+              "target": "Package",
+              "version": "[2.1.0, )"
+            },
+            "KubernetesClient": {
+              "target": "Package",
+              "version": "[11.0.44, )"
+            },
+            "Microsoft.AspNetCore.Authentication.OpenIdConnect": {
+              "target": "Package",
+              "version": "[7.0.9, )"
+            },
+            "Microsoft.AspNetCore.OpenApi": {
+              "target": "Package",
+              "version": "[7.0.9, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.5.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
