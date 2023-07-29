@@ -290,16 +290,18 @@ namespace gge.K8sControllers
             var patch = before.CreatePatch(expected); 
             */
 
+            /*
             // patch secret without removed labels
             string patch = @"{""metadata"":{""labels"":";
             patch += JsonSerializer.Serialize(secret.Metadata.Labels);
             patch += "}}";
             Console.WriteLine("patch:");
             Console.WriteLine(patch);
+            */
             try
             {
                 Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
-                        new V1Patch(Newtonsoft.Json.JsonConvert.SerializeObject(patch), V1Patch.PatchType.JsonPatch), secret.Name(), secret.Namespace());
+                        new V1Patch(Newtonsoft.Json.JsonConvert.SerializeObject(secret), V1Patch.PatchType.JsonPatch), secret.Name(), secret.Namespace());
             }
             catch (Exception e) {
                 Console.WriteLine(e.Message);
