@@ -271,6 +271,7 @@ namespace gge.K8sControllers
             }
 
             // patch secret with new labels
+            Console.WriteLine("Patching ...");
             Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
                     new V1Patch(secret, V1Patch.PatchType.MergePatch), secret.Name(), secret.Namespace());
 
