@@ -68,7 +68,6 @@ namespace daytwo
                 clusterController.Listen(cluster);
             }
 
-
             return Task.CompletedTask;
         }
 

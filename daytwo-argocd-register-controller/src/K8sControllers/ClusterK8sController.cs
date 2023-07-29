@@ -217,6 +217,14 @@ namespace gge.K8sControllers
             Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
                 new V1Patch(tmp, V1Patch.PatchType.MergePatch), tmp.Name(), tmp.Namespace());
 
+            // Check for environment variable asking us not to copy labels
+            string? disable = Environment.GetEnvironmentVariable("OPTION_DISABLE_LABEL_COPY");
+            if ((disable != null) && (disable.Equals("true", StringComparison.OrdinalIgnoreCase)))
+            {
+                // do not copy labels
+                return;
+            }
+
             //
             string _api = cluster.Spec.controlPlaneRef.kind.ToLower();
             string _group = cluster.Spec.controlPlaneRef.apiVersion.Substring(0, cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/"));

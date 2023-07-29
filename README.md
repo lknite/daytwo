@@ -13,46 +13,34 @@ ready then performs additional idempotent actions.  However, this method is not 
 would be a controller which recognizes a new cluster and then takes care of things automatically, that way the
 environment always matches what is in git.
 
-## compatible
+## capi compatible
 - clusterapi
-- tanzu
+- tanzu (which uses capi)
 
 ## controllers
 - [daytwo-argocd-register-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-register-controller)
   - watches for new clusters to reach a ready state and automatically adds them to argocd
-- [daytwo-argocd-addons-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-addons-controller)
-  - syncs 'addons-*' labels between cluster.yaml and argocd cluster secrets
-  - argocd applicationsets can then target labels, allowing addons to be managed via cluster.yaml
+  - syncs labels between capi provider.yaml and argocd cluster secrets
+    - argocd applicationsets can then target labels, allowing addons to be managed via provider.yaml
+    - the 'cluster.x-k8s.io/cluster-name' is included in the label copy allowing for targeting the cluster name
 - [daytwo-argocd-pinniped-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-pinniped-controller)
   - watches for registered argocd clusters and updates pinniped kubeconfig files
   - hosts a website which can be used to access the pinniped kubeconfig files
-- [daytwo-argocd-external-dns-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-external-dns-controller)
-  - adds a label to the service which provides kubeapi access
-  - allows for fqdn access to clusters
-  - note: if certificates are not generated w/ fqdn access will be denied, use (-insecure) to get around
-    - recommend regenerate certificates
-    - research 'insecure-skip-tls-verify' in kubeconfig before deciding to use it
-- [daytwo-argocd-trigger-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-trigger-controller)
-  - calls a provided script allowing for daytwo actions to be performed elsewhere
-  - use as needed for actions which require more customization (e.g. creating cluster-specific ad groups)
 
 ## operator-controller
 - [daytwo-operator](https://github.com/lknite/daytwo/tree/main/daytwo-operator)
   - use to allow for a single helm chart deployment and values file
 
 ## development
-| status  | controller                            | detail                          |
-|---------|---------------------------------------|---------------------------------|
-| active  | daytwo-argocd-register-controller     | working, todo: cleanup, add tkg |
-| testing | daytwo-argocd-addons-controller       | functionality added to register |
-| todo    | daytwo-argocd-pinniped-controller     |                                 |
-| todo    | daytwo-argocd-external-dns-controller |                                 |
-| todo    | daytwo-argocd-trigger-controller      |                                 |
-| todo    | add helm charts                       |                                 |
-| todo    | daytwo-operator                       |                                 |
-| todo    | add daytwo-operator helm chart        |                                 |
-| todo    | move builds to use github actions     |                                 |
-| todo    | rewrite all controllers using go      |                                 |
+| status  | controller                            | detail                                  |
+|---------|---------------------------------------|-----------------------------------------|
+| active  | daytwo-argocd-register-controller     | working, todo: improve logging, delete orphaned secrets |
+| todo    | daytwo-argocd-pinniped-controller     |                                         |
+| todo    | add helm charts                       |                                         |
+| todo    | daytwo-operator                       |                                         |
+| todo    | add daytwo-operator helm chart        |                                         |
+| todo    | move builds to use github actions     |                                         |
+| todo    | rewrite all controllers using go      |                                         |
 
 ## individual installation
 - use helm chart to install respective controller
