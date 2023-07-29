@@ -283,9 +283,9 @@ namespace gge.K8sControllers
             }
 
             // patch secret without removed labels
-            string patch = @"{""metadata"":""labels"":";
+            string patch = @"{""metadata"":{""labels"":";
             patch += JsonSerializer.Serialize(secret.Metadata.Labels);
-            patch += "}";
+            patch += "}}";
             Console.WriteLine("patch:");
             Console.WriteLine(patch);
             try
