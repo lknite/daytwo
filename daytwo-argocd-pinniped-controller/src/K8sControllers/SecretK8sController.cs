@@ -16,6 +16,7 @@ using daytwo.crd.cluster;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
 using System.Net.Sockets;
+using System.Diagnostics;
 
 namespace gge.K8sControllers
 {
@@ -128,18 +129,28 @@ namespace gge.K8sControllers
         }
         public async Task ProcessModified(V1Secret secret)
         {
-            /*
-            Dictionary<string, string> data = new Dictionary<string, string>();
-            string patchStr = string.Empty;
+            Console.WriteLine("update configmap");
 
-            Console.WriteLine("  - namespace: " + cluster.Namespace() + ", cluster: " + cluster.Name());
-            */
+            var p = new Process
+            {
+                StartInfo = {
+                    FileName = "pinniped",
+                    WorkingDirectory = @"/usr/local/bin",
+                    Arguments = "version"
+                }
+            };
+            p.Start();
+            p.WaitForExit();
+            while (!p.StandardOutput.EndOfStream)
+            {
+                Console.WriteLine(p.StandardOutput.ReadLine());
+            }
 
             return;
         }
         public async Task ProcessDeleted(V1Secret secret)
         {
-
+            Console.WriteLine("remove from configmap");
             return;
         }
     }
