@@ -12,6 +12,9 @@ namespace daytwo
         public KubernetesClientConfiguration kubeconfig;
         public Kubernetes kubeclient;
 
+        // save argocd namespace
+        public string argocdNamespace = "argocd";
+
         //
         //public List<ClusterK8sController> clusters = new List<ClusterK8sController>();
 
@@ -27,6 +30,12 @@ namespace daytwo
                 {
                     throw new Exception("Missing required environment variable: '" + req + "'");
                 }
+            }
+
+            // If argocd namespace is specified via environment variable then set here
+            if (Environment.GetEnvironmentVariable("ARGOCD_NAMESPACE") != null)
+            {
+                argocdNamespace = Environment.GetEnvironmentVariable("ARGOCD_NAMESPACE");
             }
 
             main = new Main.Main();

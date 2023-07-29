@@ -1,4 +1,5 @@
 ﻿using daytwo;
+using daytwo.Helpers;
 using k8s.Models;
 using k8s;
 using System.Text.Json;
@@ -22,13 +23,12 @@ namespace gge.K8sControllers
 {
     public class ClusterK8sController
     {
+        public string managementCluster;
+
         static string api = "cluster";
         static string group = "cluster.x-k8s.io";
         static string version = "v1beta1";
         static string plural = api + "s";
-
-
-        public string managementCluster;
 
         public Kubernetes kubeclient = null;
         public KubernetesClientConfiguration kubeconfig = null;
@@ -55,10 +55,13 @@ namespace gge.K8sControllers
 
         public async Task Listen(string managementCluster)
         {
+            // remember the management cluster
+            this.managementCluster = managementCluster;
+
             // locate the provisioning cluster argocd secret
-            V1Secret? secret = GetClusterArgocdSecret(managementCluster);
+            V1Secret? secret = Main.GetClusterArgocdSecret(managementCluster);
             // use secret to create kubeconfig
-            kubeconfig = BuildConfigFromArgocdSecret(secret);
+            kubeconfig = Main.BuildConfigFromArgocdSecret(secret);
             // use kubeconfig to create client
             kubeclient = new Kubernetes(kubeconfig);
 
@@ -155,7 +158,7 @@ namespace gge.K8sControllers
             }
 
             // has this cluster been added to argocd?
-            V1Secret? tmp = GetClusterArgocdSecret(cluster.Name());
+            V1Secret? tmp = Main.GetClusterArgocdSecret(cluster.Name(), managementCluster);
 
             if (tmp != null)
             {
@@ -202,7 +205,7 @@ namespace gge.K8sControllers
             KubernetesClientConfiguration tmpkubeconfig = await GetClusterKubeConfig(cluster.Name(), cluster.Namespace());
 
             // acquire argocd cluster secret to so we can add annotation and labels
-            tmp = GetClusterArgocdSecret(cluster.Name());
+            tmp = Main.GetClusterArgocdSecret(cluster.Name(), managementCluster);
             if (tmp == null)
             {
                 Console.WriteLine("unable to add argocd secret");
@@ -221,7 +224,7 @@ namespace gge.K8sControllers
             string? disable = Environment.GetEnvironmentVariable("OPTION_DISABLE_LABEL_COPY");
             if ((disable != null) && (disable.Equals("true", StringComparison.OrdinalIgnoreCase)))
             {
-                // do not copy labels
+                // do not monitor providers or copy labels
                 return;
             }
 
@@ -258,7 +261,7 @@ namespace gge.K8sControllers
         public async Task ProcessDeleted(CrdCluster cluster)
         {
             // check if we should remove this from argocd
-            V1Secret tmp = GetClusterArgocdSecret(cluster.Name());
+            V1Secret tmp = Main.GetClusterArgocdSecret(cluster.Name(), managementCluster);
             if (tmp == null)
             {
                 Console.WriteLine("argocd is not managing this cluster, no need to remove it");
@@ -327,104 +330,8 @@ namespace gge.K8sControllers
             Console.WriteLine("[cluster] after exec (2)");
         }
 
-        public static string Base64Encode(string text)
-        {
-            var textBytes = System.Text.Encoding.UTF8.GetBytes(text);
-            return System.Convert.ToBase64String(textBytes);
-        }
-        public static string Base64Decode(string base64)
-        {
-            var base64Bytes = System.Convert.FromBase64String(base64);
-            return System.Text.Encoding.UTF8.GetString(base64Bytes);
-        }
 
-        public static V1Secret? GetClusterArgocdSecret(string clusterName)
-        {
-            //Console.WriteLine("- GetClusterSecret, clusterName: "+ clusterName);
-            V1SecretList secrets = Globals.service.kubeclient.ListNamespacedSecret("argocd");
-
-            //Console.WriteLine("- argocd cluster secrets:");
-            foreach (V1Secret secret in secrets)
-            {
-                // is there a label indicating this is a cluster secret?
-                if (secret.Labels() == null)
-                {
-                    //Console.WriteLine("  - skipping, a");
-                    continue;
-                }
-                if (!secret.Labels().TryGetValue("argocd.argoproj.io/secret-type", out var value))
-                {
-                    //Console.WriteLine("  - skipping, b");
-                    continue;
-                }
-                if (value != "cluster")
-                {
-                    //Console.WriteLine("  - skipping, c, value: "+ value);
-                    continue;
-                }
-
-                // is this the cluster we are looking for?
-                string name = Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length);
-                //Console.WriteLine("  - name: " + name +", tkcName: "+ tkc.Metadata.Name);
-                if (name != clusterName)
-                {
-                    //Console.WriteLine("  - skipping, d");
-                    continue;
-                }
-
-                /*
-                // use regex to match cluster name via argocd secret which represents cluster
-                if (!Regex.Match(next.Name(), "cluster-" + tkc.Metadata.Name + "-" + "\\d").Success)
-                {
-                    // skip secret, this is not the cluster secret
-                    continue;
-                }
-                */
-
-                // secret located
-                //Console.WriteLine("- secret located: " + secret.Name());
-                return secret;
-            }
-
-            return null;
-        }
-
-        public static KubernetesClientConfiguration BuildConfigFromArgocdSecret(V1Secret secret)
-        {
-            Dictionary<string, string> data = new Dictionary<string, string>();
-
-            // form a kubeconfig via the argocd secret
-            Console.WriteLine("- form kubeconfig from argocd cluster secret ...");
-
-            // we have a cluster secret, check its name/server
-            data.Add("name", Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length));
-            data.Add("server", Encoding.UTF8.GetString(secret.Data["server"], 0, secret.Data["server"].Length));
-            data.Add("config", Encoding.UTF8.GetString(secret.Data["config"], 0, secret.Data["config"].Length));
-
-            Console.WriteLine("  -   name: " + data["name"]);
-            Console.WriteLine("  - server: " + data["server"]);
-
-            // parse kubeconfig json data from argocd secret
-            JsonElement o = JsonSerializer.Deserialize<JsonElement>(data["config"]);
-
-            // start with an empty kubeconfig
-            KubernetesClientConfiguration kubeconfig = new KubernetesClientConfiguration();
-
-            // form kubeconfig using values from argocd secret
-            kubeconfig.Host = data["server"];
-            kubeconfig.SkipTlsVerify = o.GetProperty("tlsClientConfig").GetProperty("insecure").GetBoolean();
-            kubeconfig.ClientCertificateData = o.GetProperty("tlsClientConfig").GetProperty("certData").GetString();
-            kubeconfig.ClientCertificateKeyData = o.GetProperty("tlsClientConfig").GetProperty("keyData").GetString();
-            // convert caData into an x509 cert & add
-            kubeconfig.SslCaCerts = new X509Certificate2Collection();
-            kubeconfig.SslCaCerts.Add(
-                    X509Certificate2.CreateFromPem(
-                        Base64Decode(o.GetProperty("tlsClientConfig").GetProperty("caData").GetString()).AsSpan()
-                ));
-
-            return kubeconfig;
-        }
-
+        
         /// <summary>
         /// With knowledge of the innerworkings of the cluster provisioning process,
         /// obtain the default admin kubeconfig '/etc/kubernetes/admin.conf'.
@@ -539,10 +446,12 @@ namespace gge.K8sControllers
             return null;
         }
 
+        /*
         public static void PrintEvenNumbers()
         {
             //Console.WriteLine("all is done");
         }
+        */
         public static Task One(Stream stdIn, Stream stdOut, Stream stdErr)
         {
             StreamReader sr = new StreamReader(stdOut);
@@ -556,6 +465,7 @@ namespace gge.K8sControllers
             //return new Task(PrintEvenNumbers);
         }
 
+        /*
         private static async Task ExecInPod(IKubernetes client, V1Pod pod, string cmd)
         {
             var webSocket =
@@ -573,5 +483,6 @@ namespace gge.K8sControllers
 
             //return new Task(PrintEvenNumbers);
         }
+        */
     }
 }

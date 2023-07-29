@@ -18,6 +18,7 @@ using System.Runtime.CompilerServices;
 using YamlDotNet.Serialization.NamingConventions;
 using System.Reflection.Emit;
 using Json.Patch;
+using daytwo.Helpers;
 
 namespace gge.K8sControllers
 {
@@ -77,9 +78,9 @@ namespace gge.K8sControllers
             this.managementCluster = managementCluster;
 
             // locate the provisioning cluster argocd secret
-            V1Secret? secret = GetClusterArgocdSecret(managementCluster);
+            V1Secret? secret = Main.GetClusterArgocdSecret(managementCluster);
             // use secret to create kubeconfig
-            kubeconfig = BuildConfigFromArgocdSecret(secret);
+            kubeconfig = Main.BuildConfigFromArgocdSecret(secret);
             // use kubeconfig to create client
             kubeclient = new Kubernetes(kubeconfig);
 
@@ -162,7 +163,7 @@ namespace gge.K8sControllers
             Console.WriteLine("Addition/Modify detected: " + provider.Metadata.Name);
 
             // acquire argocd cluster secret to so we can sync labels
-            V1Secret? secret = GetClusterArgocdSecret(provider.Name());
+            V1Secret? secret = Main.GetClusterArgocdSecret(provider.Name(), managementCluster);
             if (secret == null)
             {
                 Console.WriteLine("(vcluster) unable to locate argocd secret");
@@ -319,121 +320,6 @@ namespace gge.K8sControllers
         public async Task ProcessDeleted(CrdProviderCluster provider)
         {
             Console.WriteLine("Deleted detected: " + provider.Metadata.Name);
-        }
-
-        public static string Base64Encode(string text)
-        {
-            var textBytes = System.Text.Encoding.UTF8.GetBytes(text);
-            return System.Convert.ToBase64String(textBytes);
-        }
-        public static string Base64Decode(string base64)
-        {
-            var base64Bytes = System.Convert.FromBase64String(base64);
-            return System.Text.Encoding.UTF8.GetString(base64Bytes);
-        }
-
-        public static V1Secret? GetClusterArgocdSecret(string clusterName)
-        {
-            //Console.WriteLine("- GetClusterSecret, clusterName: "+ clusterName);
-            V1SecretList secrets = Globals.service.kubeclient.ListNamespacedSecret("argocd");
-
-            //Console.WriteLine("- argocd cluster secrets:");
-            foreach (V1Secret secret in secrets)
-            {
-                // is there a label indicating this is a cluster secret?
-                if (secret.Labels() == null)
-                {
-                    //Console.WriteLine("  - skipping, a");
-                    continue;
-                }
-                if (!secret.Labels().TryGetValue("argocd.argoproj.io/secret-type", out var value))
-                {
-                    //Console.WriteLine("  - skipping, b");
-                    continue;
-                }
-                if (value != "cluster")
-                {
-                    //Console.WriteLine("  - skipping, c, value: "+ value);
-                    continue;
-                }
-
-                // is this the cluster we are looking for?
-                string name = Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length);
-                //Console.WriteLine("  - name: " + name +", tkcName: "+ tkc.Metadata.Name);
-                if (name != clusterName)
-                {
-                    //Console.WriteLine("  - skipping, d");
-                    continue;
-                }
-
-                /*
-                // use regex to match cluster name via argocd secret which represents cluster
-                if (!Regex.Match(next.Name(), "cluster-" + tkc.Metadata.Name + "-" + "\\d").Success)
-                {
-                    // skip secret, this is not the cluster secret
-                    continue;
-                }
-                */
-
-                // secret located
-                //Console.WriteLine("- secret located: " + secret.Name());
-                return secret;
-            }
-
-            return null;
-        }
-
-        public static KubernetesClientConfiguration BuildConfigFromArgocdSecret(V1Secret secret)
-        {
-            Dictionary<string, string> data = new Dictionary<string, string>();
-
-            // form a kubeconfig via the argocd secret
-            Console.WriteLine("- form kubeconfig from argocd cluster secret ...");
-
-            // we have a cluster secret, check its name/server
-            data.Add("name", Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length));
-            data.Add("server", Encoding.UTF8.GetString(secret.Data["server"], 0, secret.Data["server"].Length));
-            data.Add("config", Encoding.UTF8.GetString(secret.Data["config"], 0, secret.Data["config"].Length));
-
-            Console.WriteLine("  -   name: " + data["name"]);
-            Console.WriteLine("  - server: " + data["server"]);
-
-            // parse kubeconfig json data from argocd secret
-            JsonElement o = JsonSerializer.Deserialize<JsonElement>(data["config"]);
-
-            // start with an empty kubeconfig
-            KubernetesClientConfiguration kubeconfig = new KubernetesClientConfiguration();
-
-            // form kubeconfig using values from argocd secret
-            kubeconfig.Host = data["server"];
-            kubeconfig.SkipTlsVerify = o.GetProperty("tlsClientConfig").GetProperty("insecure").GetBoolean();
-            kubeconfig.ClientCertificateData = o.GetProperty("tlsClientConfig").GetProperty("certData").GetString();
-            kubeconfig.ClientCertificateKeyData = o.GetProperty("tlsClientConfig").GetProperty("keyData").GetString();
-            // convert caData into an x509 cert & add
-            kubeconfig.SslCaCerts = new X509Certificate2Collection();
-            kubeconfig.SslCaCerts.Add(
-                    X509Certificate2.CreateFromPem(
-                        Base64Decode(o.GetProperty("tlsClientConfig").GetProperty("caData").GetString()).AsSpan()
-                ));
-
-            return kubeconfig;
-        }
-        /// <summary>
-        /// With knowledge of the innerworkings of the cluster provisioning process,
-        /// obtain the default admin kubeconfig '/etc/kubernetes/admin.conf'.
-        /// </summary>
-        /// <param name="clusterName"></param>
-        /// <returns></returns>
-        public static KubernetesClientConfiguration GetClusterKubeConfig(string clusterName, string clusterNamespace)
-        {
-            // clusterctl - n vc - test get kubeconfig vc - test
-            // k -n vc-test get secrets vc-test-kubeconfig -o jsonpath='{.data.value}' | base64 -d
-            V1Secret secret = Globals.service.kubeclient.ReadNamespacedSecret(clusterName + "-kubeconfig", clusterNamespace);
-            secret.Data.TryGetValue("value", out byte[] bytes);
-            string kubeconfig = System.Text.Encoding.UTF8.GetString(bytes);
-            Console.WriteLine(kubeconfig);
-
-            return null;
         }
     }
 }
