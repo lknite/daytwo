@@ -15,10 +15,9 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Collections.Generic;
 using k8s.KubeConfigModels;
 using System.Runtime.CompilerServices;
-using Microsoft.AspNetCore.JsonPatch;
-using Newtonsoft.Json.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using System.Reflection.Emit;
+using Json.Patch;
 
 namespace gge.K8sControllers
 {
@@ -180,6 +179,9 @@ namespace gge.K8sControllers
             // locate argocd cluster secret representing this cluster
             Console.WriteLine("** sync 'addons' ...");
 
+            //
+            var before = JsonSerializer.SerializeToDocument(secret);
+
             // add missing labels to argocd cluster secret
             Console.WriteLine("- add missing labels to argocd cluster secret:");
             foreach (var l in provider.Metadata.Labels)
@@ -280,37 +282,22 @@ namespace gge.K8sControllers
                 Console.WriteLine("- "+ next.Key +": "+ next.Value);
             }
 
-            /*
             //
-            var expected = JsonSerializer.SerializeToDocument(secret);
-            var patch = Newtonsoft.Json.JsonConvert.SerializeObject()
-            var patch = before.CreatePatch(expected); 
-            */
+            var patch = before.CreatePatch(secret);
 
             /*
-            // patch secret without removed labels
-            string patch = @"{""metadata"":{""labels"":";
-            patch += JsonSerializer.Serialize(secret.Metadata.Labels);
-            patch += "}}";
-            Console.WriteLine("patch:");
-            Console.WriteLine(patch);
-            */
             var patch = new JsonPatchDocument<V1Secret>();
             patch.Replace(x => x.Metadata.Labels, secret.Labels());
-            /*
-            patch.ContractResolver = new DefaultContractResolver
-            {
-                NamingStrategy =  new CamelCaseNamingStrategy()
-            };
-            */
             patchStr = Newtonsoft.Json.JsonConvert.SerializeObject(patch);
             patchStr = patchStr.Replace("/Metadata/Labels", "/metadata/labels");
             Console.WriteLine("patch:");
             Console.WriteLine(patchStr);
+            */
             try
             {
                 Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
-                        new V1Patch(patchStr, V1Patch.PatchType.JsonPatch), secret.Name(), secret.Namespace());
+                        new V1Patch(patch, V1Patch.PatchType.JsonPatch), secret.Name(), secret.Namespace());
+                        //new V1Patch(patchStr, V1Patch.PatchType.JsonPatch), secret.Name(), secret.Namespace());
             }
             catch (Exception e) {
                 Console.WriteLine(e.Message);
