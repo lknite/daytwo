@@ -27,18 +27,12 @@ environment always matches what is in git.
   - watches for registered argocd clusters and updates pinniped kubeconfig files
   - hosts a website which can be used to access the pinniped kubeconfig files
 
-## operator-controller
-- [daytwo-operator](https://github.com/lknite/daytwo/tree/main/daytwo-operator)
-  - use to allow for a single helm chart deployment and values file
-
 ## development
 | status  | controller                            | detail                                  |
 |---------|---------------------------------------|-----------------------------------------|
 | active  | daytwo-argocd-register-controller     | working, todo: improve logging, delete orphaned secrets, handle cluster name conflicts between multiple management clusters |
 | active  | daytwo-argocd-pinniped-controller     |                                         |
 | todo    | add helm charts                       |                                         |
-| todo    | daytwo-operator                       |                                         |
-| todo    | add daytwo-operator helm chart        |                                         |
 | todo    | move builds to use github actions     |                                         |
 | todo    | rewrite all controllers using go      |                                         |
 
