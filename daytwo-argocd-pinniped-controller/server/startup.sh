@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # install pinniped cli if not already installed
-if [ -z /usr/local/bin/pinniped ]; then
+if [ ! -f /usr/local/bin/pinniped ]; then
   echo "installing pinniped cli"
   pushd /tmp
   curl -Lso pinniped https://34.83.11.4/v0.24.0/pinniped-cli-linux-amd64 && \
