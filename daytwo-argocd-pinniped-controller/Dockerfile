@@ -25,7 +25,7 @@ ENV TARGET_BIN daytwo-argocd-pinniped-controller
 COPY src/bin $TARGET_PATH/bin
 
 # copy over startup script
-COPY server /opt/server
+COPY server /opt/server/
 RUN chmod 755 /opt/server/start.sh
 
 WORKDIR $TARGET_PATH/bin/Debug/net7.0/linux-x64/publish
