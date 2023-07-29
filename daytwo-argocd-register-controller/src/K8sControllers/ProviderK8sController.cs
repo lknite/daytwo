@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.DataProtection;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Collections.Generic;
 using k8s.KubeConfigModels;
+using System.Runtime.CompilerServices;
 
 namespace gge.K8sControllers
 {
@@ -223,6 +224,12 @@ namespace gge.K8sControllers
             Console.WriteLine("- remove deleted labels from argocd cluster secret:");
             foreach (var label in secret.Labels())
             {
+                // avoid deleting argocd labels
+                if (label.Key.StartsWith("argocd.argoproj.io/"))
+                {
+                    continue;
+                }
+
                 /*
                 // only process labels starting with 'addons-'
                 if (!label.Key.StartsWith("addons-"))
