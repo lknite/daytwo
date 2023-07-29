@@ -21,7 +21,6 @@ namespace daytwo.Helpers
             data.Add("config", Encoding.UTF8.GetString(secret.Data["config"], 0, secret.Data["config"].Length));
 
             Console.WriteLine("  -        name: " + data["name"]);
-            Console.WriteLine("  -   namespace: " + data["namespace"]);
             Console.WriteLine("  -      server: " + data["server"]);
 
             // parse kubeconfig json data from argocd secret
