@@ -17,6 +17,7 @@ using System.Collections.ObjectModel;
 using System.Xml.Linq;
 using System.Net.Sockets;
 using System.Diagnostics;
+using daytwo.Helpers;
 
 namespace gge.K8sControllers
 {
@@ -131,6 +132,11 @@ namespace gge.K8sControllers
         {
             Console.WriteLine("update configmap");
 
+            //
+            KubernetesClientConfiguration kubeconfig = Main.BuildConfigFromArgocdSecret(secret);
+            Console.WriteLine(kubeconfig);
+
+            // generate pinniped kubeconfig
             var p = new Process
             {
                 StartInfo = {
