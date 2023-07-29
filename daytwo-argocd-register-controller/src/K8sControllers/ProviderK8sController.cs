@@ -111,14 +111,14 @@ namespace gge.K8sControllers
                         // Handle event type
                         switch (type)
                         {
-                            case WatchEventType.Added:
-                                await ProcessAdded(item);
-                                break;
+                            //case WatchEventType.Added:
+                            //    await ProcessAdded(item);
+                            //    break;
                             //case WatchEventType.Bookmark:
                             //    break;
-                            case WatchEventType.Deleted:
-                                await ProcessDeleted(item);
-                                break;
+                            //case WatchEventType.Deleted:
+                            //    await ProcessDeleted(item);
+                            //    break;
                             //case WatchEventType.Error:
                             //    break;
                             case WatchEventType.Modified:
