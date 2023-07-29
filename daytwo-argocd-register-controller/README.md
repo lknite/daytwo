@@ -25,7 +25,7 @@ todo
   - MANAGEMENT_CLUSTERS: clusters
 - Argocd auth token of account which will be used to add clusters to argocd
   - ARGOCD_AUTH_TOKEN: ...
-    - you are probably going to inject this using something like [external secrets](https://external-secrets.io/) rather than add to your git repo
+    - recommend injecting this using something like [external secrets](https://external-secrets.io/) rather than add to your git repo
 
 ### optional ###
 - To specify an alternative location for argocd ('argocd' by default):
