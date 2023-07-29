@@ -266,7 +266,7 @@ namespace gge.K8sControllers
                 if (!found)
                 {
                     Console.WriteLine("  - " + label.Key + ": " + label.Value);
-                    secret.SetLabel(label.Key);
+                    secret.SetLabel(label.Key, null);
                 }
             }
 
