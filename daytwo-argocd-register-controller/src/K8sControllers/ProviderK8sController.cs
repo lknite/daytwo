@@ -283,8 +283,11 @@ namespace gge.K8sControllers
             }
 
             // patch secret without removed labels
+            string patch = JsonSerializer.Serialize(secret);
+            Console.WriteLine("patch:");
+            Console.WriteLine(patch);
             Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
-                    new V1Patch(secret, V1Patch.PatchType.MergePatch), secret.Name(), secret.Namespace());
+                    new V1Patch(patch, V1Patch.PatchType.JsonPatch), secret.Name(), secret.Namespace());
 
             return;
         }
