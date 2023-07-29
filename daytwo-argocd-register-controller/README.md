@@ -20,15 +20,16 @@
 todo
 
 ## configuration environment variables ##
-- (required) Comma separated list of management clusters to sync w/ argocd
-  - name: MANAGEMENT_CLUSTERS
-  - value: clusters
-- (required) Argocd auth token of account which will be used to add clusters to argocd
-  - name: ARGOCD_AUTH_TOKEN
-  - value: ...
-- (optional) To disable the label copy feature (enabled by default):
-  - name: OPTION_DISABLE_LABEL_COPY
-  - value: true
+### required ###
+- Comma separated list of management clusters to sync w/ argocd
+  - MANAGEMENT_CLUSTERS: clusters1
+- Argocd auth token of account which will be used to add clusters to argocd
+  - ARGOCD_AUTH_TOKEN: ...
+### optional ###
+- To specify an alternative location for argocd ('argocd' by default):
+  - ARGOCD_NAMESPACE: argocd
+- To disable the label copy feature (enabled by default):
+  - OPTION_DISABLE_LABEL_COPY: true
   
 ## status ##
 - main functionality implemented
