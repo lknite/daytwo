@@ -3,7 +3,6 @@ using k8s.Models;
 using k8s;
 using System.Text.Json;
 using daytwo.CustomResourceDefinitions;
-using daytwo.crd.tanzukubernetescluster;
 using System.Text.RegularExpressions;
 using System.Text;
 using System.Security.Cryptography.X509Certificates;
@@ -18,6 +17,7 @@ using YamlDotNet.Serialization.NamingConventions;
 using System.Reflection.Emit;
 using Json.Patch;
 using daytwo.Helpers;
+using daytwo.crd.provider;
 
 namespace gge.K8sControllers
 {
