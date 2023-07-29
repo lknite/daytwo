@@ -179,12 +179,14 @@ namespace gge.K8sControllers
             Console.WriteLine("- add missing labels to argocd cluster secret:");
             foreach (var l in provider.Metadata.Labels)
             {
+                /*
                 // only process labels starting with 'addons-'
                 if (!l.Key.StartsWith("addons-"))
                 {
                     // skip
                     continue;
                 }
+                */
 
                 // is this label already on the secret?
                 bool found = false;
@@ -213,6 +215,7 @@ namespace gge.K8sControllers
                 if (!found)
                 {
                     Console.WriteLine("  - " + l.Key + ": " + l.Value);
+                    secret.Labels().Add(l.Key, l.Value);
                 }
             }
 
@@ -220,12 +223,14 @@ namespace gge.K8sControllers
             Console.WriteLine("- remove deleted labels from argocd cluster secret:");
             foreach (var label in secret.Labels())
             {
+                /*
                 // only process labels starting with 'addons-'
                 if (!label.Key.StartsWith("addons-"))
                 {
                     // skip
                     continue;
                 }
+                */
 
                 // is this label already on the secret?
                 bool found = false;
@@ -254,6 +259,7 @@ namespace gge.K8sControllers
                 if (!found)
                 {
                     Console.WriteLine("  - " + label.Key + ": " + label.Value);
+                    secret.Labels().Remove(label.Key);
                 }
             }
 
