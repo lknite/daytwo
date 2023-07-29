@@ -286,7 +286,7 @@ namespace gge.K8sControllers
             Console.WriteLine("** argocd remove cluster ...");
 
             // locate server pod
-            V1PodList list = await Globals.service.kubeclient.ListNamespacedPodAsync("argocd");
+            V1PodList list = await Globals.service.kubeclient.ListNamespacedPodAsync(Globals.service.argocdNamespace);
             V1Pod pod = null;
             foreach (var item in list.Items)
             {
