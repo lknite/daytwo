@@ -15,7 +15,7 @@ apiVersion: v1
 kind: Config
 clusters:
 - cluster:
-    certificate-authority-data: {kubeconfig.ClientCertificateData}
+    certificate-authority-data: {Base64Encode(pem.ToString())}
     server: {kubeconfig.Host}
   name: cluster
 contexts:
