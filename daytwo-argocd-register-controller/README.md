@@ -17,17 +17,18 @@
   - used to access workload cluster kubeconfig via namespaced secrets managed by clusterapi
 
 ## installation ##
+todo
 
 ## configuration environment variables ##
 - (required) Comma separated list of management clusters to sync w/ argocd
-  name: MANAGEMENT_CLUSTERS
-  value: clusters
+  - name: MANAGEMENT_CLUSTERS
+  - value: clusters
 - (required) Argocd auth token of account which will be used to add clusters to argocd
-  name: ARGOCD_AUTH_TOKEN
-  value: ...
+  - name: ARGOCD_AUTH_TOKEN
+  - value: ...
 - (optional) To disable the label copy feature (enabled by default):
-  name: OPTION_DISABLE_LABEL_COPY
-  value: true
+  - name: OPTION_DISABLE_LABEL_COPY
+  - value: true
   
 ## status ##
 - main functionality implemented
