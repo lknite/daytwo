@@ -47,7 +47,6 @@ C:\Users\travis.HOME\source\repos\daytwo\daytwo-argocd-register-controller\src\o
 C:\Users\travis.HOME\source\repos\daytwo\daytwo-argocd-register-controller\src\obj\Debug\net7.0\daytwo-argocd-register-controller.pdb
 C:\Users\travis.HOME\source\repos\daytwo\daytwo-argocd-register-controller\src\obj\Debug\net7.0\daytwo-argocd-register-controller.genruntimeconfig.cache
 C:\Users\travis.HOME\source\repos\daytwo\daytwo-argocd-register-controller\src\obj\Debug\net7.0\ref\daytwo-argocd-register-controller.dll
-C:\Users\travis.HOME\source\repos\daytwo\daytwo-argocd-register-controller\src\bin\Debug\net7.0\Microsoft.AspNetCore.JsonPatch.dll
-C:\Users\travis.HOME\source\repos\daytwo\daytwo-argocd-register-controller\src\bin\Debug\net7.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
-C:\Users\travis.HOME\source\repos\daytwo\daytwo-argocd-register-controller\src\bin\Debug\net7.0\Newtonsoft.Json.dll
-C:\Users\travis.HOME\source\repos\daytwo\daytwo-argocd-register-controller\src\bin\Debug\net7.0\Newtonsoft.Json.Bson.dll
+C:\Users\travis.HOME\source\repos\daytwo\daytwo-argocd-register-controller\src\bin\Debug\net7.0\Json.More.dll
+C:\Users\travis.HOME\source\repos\daytwo\daytwo-argocd-register-controller\src\bin\Debug\net7.0\JsonPatch.Net.dll
+C:\Users\travis.HOME\source\repos\daytwo\daytwo-argocd-register-controller\src\bin\Debug\net7.0\JsonPointer.Net.dll
