@@ -198,18 +198,27 @@ namespace gge.K8sControllers
                 Console.WriteLine("      - cluster already added to argocd");
 
                 // check if provider is already present
-                ProviderK8sController? item = providers.Find(item => (item.api == _api) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));
-                if (item != null)
+                ProviderK8sController? _item = providers.Find(item =>
+                        (item.api == cluster.Spec.controlPlaneRef.kind.ToLower())
+                        && (item.group == cluster.Spec.controlPlaneRef.apiVersion.Substring(0))
+                        && (item.version == cluster.Spec.controlPlaneRef.apiVersion.Substring(cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/") + 1))
+                        && (item.plural == cluster.Spec.controlPlaneRef.kind.ToLower() + "s")
+                    );
+                if (_item != null)
                 {
                     // provider already exists, nudge it to recheck this cluster which just had its secret updated
-                    CrdProviderCluster crd = await item.generic.ReadNamespacedAsync<CrdProviderCluster>(cluster.Namespace(), cluster.Name());
-                    item.ProcessModified(crd);
+                    CrdProviderCluster crd = await _item.generic.ReadNamespacedAsync<CrdProviderCluster>(cluster.Namespace(), cluster.Name());
+                    _item.ProcessModified(crd);
                 }
                 else //if (item == null)
                 {
                     // if not, start monitoring
                     ProviderK8sController provider = new ProviderK8sController(
-                            _api, _group, _version, _plural);
+                            cluster.Spec.controlPlaneRef.kind.ToLower(),
+                            cluster.Spec.controlPlaneRef.apiVersion.Substring(0, cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/")),
+                            cluster.Spec.controlPlaneRef.apiVersion.Substring(cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/") + 1),
+                            cluster.Spec.controlPlaneRef.kind.ToLower() + "s"
+                        );
 
                     // add to list of providers we are monitoring
                     providers.Add(provider);
