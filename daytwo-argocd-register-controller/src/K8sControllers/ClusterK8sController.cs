@@ -197,6 +197,14 @@ namespace gge.K8sControllers
             {
                 Console.WriteLine("      - cluster already added to argocd");
 
+                // Check for environment variable asking us not to copy labels
+                string? value = Environment.GetEnvironmentVariable("OPTION_DISABLE_LABEL_COPY");
+                if ((value != null) && (value.Equals("true", StringComparison.OrdinalIgnoreCase)))
+                {
+                    // do not monitor providers or copy labels
+                    return;
+                }
+
                 // check if provider is already present
                 ProviderK8sController? _item = providers.Find(item =>
                         (item.api == cluster.Spec.controlPlaneRef.kind.ToLower())
