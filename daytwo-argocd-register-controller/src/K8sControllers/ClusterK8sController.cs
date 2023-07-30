@@ -17,8 +17,9 @@ using daytwo.crd.cluster;
 using System.Collections.ObjectModel;
 using System.Xml.Linq;
 using daytwo.crd.provider;
+using Microsoft.AspNetCore.Antiforgery;
 
-namespace gge.K8sControllers
+namespace daytwo.K8sControllers
 {
     public class ClusterK8sController
     {
@@ -58,9 +59,9 @@ namespace gge.K8sControllers
             this.managementCluster = managementCluster;
 
             // locate the provisioning cluster argocd secret
-            V1Secret? secret = Main.GetClusterArgocdSecret(managementCluster);
+            V1Secret? secret = daytwo.Helpers.Main.GetClusterArgocdSecret(managementCluster);
             // use secret to create kubeconfig
-            kubeconfig = Main.BuildConfigFromArgocdSecret(secret);
+            kubeconfig = daytwo.Helpers.Main.BuildConfigFromArgocdSecret(secret);
             // use kubeconfig to create client
             kubeclient = new Kubernetes(kubeconfig);
 
@@ -197,43 +198,8 @@ namespace gge.K8sControllers
             {
                 Console.WriteLine("      - cluster already added to argocd");
 
-                // Check for environment variable asking us not to copy labels
-                string? value = Environment.GetEnvironmentVariable("OPTION_DISABLE_LABEL_COPY");
-                if ((value != null) && (value.Equals("true", StringComparison.OrdinalIgnoreCase)))
-                {
-                    // do not monitor providers or copy labels
-                    return;
-                }
-
-                // check if provider is already present
-                ProviderK8sController? _item = providers.Find(item =>
-                        (item.api == cluster.Spec.controlPlaneRef.kind.ToLower())
-                        && (item.group == cluster.Spec.controlPlaneRef.apiVersion.Substring(0))
-                        && (item.version == cluster.Spec.controlPlaneRef.apiVersion.Substring(cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/") + 1))
-                        && (item.plural == cluster.Spec.controlPlaneRef.kind.ToLower() + "s")
-                    );
-                if (_item != null)
-                {
-                    // provider already exists, nudge it to recheck this cluster which just had its secret updated
-                    CrdProviderCluster crd = await _item.generic.ReadNamespacedAsync<CrdProviderCluster>(cluster.Namespace(), cluster.Name());
-                    _item.ProcessModified(crd);
-                }
-                else //if (item == null)
-                {
-                    // if not, start monitoring
-                    ProviderK8sController provider = new ProviderK8sController(
-                            cluster.Spec.controlPlaneRef.kind.ToLower(),
-                            cluster.Spec.controlPlaneRef.apiVersion.Substring(0, cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/")),
-                            cluster.Spec.controlPlaneRef.apiVersion.Substring(cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/") + 1),
-                            cluster.Spec.controlPlaneRef.kind.ToLower() + "s"
-                        );
-
-                    // add to list of providers we are monitoring
-                    providers.Add(provider);
-
-                    // start listening
-                    provider.Listen(Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
-                }
+                //
+                await AddProvider(cluster);
 
                 return;
             }
@@ -249,49 +215,15 @@ namespace gge.K8sControllers
                 return;
             }
 
-            // store cluster resourceVersion, we use this later to check for changes
+            // add/update cluster resourceVersion, we use this later to check for changes
             tmp.SetAnnotation("daytwo.aarr.xyz/resourceVersion", cluster.Metadata.ResourceVersion);
-            //tmp.SetAnnotation("daytwo.aarr.xyz/management-cluster", Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
 
             //
             Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
                 new V1Patch(tmp, V1Patch.PatchType.MergePatch), tmp.Name(), tmp.Namespace());
 
-            // Check for environment variable asking us not to copy labels
-            string? disable = Environment.GetEnvironmentVariable("OPTION_DISABLE_LABEL_COPY");
-            if ((disable != null) && (disable.Equals("true", StringComparison.OrdinalIgnoreCase)))
-            {
-                // do not monitor providers or copy labels
-                return;
-            }
-
-            //
-            string _api = cluster.Spec.controlPlaneRef.kind.ToLower();
-            string _group = cluster.Spec.controlPlaneRef.apiVersion.Substring(0, cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/"));
-            string _version = cluster.Spec.controlPlaneRef.apiVersion.Substring(cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/") + 1);
-            string _plural = _api + "s";
-
-            // check if provider is already present
-            ProviderK8sController? item = providers.Find(item => (item.api == _api) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));
-            if (item != null)
-            {
-                // provider already exists, nudge it to recheck this cluster which just had its secret updated
-                CrdProviderCluster crd = await item.generic.ReadNamespacedAsync<CrdProviderCluster>(cluster.Namespace(), cluster.Name());
-                item.ProcessModified(crd);
-            }
-            else //if (item == null)
-            {
-                // if not, start monitoring
-                ProviderK8sController provider = new ProviderK8sController(
-                        _api, _group, _version, _plural);
-
-                // add to list of providers we are monitoring
-                providers.Add(provider);
-
-                // start listening
-                provider.Listen(Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
-            }
-
+            await AddProvider(cluster);
+            
 
             return;
         }
@@ -522,5 +454,43 @@ namespace gge.K8sControllers
             //return new Task(PrintEvenNumbers);
         }
         */
+
+        public async Task AddProvider(CrdCluster cluster)
+        {
+            // Check for environment variable asking us not to copy labels
+            string? disable = Environment.GetEnvironmentVariable("OPTION_DISABLE_LABEL_COPY");
+            if ((disable != null) && (disable.Equals("true", StringComparison.OrdinalIgnoreCase)))
+            {
+                // do not monitor providers or copy labels
+                return;
+            }
+
+            //
+            string _api = cluster.Spec.controlPlaneRef.kind.ToLower();
+            string _group = cluster.Spec.controlPlaneRef.apiVersion.Substring(0, cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/"));
+            string _version = cluster.Spec.controlPlaneRef.apiVersion.Substring(cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/") + 1);
+            string _plural = _api + "s";
+
+            // check if provider is already present
+            ProviderK8sController? item = providers.Find(item => (item.api == _api) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));
+            if (item != null)
+            {
+                // provider already exists, nudge it to recheck this cluster which just had its secret updated
+                CrdProviderCluster crd = await item.generic.ReadNamespacedAsync<CrdProviderCluster>(cluster.Namespace(), cluster.Name());
+                item.ProcessModified(crd);
+            }
+            else //if (item == null)
+            {
+                // if not, start monitoring
+                ProviderK8sController provider = new ProviderK8sController(
+                        _api, _group, _version, _plural);
+
+                // add to list of providers we are monitoring
+                providers.Add(provider);
+
+                // start listening
+                provider.Listen(managementCluster);
+            }
+        }
     }
 }

@@ -19,7 +19,7 @@ using Json.Patch;
 using daytwo.Helpers;
 using daytwo.crd.provider;
 
-namespace gge.K8sControllers
+namespace daytwo.K8sControllers
 {
     /*
     public class Provider : IComparable<Provider>
@@ -77,9 +77,9 @@ namespace gge.K8sControllers
             this.managementCluster = managementCluster;
 
             // locate the provisioning cluster argocd secret
-            V1Secret? secret = Main.GetClusterArgocdSecret(managementCluster);
+            V1Secret? secret = daytwo.Helpers.Main.GetClusterArgocdSecret(managementCluster);
             // use secret to create kubeconfig
-            kubeconfig = Main.BuildConfigFromArgocdSecret(secret);
+            kubeconfig = daytwo.Helpers.Main.BuildConfigFromArgocdSecret(secret);
             // use kubeconfig to create client
             kubeclient = new Kubernetes(kubeconfig);
 
@@ -162,7 +162,7 @@ namespace gge.K8sControllers
             Console.WriteLine("Addition/Modify detected: " + provider.Metadata.Name);
 
             // acquire argocd cluster secret to so we can sync labels
-            V1Secret? secret = Main.GetClusterArgocdSecret(provider.Name(), managementCluster);
+            V1Secret? secret = daytwo.Helpers.Main.GetClusterArgocdSecret(provider.Name(), managementCluster);
             if (secret == null)
             {
                 Console.WriteLine("(vcluster) unable to locate argocd secret");

@@ -1,6 +1,6 @@
 ﻿using k8s;
 using System.Text.Json;
-using gge.K8sControllers;
+using daytwo.K8sControllers;
 
 namespace daytwo
 {
