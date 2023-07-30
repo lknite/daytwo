@@ -239,7 +239,7 @@ namespace gge.K8sControllers
             }
 
             // add new cluster to argocd
-            KubernetesClientConfiguration tmpkubeconfig = await GetClusterKubeConfig(cluster.Name(), cluster.Namespace());
+            KubernetesClientConfiguration tmpkubeconfig = await GetClusterKubeConfig(cluster.Name(), cluster.Namespace(), managementCluster);
 
             // acquire argocd cluster secret to so we can add annotation and labels
             tmp = Main.GetClusterArgocdSecret(cluster.Name(), managementCluster);
@@ -375,7 +375,7 @@ namespace gge.K8sControllers
         /// </summary>
         /// <param name="clusterName"></param>
         /// <returns></returns>
-        public static async Task<KubernetesClientConfiguration> GetClusterKubeConfig(string clusterName, string clusterNamespace)
+        public static async Task<KubernetesClientConfiguration> GetClusterKubeConfig(string clusterName, string clusterNamespace, string? managementCluster)
         {
             // clusterctl - n vc - test get kubeconfig vc - test
             // k -n vc-test get secrets vc-test-kubeconfig -o jsonpath='{.data.value}' | base64 -d
@@ -461,7 +461,7 @@ namespace gge.K8sControllers
                         + $" -y"
                         + $" --upsert"
                         + $" --name {clusterName}"
-                        + $" --annotation 'daytwo.aarr.xyz/management-cluster'={clusterName}"
+                        + ((managementCluster != null) ? $" --annotation 'daytwo.aarr.xyz/management-cluster'={managementCluster}" : "")
                         + $" --kubeconfig /tmp/{clusterName}.conf"
                         + $" --server=localhost:8080"
                         + $" --plaintext"
