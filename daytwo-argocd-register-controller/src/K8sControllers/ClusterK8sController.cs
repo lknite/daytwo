@@ -197,6 +197,27 @@ namespace gge.K8sControllers
             {
                 Console.WriteLine("      - cluster already added to argocd");
 
+                // check if provider is already present
+                ProviderK8sController? item = providers.Find(item => (item.api == _api) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));
+                if (item != null)
+                {
+                    // provider already exists, nudge it to recheck this cluster which just had its secret updated
+                    CrdProviderCluster crd = await item.generic.ReadNamespacedAsync<CrdProviderCluster>(cluster.Namespace(), cluster.Name());
+                    item.ProcessModified(crd);
+                }
+                else //if (item == null)
+                {
+                    // if not, start monitoring
+                    ProviderK8sController provider = new ProviderK8sController(
+                            _api, _group, _version, _plural);
+
+                    // add to list of providers we are monitoring
+                    providers.Add(provider);
+
+                    // start listening
+                    provider.Listen(Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
+                }
+
                 return;
             }
 
