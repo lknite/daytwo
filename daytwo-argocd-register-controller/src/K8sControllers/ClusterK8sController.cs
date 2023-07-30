@@ -461,7 +461,7 @@ namespace gge.K8sControllers
                         + $" -y"
                         + $" --upsert"
                         + $" --name {clusterName}"
-                        + $" --annotate 'daytwo.aarr.xyz/management-cluster'={clusterName}"
+                        + $" --annotation 'daytwo.aarr.xyz/management-cluster'={clusterName}"
                         + $" --kubeconfig /tmp/{clusterName}.conf"
                         + $" --server=localhost:8080"
                         + $" --plaintext"
