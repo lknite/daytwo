@@ -251,7 +251,7 @@ namespace gge.K8sControllers
 
             // store cluster resourceVersion, we use this later to check for changes
             tmp.SetAnnotation("daytwo.aarr.xyz/resourceVersion", cluster.Metadata.ResourceVersion);
-            tmp.SetAnnotation("daytwo.aarr.xyz/management-cluster", Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
+            //tmp.SetAnnotation("daytwo.aarr.xyz/management-cluster", Environment.GetEnvironmentVariable("MANAGEMENT_CLUSTERS"));
 
             //
             Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
@@ -461,6 +461,7 @@ namespace gge.K8sControllers
                         + $" -y"
                         + $" --upsert"
                         + $" --name {clusterName}"
+                        + $" --annotate daytwo.aarr.xyz/management-cluster={clusterName}"
                         + $" --kubeconfig /tmp/{clusterName}.conf"
                         + $" --server=localhost:8080"
                         + $" --plaintext"
