@@ -150,6 +150,16 @@ namespace gge.K8sControllers
             //Console.WriteLine(json);
             File.WriteAllText("/tmp/kubeconfig", json);
 
+            /*
+            pinniped get kubeconfig \
+              --oidc-issuer https://keycloak.vc-prod.k.home.net/realms/home.net \
+              --oidc-client-id default \
+              --oidc-scopes openid,email,profile,offline_access \
+              --kubeconfig ~/tmp/kubeconfig \
+              --concierge-authenticator-name oidc-config \
+              --concierge-authenticator-type jwt \
+              --skip-validation
+             */
             // generate pinniped kubeconfig
             var p = new Process
             {
@@ -157,12 +167,14 @@ namespace gge.K8sControllers
                     // pinniped get kubeconfig --kubeconfig /tmp/kubeconfig
                     FileName = "pinniped",
                     WorkingDirectory = @"/tmp",
-                    Arguments = "get kubeconfig --kubeconfig /tmp/kubeconfig"
-                    /*
-                    FileName = "pinniped",
-                    WorkingDirectory = @"/usr/local/bin",
-                    Arguments = "version"
-                    */
+                    Arguments = "get kubeconfig"
+                        + " --kubeconfig /tmp/kubeconfig"
+                        + " --oidc-issuer https://keycloak.vc-prod.k.home.net/realms/home.net"
+                        + " --oidc-client-id default"
+                        + " --oidc-scopes openid,email,profile,offline_access"
+                        + " --concierge-authenticator-name oidc-config"
+                        + " --concierge-authenticator-type jwt"
+                        + " --skip-validation"
                 }
             };
             p.Start();
