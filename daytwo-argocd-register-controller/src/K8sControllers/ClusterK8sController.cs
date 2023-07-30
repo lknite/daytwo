@@ -158,7 +158,7 @@ namespace daytwo.K8sControllers
             }
 
             // has this cluster been added to argocd?
-            V1Secret? tmp = Main.GetClusterArgocdSecret(cluster.Name(), managementCluster);
+            V1Secret? tmp = daytwo.Helpers.Main.GetClusterArgocdSecret(cluster.Name(), managementCluster);
 
             if (tmp != null)
             {
@@ -208,7 +208,7 @@ namespace daytwo.K8sControllers
             KubernetesClientConfiguration tmpkubeconfig = await GetClusterKubeConfig(cluster.Name(), cluster.Namespace(), managementCluster);
 
             // acquire argocd cluster secret to so we can add annotation and labels
-            tmp = Main.GetClusterArgocdSecret(cluster.Name(), managementCluster);
+            tmp = daytwo.Helpers.Main.GetClusterArgocdSecret(cluster.Name(), managementCluster);
             if (tmp == null)
             {
                 Console.WriteLine("unable to add argocd secret");
@@ -230,7 +230,7 @@ namespace daytwo.K8sControllers
         public async Task ProcessDeleted(CrdCluster cluster)
         {
             // check if we should remove this from argocd
-            V1Secret tmp = Main.GetClusterArgocdSecret(cluster.Name(), managementCluster);
+            V1Secret tmp = daytwo.Helpers.Main.GetClusterArgocdSecret(cluster.Name(), managementCluster);
             if (tmp == null)
             {
                 Console.WriteLine("argocd is not managing this cluster, no need to remove it");
