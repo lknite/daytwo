@@ -21,7 +21,7 @@ image:
 register:
   ## @param managementCluster Comma separated list of names of clusterapi servers
   ##
-  managementCluster: ""
+  managementClusters: ""
 
   ## @param argocdAuthToken Used when registering cluster with argocd
   ##
