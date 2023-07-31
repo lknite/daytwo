@@ -186,14 +186,6 @@ namespace gge.K8sControllers
                 }
             };
             p.Start();
-            p.WaitForExit();
-            Console.WriteLine("after generate pinniped kubeconfig");
-
-            // debug, show stdout from the command
-            Console.WriteLine("create 'www' folder structure");
-            Directory.CreateDirectory($"/tmp/www");
-            Directory.CreateDirectory($"/tmp/www/{managementCluster}");
-            Directory.CreateDirectory($"/tmp/www/{managementCluster}/{workloadCluster}");
 
             // capture output
             string tmp = "";
@@ -204,6 +196,15 @@ namespace gge.K8sControllers
             }
             Console.WriteLine("display output");
             Console.WriteLine(tmp);
+
+            //p.WaitForExit();
+            Console.WriteLine("after generate pinniped kubeconfig");
+
+            // debug, show stdout from the command
+            Console.WriteLine("create 'www' folder structure");
+            Directory.CreateDirectory($"/tmp/www");
+            Directory.CreateDirectory($"/tmp/www/{managementCluster}");
+            Directory.CreateDirectory($"/tmp/www/{managementCluster}/{workloadCluster}");
 
             // save to file (accessible via GET)
             Console.WriteLine("copy to www folder");
