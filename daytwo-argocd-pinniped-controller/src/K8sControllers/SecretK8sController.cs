@@ -191,6 +191,13 @@ namespace gge.K8sControllers
             p.Start();
             p.WaitForExit();
 
+            // if there was an error, we stop here
+            if (p.ExitCode != 0)
+            {
+                Console.WriteLine("error generating pinniped kubeconfig");
+                return;
+            }
+
             // capture output
             string tmp = "";
             Console.WriteLine("parse output");
@@ -200,13 +207,6 @@ namespace gge.K8sControllers
             }
             Console.WriteLine("display output");
             Console.WriteLine(tmp);
-
-            // if there was an error, we stop here
-            if (p.ExitCode != 0)
-            {
-                Console.WriteLine("error generating pinniped kubeconfig");
-                return;
-            }
 
             Console.WriteLine("after generate pinniped kubeconfig");
 
