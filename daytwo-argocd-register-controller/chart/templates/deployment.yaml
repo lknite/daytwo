@@ -28,7 +28,7 @@ spec:
         - name: ARGOCD_AUTH_TOKEN
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.register.argocdAuthToken }}
+              name: {{ .Values.register.argocdAuthTokenSecret }}
               key: token
         - name: ARGOCD_NAMESPACE
           value: {{ .Values.register.argocdNamespace }}
