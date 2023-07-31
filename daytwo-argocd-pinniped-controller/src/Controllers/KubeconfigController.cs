@@ -24,7 +24,7 @@ namespace daytwo.Controllers
         {
             Console.WriteLine($"GET {managementCluster}/{workloadCluster}");
 
-            String tmp = System.IO.File.ReadAllText($"/opt/www/{managementCluster}/{workloadCluster}/kubeconfig");
+            String tmp = System.IO.File.ReadAllText($"/tmp/www/{managementCluster}/{workloadCluster}/kubeconfig");
             return Content(tmp);
         }
     }
