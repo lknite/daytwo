@@ -25,7 +25,17 @@ namespace daytwo.Controllers
         {
             Console.WriteLine($"GET {managementCluster}/{workloadCluster}");
 
-            String tmp = System.IO.File.ReadAllText($"/opt/www/{managementCluster}/{workloadCluster}/kubeconfig");
+            String tmp = string.Empty;
+            try
+            {
+                tmp = System.IO.File.ReadAllText($"/opt/www/{managementCluster}/{workloadCluster}/kubeconfig");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(StatusCodes.Status404NotFound);
+            }
+
             return Content(tmp);
         }
     }
