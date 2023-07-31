@@ -24,11 +24,11 @@ spec:
         resources: {}
         env:
         - name: MANAGEMENT_CLUSTERS
-          value: {{ .Values.argocd-register-controller.managementClusters }}
+          value: {{ index .Values "argocd-register-controller.managementClusters" }}
         - name: ARGOCD_AUTH_TOKEN
-          value: {{ .Values.argocd-register-controller.argocdAuthToken }}
+          value: {{ index .Values "argocd-register-controller.argocdAuthToken" }}
         - name: ARGOCD_NAMESPACE
-          value: {{ .Values.argocd-register-controller.argocdNamespace }}
+          value: {{ .index Values "argocd-register-controller.argocdNamespace" }}
         {{- if .Values.extraVolumeMounts }}
         volumeMounts:
           {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
