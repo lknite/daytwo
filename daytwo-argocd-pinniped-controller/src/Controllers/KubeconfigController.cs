@@ -22,6 +22,8 @@ namespace daytwo.Controllers
         [HttpGet("{managementCluster}/{workloadCluster}")]
         public async Task<IActionResult> Get(string managementCluster, string workloadCluster)
         {
+            Console.WriteLine($"GET {managementCluster}/{workloadCluster}");
+
             String tmp = System.IO.File.ReadAllText($"/var/www/{managementCluster}/{workloadCluster}/kubeconfig");
             return Content(tmp);
         }
