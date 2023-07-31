@@ -219,7 +219,6 @@ namespace daytwo
             // Configure the HTTP request pipeline.
 //            if (app.Environment.IsDevelopment())
 //            {
-                /*
                 app.UseSwagger(c =>
                 {
                     c.RouteTemplate = "swagger/list/{documentName}/swagger.json";
@@ -228,17 +227,16 @@ namespace daytwo
                     c.SwaggerEndpoint("/swagger/list/v1/swagger.json", "My API V1");
                     c.RoutePrefix = "swagger/list";
                 });
-                */
 
 
-            // This is required when developing using 'http' & 'localhost'
-            app.UseCookiePolicy(new CookiePolicyOptions()
+                // This is required when developing using 'http' & 'localhost'
+                app.UseCookiePolicy(new CookiePolicyOptions()
                 {
                     MinimumSameSitePolicy = SameSiteMode.Lax
                 });
 //            }
 
-            // 
+            // enable rest methods
             app.MapControllers();
 
             app.Run();
