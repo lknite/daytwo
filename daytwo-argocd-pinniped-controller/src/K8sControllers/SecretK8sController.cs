@@ -198,10 +198,13 @@ namespace gge.K8sControllers
             {
                 tmp += p.StandardOutput.ReadLine();
             }
+            Console.WriteLine("tmp:");
+            Console.WriteLine(tmp);
 
             // save to file (accessible via GET)
             try
             {
+                Console.WriteLine("write to file: '"+ $"/tmp/www/{managementCluster}/{workloadCluster}/kubeconfig" +"'");
                 File.WriteAllText($"/tmp/www/{managementCluster}/{workloadCluster}/kubeconfig", "testadsfasdf");
             }
             catch (Exception ex)
