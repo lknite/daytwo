@@ -135,6 +135,11 @@ namespace gge.K8sControllers
             string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
             string workloadCluster = Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length);
 
+            if (managementCluster == null)
+            {
+                managementCluster = "tmp";
+            }
+
             //
             KubernetesClientConfiguration kubeconfig = Main.BuildConfigFromArgocdSecret(secret);
             /*
