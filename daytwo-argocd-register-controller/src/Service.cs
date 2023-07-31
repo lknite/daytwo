@@ -20,6 +20,24 @@ namespace daytwo
 
         public Service()
         {
+            // 
+            try
+            {
+                // Load from the default kubeconfig on the machine.
+                kubeconfig = KubernetesClientConfiguration.BuildConfigFromConfigFile();
+            }
+            catch
+            {
+                //
+                kubeconfig = KubernetesClientConfiguration.InClusterConfig();
+            }
+
+            // Use the config object to create a client.
+            kubeclient = new Kubernetes(kubeconfig);
+
+            // Todo: If no management_clusters was specified, see if we can
+            //       get a default managementCluster using existing kubeconfig
+
             // Check for required environment variable(s)
             List<string> required = new List<string>();
             required.Add("MANAGEMENT_CLUSTERS");
@@ -40,20 +58,6 @@ namespace daytwo
             }
 
             main = new Main.Main();
-
-            try
-            {
-                // Load from the default kubeconfig on the machine.
-                kubeconfig = KubernetesClientConfiguration.BuildConfigFromConfigFile();
-            }
-            catch
-            {
-                //
-                kubeconfig = KubernetesClientConfiguration.InClusterConfig();
-            }
-
-            // Use the config object to create a client.
-            kubeclient = new Kubernetes(kubeconfig);
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
