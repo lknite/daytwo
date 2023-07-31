@@ -3,12 +3,12 @@ kind: Service
 metadata:
   creationTimestamp: null
   labels:
-    app: argocd-pinniped-controller
-  name: argocd-pinniped
+    app: {{.Release.Name}}-pinniped-controller
+  name: {{.Release.Name}}-pinniped
 spec:
   ports:
   - port: 80
     protocol: TCP
     targetPort: 80
   selector:
-    app: argocd-pinniped-controller
+    app: {{.Release.Name}}-pinniped-controller

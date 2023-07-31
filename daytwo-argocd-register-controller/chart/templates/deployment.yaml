@@ -3,22 +3,22 @@ kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    app: argocd-register-controller
-  name: argocd-register-controller
+    app: {{.Release.Name}}-register-controller
+  name: {{.Release.Name}}-register-controller
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: argocd-register-controller
+      app: {{.Release.Name}}-register-controller
   strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
-        app: argocd-register-controller
+        app: {{.Release.Name}}-register-controller
     spec:
       containers:
-      - name: argocd-register-controller
+      - name: {{.Release.Name}}-register-controller
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         resources: {}

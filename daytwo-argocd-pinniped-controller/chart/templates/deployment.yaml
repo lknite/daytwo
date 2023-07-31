@@ -3,22 +3,22 @@ kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    app: argocd-pinniped-controller
-  name: argocd-pinniped-controller
+    app: {{.Release.Name}}-pinniped-controller
+  name: {{.Release.Name}}-pinniped-controller
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: argocd-pinniped-controller
+      app: {{.Release.Name}}-pinniped-controller
   strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
-        app: argocd-pinniped-controller
+        app: {{.Release.Name}}-pinniped-controller
     spec:
       containers:
-      - name: argocd-pinniped-controller
+      - name: {{.Release.Name}}-pinniped-controller
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         resources: {}
