@@ -175,6 +175,7 @@ namespace gge.K8sControllers
                     // pinniped get kubeconfig --kubeconfig /tmp/kubeconfig
                     UseShellExecute = false,
                     CreateNoWindow = true,
+                    RedirectStandardOutput = true,
                     FileName = "pinniped",
                     WorkingDirectory = @"/tmp",
                     Arguments = "get kubeconfig"
