@@ -58,10 +58,10 @@ pipeline {
             sh '#docker logout harbor.vc-prod.k.home.net'
             sh '''echo $HARBOR_CREDENTIAL_PSW | docker login $REGISTRY -u $HARBOR_CREDENTIAL_USR --password-stdin'''
             sh "#cat \$HOME/.docker/config.json"
-            sh "docker build --progress=plain -t 'harbor.vc-prod.k.home.net/daytwo/daytwo-argocd-pinniped-controller:0.0.${BUILD_NUMBER}' ."
-            sh "docker image push 'harbor.vc-prod.k.home.net/daytwo/daytwo-argocd-pinniped-controller:0.0.${BUILD_NUMBER}'"
-            sh 'docker build -t "harbor.vc-prod.k.home.net/daytwo/daytwo-argocd-pinniped-controller:latest" .'
-            sh 'docker image push "harbor.vc-prod.k.home.net/daytwo/daytwo-argocd-pinniped-controller:latest"'
+            sh "docker build --progress=plain -t 'harbor.vc-prod.k.home.net/daytwo/pinniped-controller:0.0.${BUILD_NUMBER}' ."
+            sh "docker image push 'harbor.vc-prod.k.home.net/daytwo/pinniped-controller:0.0.${BUILD_NUMBER}'"
+            sh 'docker build -t "harbor.vc-prod.k.home.net/daytwo/pinniped-controller:latest" .'
+            sh 'docker image push "harbor.vc-prod.k.home.net/daytwo/pinniped-controller:latest"'
           }
         }
       }
