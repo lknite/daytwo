@@ -26,7 +26,8 @@ namespace daytwo
             required.Add("ARGOCD_AUTH_TOKEN");
             foreach (string req in required)
             {
-                if (Environment.GetEnvironmentVariable(req) == null)
+                if ((Environment.GetEnvironmentVariable(req) == null)
+                    || (Environment.GetEnvironmentVariable(req) == ""))
                 {
                     throw new Exception("Missing required environment variable: '" + req + "'");
                 }

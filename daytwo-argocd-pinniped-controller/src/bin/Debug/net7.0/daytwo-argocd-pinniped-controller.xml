@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>daytwo-argocd-pinniped-controller</name>
+    </assembly>
+    <members>
+        <member name="M:daytwo.Controllers.KubeconfigController.Get(System.String,System.String)">
+            <summary>
+            asdf
+            </summary>
+            <param name="managementCluster"></param>
+            <param name="workloadCluster"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

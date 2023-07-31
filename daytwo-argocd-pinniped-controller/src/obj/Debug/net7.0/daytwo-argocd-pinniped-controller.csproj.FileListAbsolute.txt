@@ -50,3 +50,5 @@ C:\Users\travis.HOME\source\repos\daytwo\daytwo-argocd-pinniped-controller\src\o
 C:\Users\travis.HOME\source\repos\daytwo\daytwo-argocd-pinniped-controller\src\obj\Debug\net7.0\daytwo-argocd-pinniped-controller.pdb
 C:\Users\travis.HOME\source\repos\daytwo\daytwo-argocd-pinniped-controller\src\obj\Debug\net7.0\daytwo-argocd-pinniped-controller.genruntimeconfig.cache
 C:\Users\travis.HOME\source\repos\daytwo\daytwo-argocd-pinniped-controller\src\obj\Debug\net7.0\ref\daytwo-argocd-pinniped-controller.dll
+C:\Users\travis.HOME\source\repos\daytwo\daytwo-argocd-pinniped-controller\src\bin\Debug\net7.0\daytwo-argocd-pinniped-controller.xml
+C:\Users\travis.HOME\source\repos\daytwo\daytwo-argocd-pinniped-controller\src\obj\Debug\net7.0\daytwo-argocd-pinniped-controller.xml
