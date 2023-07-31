@@ -26,15 +26,18 @@ spec:
         - name: MANAGEMENT_CLUSTERS
           value: {{ .Values.register.managementClusters }}
         - name: ARGOCD_AUTH_TOKEN
-          value: {{ .Values.register.argocdAuthToken }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.register.argocdAuthToken }}
+              key: token
         - name: ARGOCD_NAMESPACE
           value: {{ .Values.register.argocdNamespace }}
-        {{- if .Values.extraVolumeMounts }}
         volumeMounts:
+        {{- if .Values.extraVolumeMounts }}
           {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
         {{- end }}
-      {{- if .Values.extraVolumes }}
       volumes:
+      {{- if .Values.extraVolumes }}
         {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumes "context" $) | nindent 8 }}
       {{- end }}
 status: {}
