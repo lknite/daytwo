@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace daytwo.Controllers
 {
     [ApiController]
-    [Route("")]
+    [Route("/")]
     //[Produces("application/json")]
     public class KubeconfigController : ControllerBase
     {
