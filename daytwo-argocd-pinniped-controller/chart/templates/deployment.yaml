@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: argocd-pinniped-controller
+  name: argocd-pinniped-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: argocd-pinniped-controller
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: argocd-pinniped-controller
+    spec:
+      containers:
+      - name: argocd-pinniped-controller
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        resources: {}
+        {{- if .Values.extraVolumeMounts }}
+        volumeMounts:
+          {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
+        {{- end }}
+      {{- if .Values.extraVolumes }}
+      volumes:
+        {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumes "context" $) | nindent 8 }}
+      {{- end }}
+status: {}
