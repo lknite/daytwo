@@ -205,6 +205,7 @@ namespace gge.K8sControllers
             if (p.ExitCode != 0)
             {
                 Console.WriteLine("error generating pinniped kubeconfig");
+                return;
             }
 
             Console.WriteLine("after generate pinniped kubeconfig");
