@@ -18,7 +18,7 @@ image:
   tag: latest
   pullPolicy: Always
 
-argocd-pinniped-controller:
+pinniped:
   ## @param argocdNamespace Used if targeting an argocd installation in an alternative namespace
   ##
   argocdNamespace: "argocd"
