@@ -51,9 +51,10 @@ In one step, copying a clusterapi resource file to git, cause a cluster to be de
 | todo    | move builds to use github actions     |                                         |
 | todo    | rewrite all controllers using go      |                                         |
 
-## individual installation
+## getting started
 - helm repo add lknite https://lknite.github.io/charts
 - helm repo update lknite
+- helm install register-controller
 - helm install pinniped-controller
 
 ## reference ##
