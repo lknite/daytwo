@@ -188,9 +188,9 @@ namespace gge.K8sControllers
             p.WaitForExit();
 
             // debug, show stdout from the command
-            Directory.CreateDirectory($"/var/www");
-            Directory.CreateDirectory($"/var/www/{managementCluster}");
-            Directory.CreateDirectory($"/var/www/{managementCluster}/{workloadCluster}");
+            Directory.CreateDirectory($"/opt/www");
+            Directory.CreateDirectory($"/opt/www/{managementCluster}");
+            Directory.CreateDirectory($"/opt/www/{managementCluster}/{workloadCluster}");
 
             // capture output
             string tmp = "";
@@ -202,7 +202,7 @@ namespace gge.K8sControllers
             // save to file (accessible via GET)
             try
             {
-                File.WriteAllText($"/var/www/{managementCluster}/{workloadCluster}/kubeconfig", "testadsfasdf");
+                File.WriteAllText($"/opt/www/{managementCluster}/{workloadCluster}/kubeconfig", "testadsfasdf");
             }
             catch (Exception ex)
             {
