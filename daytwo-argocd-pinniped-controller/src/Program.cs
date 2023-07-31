@@ -238,9 +238,7 @@ namespace daytwo
                 });
             //            }
 
-            /*
             app.MapControllers();
-            */
 
             app.Run();
         }
