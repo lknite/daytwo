@@ -204,6 +204,7 @@ namespace gge.K8sControllers
             while (!p.StandardOutput.EndOfStream)
             {
                 tmp += p.StandardOutput.ReadLine();
+                tmp += "\n";
             }
             Console.WriteLine("display output");
             Console.WriteLine(tmp);
