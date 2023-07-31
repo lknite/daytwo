@@ -221,7 +221,7 @@ namespace gge.K8sControllers
             try
             {
                 Console.WriteLine("write to file: '"+ $"/opt/www/{managementCluster}/{workloadCluster}/kubeconfig" +"'");
-                File.WriteAllText($"/opt/www/{managementCluster}/{workloadCluster}/kubeconfig", "testadsfasdf");
+                File.WriteAllText($"/opt/www/{managementCluster}/{workloadCluster}/kubeconfig", tmp);
             }
             catch (Exception ex)
             {
