@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: argocd-register-controller
+  name: argocd-register-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: argocd-register-controller
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: argocd-register-controller
+    spec:
+      containers:
+      - name: argocd-register-controller
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        resources: {}
+        env:
+        - name: MANAGEMENT_CLUSTERS
+          value: {{ .Values.argocd-register-controller.managementClusters }}
+        - name: ARGOCD_AUTH_TOKEN
+          value: {{ .Values.argocd-register-controller.argocdAuthToken }}
+        - name: ARGOCD_NAMESPACE
+          value: {{ .Values.argocd-register-controller.argocdNamespace }}
+        {{- if .Values.extraVolumeMounts }}
+        volumeMounts:
+          {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
+        {{- end }}
+      {{- if .Values.extraVolumes }}
+      volumes:
+        {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumes "context" $) | nindent 8 }}
+      {{- end }}
+status: {}
