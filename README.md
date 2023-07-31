@@ -47,7 +47,7 @@ In one step, copying a clusterapi resource file to git, cause a cluster to be de
 |---------|---------------------------------------|-----------------------------------------|
 | alpha   | [daytwo-argocd-register-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-register-controller)     | working, todo: improve logging, delete orphaned secrets |
 | alpha   | [daytwo-argocd-pinniped-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-pinniped-controller)     | working, todo: add config env vars |
-| alpha   | add helm charts                       | https://lknite.github.io/charts - images not yet published, testing with local repo |
+| alpha   | add [helm charts](https://lknite.github.io/charts) | images not yet published, test with local repo |
 | todo    | move builds to use github actions     |                                         |
 | todo    | rewrite all controllers using go      |                                         |
 
