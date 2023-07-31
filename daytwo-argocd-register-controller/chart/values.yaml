@@ -18,7 +18,7 @@ image:
   tag: latest
   pullPolicy: Always
 
-argocd-register-controller:
+register:
   ## @param managementCluster Comma separated list of names of clusterapi servers
   ##
   managementCluster: ""

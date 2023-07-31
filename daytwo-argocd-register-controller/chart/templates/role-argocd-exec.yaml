@@ -2,7 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: role-argocd-exec
-  namespace: {{ .Values.argocd-register-controller.argocdNamespace }}
+  namespace: {{ .Values.register.argocdNamespace }}
 rules:
 - apiGroups:
   - ""
