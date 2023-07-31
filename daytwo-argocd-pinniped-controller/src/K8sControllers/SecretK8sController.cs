@@ -132,6 +132,9 @@ namespace gge.K8sControllers
         {
             Console.WriteLine("update configmap");
 
+            string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
+            string workloadCluster = Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length);
+
             //
             KubernetesClientConfiguration kubeconfig = Main.BuildConfigFromArgocdSecret(secret);
             /*
@@ -145,8 +148,7 @@ namespace gge.K8sControllers
             }
             Console.WriteLine("try serialize (2)");
             */
-            string json = Main.SerializeKubernetesClientConfig(
-                    kubeconfig, Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length));
+            string json = Main.SerializeKubernetesClientConfig(kubeconfig, workloadCluster);
             //Console.WriteLine(json);
             File.WriteAllText("/tmp/kubeconfig", json);
 
@@ -181,10 +183,19 @@ namespace gge.K8sControllers
             p.WaitForExit();
 
             // debug, show stdout from the command
+            Directory.CreateDirectory($"/var/www");
+            Directory.CreateDirectory($"/var/www/{managementCluster}");
+            Directory.CreateDirectory($"/var/www/{managementCluster}/{workloadCluster}");
+
+            // capture output
+            string tmp = "";
             while (!p.StandardOutput.EndOfStream)
             {
-                Console.WriteLine(p.StandardOutput.ReadLine());
+                tmp += p.StandardOutput.ReadLine();
             }
+
+            // save to file (accessible via GET)
+            File.WriteAllText($"/var/www/{managementCluster}/{workloadCluster}/kubeconfig", tmp);
 
             return;
         }
