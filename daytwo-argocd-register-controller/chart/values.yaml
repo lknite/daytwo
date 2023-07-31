@@ -25,7 +25,7 @@ register:
 
   ## @param argocdAuthToken Secret containing 'token' key, used when registering cluster with argocd
   ##
-  argocdAuthTokenSecret: "authToken"
+  argocdAuthTokenSecret: "auth-token"
 
   ## @param argocdNamespace Used if targeting an argocd installation in an alternative namespace
   ##
