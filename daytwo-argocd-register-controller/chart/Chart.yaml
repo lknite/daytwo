@@ -15,7 +15,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.0.4
+version: 0.0.5
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
@@ -25,9 +25,7 @@ appVersion: "0.0.1"
 # We use some of bitnami's helm chart standards
 dependencies:
   - name: common
-#    repository: https://repo.vmware.com/bitnami-files
     repository: oci://registry-1.docker.io/bitnamicharts
     tags:
       - bitnami-common
-#    version: 2.6.0
     version: 2.x.x
