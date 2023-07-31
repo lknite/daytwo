@@ -197,7 +197,7 @@ namespace gge.K8sControllers
             Console.WriteLine("display output");
             Console.WriteLine(tmp);
 
-            //p.WaitForExit();
+            p.WaitForExit();
             Console.WriteLine("after generate pinniped kubeconfig");
 
             // debug, show stdout from the command
