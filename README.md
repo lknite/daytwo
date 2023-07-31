@@ -28,7 +28,7 @@ environment always matches what is in git.
   - hosts a website which can be used to access the pinniped kubeconfig files
 
 ## intended use
-In one step, copying a clusterapi resource file to git, cause a cluster to be deployed, addons installed, be authenticated via pinniped, and authorized via rbac.
+In one step, copying a clusterapi resource file to git, cause a cluster to be deployed, addons installed, enable authentication via pinniped, and authorization via rbac.
 
 - place clusterapi cluster.yaml into a git repo
 - use argocd to automatically apply the folder containing all cluster yaml file
