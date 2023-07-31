@@ -47,17 +47,14 @@ In one step, copying a clusterapi resource file to git, cause a cluster to be de
 |---------|---------------------------------------|-----------------------------------------|
 | alpha   | [daytwo-argocd-register-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-register-controller)     | working, todo: improve logging, delete orphaned secrets |
 | alpha   | [daytwo-argocd-pinniped-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-pinniped-controller)     | working, todo: add config env vars |
-| active  | add helm charts                       |                                         |
+| alpha   | add helm charts                       | https://lknite.github.io/charts - images not yet published, testing with local repo |
 | todo    | move builds to use github actions     |                                         |
 | todo    | rewrite all controllers using go      |                                         |
 
 ## individual installation
-- use helm chart to install respective controller
-- by default daytwo controllers install to the argocd namespace
-- use of an alternative namespace, e.g. daytwo, will work as long as two items are defined:
-  - the argocd namespace must be specified
-  - access must be granted to argocd secrets (argocd secrets are how argocd registers clusters)
-
+- helm repo add lknite https://lknite.github.io/charts
+- helm repo update lknite
+- helm install pinniped-controller
 
 ## reference ##
 [kubernetes daytwo controllers](https://www.travisloyd.xyz/2023/07/08/kubernetes-daytwo-controllers/)

@@ -21,8 +21,9 @@ todo
   - OPTION_DISABLE_HOSTING: true
   
 ## status ##
-- initial development
+- working
 - todo:
+  - improve logging
 
 ## reference ##
 - [kubernetes daytwo controllers](https://www.travisloyd.xyz/2023/07/08/kubernetes-daytwo-controllers/)
