@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: {{.Release.Name}}-pinniped-controller
+  name: {{.Release.Name}}-pinniped
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: {{.Release.Name}}-pinniped-controller
