@@ -202,7 +202,7 @@ namespace gge.K8sControllers
             // save to file (accessible via GET)
             try
             {
-                File.WriteAllText($"/var/www/{managementCluster}/{workloadCluster}/kubeconfig", tmp);
+                File.WriteAllText($"/var/www/{managementCluster}/{workloadCluster}/kubeconfig", "testadsfasdf");
             }
             catch (Exception ex)
             {
