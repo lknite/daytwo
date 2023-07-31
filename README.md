@@ -27,12 +27,25 @@ environment always matches what is in git.
   - watches for registered argocd clusters and updates pinniped kubeconfig files
   - hosts a website which can be used to access the pinniped kubeconfig files
 
+## intended use
+- place clusterapi cluster.yaml into a git repo
+- use argocd to automatically apply the folder containing all cluster yaml file
+- register-controller will detect cluster and automatically register it with argocd
+- register-controller will also copy all labels from the cluster resource to the argocd cluster secret
+- use argocd applicationsets to install addons automatically by using matchLabel to match labels copied from the cluster resource
+  - labels such as: addons-cert-manager, addons-fluent-bit, addons-pinniped-concierge, addons-pinniped-www, addons-rbac
+- this will cause "pinniped-concierge" & "pinniped-www" to be installed to each registered cluster
+- pinniped-controller will watch argocd secrets and generate a pinniped kubeconfig automatically
+- pinniped-controller also hosts a website to access the pinniped kubeconfig files it generates
+- pinniped-www can be used by consumers to access the cluster-specific pinniped kubeconfig file e.g.
+  - https://pinniped.<clustername>.<domain>
+
 ## development
 | status  | controller                            | detail                                  |
 |---------|---------------------------------------|-----------------------------------------|
-| active  | [daytwo-argocd-register-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-register-controller)     | working, todo: improve logging, delete orphaned secrets |
-| active  | [daytwo-argocd-pinniped-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-pinniped-controller)     | working, todo: add config env vars |
-| todo    | add helm charts                       |                                         |
+| alpha   | [daytwo-argocd-register-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-register-controller)     | working, todo: improve logging, delete orphaned secrets |
+| alpha   | [daytwo-argocd-pinniped-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-pinniped-controller)     | working, todo: add config env vars |
+| active  | add helm charts                       |                                         |
 | todo    | move builds to use github actions     |                                         |
 | todo    | rewrite all controllers using go      |                                         |
 
