@@ -17,7 +17,8 @@ namespace daytwo.Controllers
         /// <summary>
         /// asdf
         /// </summary>
-        /// <param name="game"></param>
+        /// <param name="managementCluster"></param>
+        /// <param name="workloadCluster"></param>
         /// <returns></returns>
         [HttpGet("{managementCluster}/{workloadCluster}")]
         public async Task<IActionResult> Get(string managementCluster, string workloadCluster)
