@@ -221,11 +221,11 @@ namespace daytwo
 //            {
                 app.UseSwagger(c =>
                 {
-                    c.RouteTemplate = "swagger/list/{documentName}/swagger.json";
+                    c.RouteTemplate = "swagger/{documentName}/swagger.json";
                 });
                 app.UseSwaggerUI(c => {
-                    c.SwaggerEndpoint("/swagger/list/v1/swagger.json", "My API V1");
-                    c.RoutePrefix = "swagger/list";
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                    c.RoutePrefix = "swagger";
                 });
 
 
