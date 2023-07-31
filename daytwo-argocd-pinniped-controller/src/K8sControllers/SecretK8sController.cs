@@ -201,20 +201,26 @@ namespace gge.K8sControllers
             Console.WriteLine("display output");
             Console.WriteLine(tmp);
 
+            // if there was an error, we stop here
+            if (p.ExitCode != 0)
+            {
+                Console.WriteLine("error generating pinniped kubeconfig");
+            }
+
             Console.WriteLine("after generate pinniped kubeconfig");
 
             // debug, show stdout from the command
             Console.WriteLine("create 'www' folder structure");
-            Directory.CreateDirectory($"/tmp/www");
-            Directory.CreateDirectory($"/tmp/www/{managementCluster}");
-            Directory.CreateDirectory($"/tmp/www/{managementCluster}/{workloadCluster}");
+            Directory.CreateDirectory($"/opt/www");
+            Directory.CreateDirectory($"/opt/www/{managementCluster}");
+            Directory.CreateDirectory($"/opt/www/{managementCluster}/{workloadCluster}");
 
             // save to file (accessible via GET)
             Console.WriteLine("copy to www folder");
             try
             {
                 Console.WriteLine("write to file: '"+ $"/tmp/www/{managementCluster}/{workloadCluster}/kubeconfig" +"'");
-                File.WriteAllText($"/tmp/www/{managementCluster}/{workloadCluster}/kubeconfig", "testadsfasdf");
+                File.WriteAllText($"/tmp/opt/{managementCluster}/{workloadCluster}/kubeconfig", "testadsfasdf");
             }
             catch (Exception ex)
             {
