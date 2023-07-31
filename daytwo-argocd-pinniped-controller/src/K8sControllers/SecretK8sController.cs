@@ -200,7 +200,14 @@ namespace gge.K8sControllers
             }
 
             // save to file (accessible via GET)
-            File.WriteAllText($"/var/www/{managementCluster}/{workloadCluster}/kubeconfig", tmp);
+            try
+            {
+                File.WriteAllText($"/var/www/{managementCluster}/{workloadCluster}/kubeconfig", tmp);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
 
             return;
         }
