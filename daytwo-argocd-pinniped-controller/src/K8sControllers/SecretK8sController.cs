@@ -170,7 +170,7 @@ namespace gge.K8sControllers
                     Arguments = "get kubeconfig"
                         + " --kubeconfig /tmp/kubeconfig"
                         + " --oidc-issuer https://keycloak.vc-prod.k.home.net/realms/home.net"
-                        + " --oidc-client-id default"
+                        + " --oidc-client-id kubernetes"
                         + " --oidc-scopes openid,email,profile,offline_access"
                         + " --concierge-authenticator-name oidc-config"
                         + " --concierge-authenticator-type jwt"
