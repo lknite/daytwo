@@ -168,6 +168,7 @@ namespace gge.K8sControllers
               --skip-validation
              */
             // generate pinniped kubeconfig
+            Console.WriteLine("generate pinniped kubeconfig");
             var p = new Process
             {
                 StartInfo = {
@@ -186,22 +187,26 @@ namespace gge.K8sControllers
             };
             p.Start();
             p.WaitForExit();
+            Console.WriteLine("after generate pinniped kubeconfig");
 
             // debug, show stdout from the command
+            Console.WriteLine("create 'www' folder structure");
             Directory.CreateDirectory($"/tmp/www");
             Directory.CreateDirectory($"/tmp/www/{managementCluster}");
             Directory.CreateDirectory($"/tmp/www/{managementCluster}/{workloadCluster}");
 
             // capture output
             string tmp = "";
+            Console.WriteLine("parse output");
             while (!p.StandardOutput.EndOfStream)
             {
                 tmp += p.StandardOutput.ReadLine();
             }
-            Console.WriteLine("tmp:");
+            Console.WriteLine("display output");
             Console.WriteLine(tmp);
 
             // save to file (accessible via GET)
+            Console.WriteLine("copy to www folder");
             try
             {
                 Console.WriteLine("write to file: '"+ $"/tmp/www/{managementCluster}/{workloadCluster}/kubeconfig" +"'");
