@@ -21,6 +21,11 @@
 - PINNIPED_CONCIERGE_AUTHENTICATOR_TYPE: jwt
 - PINNIPED_SKIP_VALIDATION: true
 
+### required ###
+- Select which version of pinniped to install:
+  - name: INSTALL_VERSION
+    value: v0.24.0
+
 ### optional ###
 - To specify an alternative location for argocd ('argocd' by default):
   - ARGOCD_NAMESPACE: argocd
