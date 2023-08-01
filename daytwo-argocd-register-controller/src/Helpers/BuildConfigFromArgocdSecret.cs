@@ -25,25 +25,25 @@ namespace daytwo.Helpers
 
                 Console.WriteLine("  -   name: " + data["name"]);
                 Console.WriteLine("  - server: " + data["server"]);
-                Console.WriteLine("  - config: " + data["config"]);
+                //Console.WriteLine("  - config: " + data["config"]);
 
                 // parse kubeconfig json data from argocd secret
-                Console.WriteLine("  - 1");
+                //Console.WriteLine("  - 1");
                 JsonElement o = JsonSerializer.Deserialize<JsonElement>(data["config"]);
 
                 // form kubeconfig using values from argocd secret
-                Console.WriteLine("  - 2");
+                //Console.WriteLine("  - 2");
                 kubeconfig.Host = data["server"];
-                Console.WriteLine("  - 3");
+                //Console.WriteLine("  - 3");
                 kubeconfig.SkipTlsVerify = o.GetProperty("tlsClientConfig").GetProperty("insecure").GetBoolean();
-                Console.WriteLine("  - 4");
+                //Console.WriteLine("  - 4");
                 kubeconfig.ClientCertificateData = o.GetProperty("tlsClientConfig").GetProperty("certData").GetString();
-                Console.WriteLine("  - 5");
+                //Console.WriteLine("  - 5");
                 kubeconfig.ClientCertificateKeyData = o.GetProperty("tlsClientConfig").GetProperty("keyData").GetString();
                 // convert caData into an x509 cert & add
-                Console.WriteLine("  - 6");
+                //Console.WriteLine("  - 6");
                 kubeconfig.SslCaCerts = new X509Certificate2Collection();
-                Console.WriteLine("  - 7");
+                //Console.WriteLine("  - 7");
                 if (kubeconfig.SkipTlsVerify)
                 {
                     kubeconfig.SslCaCerts.Add(
