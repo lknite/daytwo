@@ -44,10 +44,13 @@ namespace daytwo.Helpers
                 Console.WriteLine("  - 6");
                 kubeconfig.SslCaCerts = new X509Certificate2Collection();
                 Console.WriteLine("  - 7");
-                kubeconfig.SslCaCerts.Add(
-                        X509Certificate2.CreateFromPem(
-                            Base64Decode(o.GetProperty("tlsClientConfig").GetProperty("caData").GetString()).AsSpan()
-                    ));
+                if (kubeconfig.SkipTlsVerify)
+                {
+                    kubeconfig.SslCaCerts.Add(
+                            X509Certificate2.CreateFromPem(
+                                Base64Decode(o.GetProperty("tlsClientConfig").GetProperty("caData").GetString()).AsSpan()
+                        ));
+                }
             }
             catch (Exception ex)
             {
