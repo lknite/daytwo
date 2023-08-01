@@ -4,7 +4,7 @@
 if [ ! -f /usr/local/bin/pinniped ]; then
   echo "- installing pinniped cli (first run only)"
   pushd /tmp > /dev/null
-  curl -Lso pinniped https://get.pinniped.dev/v0.24.0/pinniped-cli-linux-amd64 && \
+  curl -Lso pinniped https://get.pinniped.dev/$INSTALL_VERSION/pinniped-cli-linux-amd64 && \
     chmod +x pinniped && \
     mv pinniped /usr/local/bin/pinniped
   popd > /dev/null
