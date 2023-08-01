@@ -24,7 +24,7 @@ spec:
         resources: {}
         env:
         - name: INSTALL_VERSION
-          value: {{ .Values.pinnipedVersion }}
+          value: {{ .Values.pinniped.pinnipedVersion }}
         {{- if .Values.env }}
         {{- include "common.tplvalues.render" (dict "value" .Values.env "context" $) | nindent 10 }}
         {{- end }}
