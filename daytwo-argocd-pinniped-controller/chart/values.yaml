@@ -23,6 +23,11 @@ pinniped:
   ##
   argocdNamespace: "argocd"
 
+  ## @param pinnipedVersion What version of pinniped to download and use inside container
+  ## e.g. https://get.pinniped.dev/v0.24.0/pinniped-cli-linux-amd64
+  ##
+  pinnipedVersion: "v0.24.0"
+
 ## @param env Use to define environment variables passed to pinniped when generating kubeconfig
 ## E.g. to define the "--oidc-issuer" use: PINNIPED_OIDC_ISSUER
 ##
