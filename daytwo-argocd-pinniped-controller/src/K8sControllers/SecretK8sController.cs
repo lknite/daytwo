@@ -203,12 +203,15 @@ namespace gge.K8sControllers
                 if (key.StartsWith("PINNIPED_"))
                 {
                     string name = key.Substring(9).ToLower().Replace("_", "-");
-                    string value = "";
+                    string value = string.Empty;
 
-                    // true gets the default value of '', false though is just skipped
                     if (Environment.GetEnvironmentVariable(key) == "false")
                     {
                         continue;
+                    }
+                    else if (Environment.GetEnvironmentVariable(key) == "true")
+                    {
+                        value = "";
                     }
                     else
                     {
