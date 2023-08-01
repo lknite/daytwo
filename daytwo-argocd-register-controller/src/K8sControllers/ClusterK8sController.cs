@@ -50,7 +50,7 @@ namespace daytwo.K8sControllers
             */
 
             // start listening
-            Console.WriteLine($"**** Cluster.Add({api}s.{group}.{version})");
+            Console.WriteLine($"**** Cluster.Add({api}s.{group}/{version})");
         }
 
         public async Task Listen(string managementCluster)
