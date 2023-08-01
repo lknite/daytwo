@@ -24,7 +24,7 @@
 ### required ###
 - Select which version of pinniped to install:
   - name: INSTALL_VERSION
-    value: v0.24.0
+    value: "0.24.0"
 
 ### optional ###
 - To specify an alternative location for argocd ('argocd' by default):
