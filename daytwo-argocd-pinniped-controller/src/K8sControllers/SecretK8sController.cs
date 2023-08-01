@@ -180,6 +180,7 @@ namespace gge.K8sControllers
                     WorkingDirectory = @"/tmp",
                     Arguments = "get kubeconfig"
                         + " --kubeconfig /tmp/kubeconfig"
+                        /*
                         + ((Environment.GetEnvironmentVariable("PINNIPED_OIDC_ISSUER") != null) ?
                             $" --oidc-issuer {Environment.GetEnvironmentVariable("PINNIPED_OIDC_ISSUER")}" : "")
                         + ((Environment.GetEnvironmentVariable("PINNIPED_OIDC_CLIENT_ID") != null) ?
@@ -192,8 +193,33 @@ namespace gge.K8sControllers
                             $" --concierge-authenticator-type {Environment.GetEnvironmentVariable("PINNIPED_CONCIERGE_AUTHENTICATOR_TYPE")}" : "")
                         + ((Environment.GetEnvironmentVariable("PINNIPED_SKIP_VALIDATION") != null) ?
                             ((Environment.GetEnvironmentVariable("PINNIPED_SKIP_VALIDATION") == "true") ? " --skip-validation" : "") : "")
+                        */
                 }
             };
+            // append whatever parameters are passed in via environment variables
+            foreach (string key in Environment.GetEnvironmentVariables().Keys)
+            {
+                // check if this is a pinniped parameter
+                if (key.StartsWith("PINNIPED_"))
+                {
+                    string name = key.Substring(9).ToLower().Replace("_", "-");
+                    string value = "";
+
+                    // true gets the default value of '', false though is just skipped
+                    if (Environment.GetEnvironmentVariable(key) == "false")
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        value = Environment.GetEnvironmentVariable(key);
+                    }
+
+                    // append new parameter
+                    p.StartInfo.Arguments += $" --{name} {value}";
+                }
+            }
+
             p.Start();
             p.WaitForExit();
 
