@@ -180,12 +180,12 @@ namespace gge.K8sControllers
                     WorkingDirectory = @"/tmp",
                     Arguments = "get kubeconfig"
                         + " --kubeconfig /tmp/kubeconfig"
-                        + " --oidc-issuer https://keycloak.vc-prod.k.home.net/realms/home.net"
-                        + " --oidc-client-id kubernetes"
-                        + " --oidc-scopes openid,email,profile,offline_access"
-                        + " --concierge-authenticator-name oidc-config"
-                        + " --concierge-authenticator-type jwt"
-                        + " --skip-validation"
+                        + $" --oidc-issuer {Environment.GetEnvironmentVariable("PINNIPED_OIDC_ISSUER")}"
+                        + $" --oidc-client-id {Environment.GetEnvironmentVariable("PINNIPED_OIDC_CLIENT_ID")}"
+                        + $" --oidc-scopes {Environment.GetEnvironmentVariable("PINNIPED_OIDC_SCOPES")}"
+                        + $" --concierge-authenticator-name {Environment.GetEnvironmentVariable("PINNIPED_CONCIERGE_AUTHENTICATOR_NAME")}"
+                        + $" --concierge-authenticator-type {Environment.GetEnvironmentVariable("PINNIPED_CONCIERGE_AUTHENTICATOR_TYPE")}"
+                        + (Environment.GetEnvironmentVariable("PINNIPED_SKIP_VALIDATION") == "true" ? " --skip-validation" : "")
                 }
             };
             p.Start();

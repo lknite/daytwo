@@ -20,7 +20,6 @@ namespace daytwo.Controllers
         /// <param name="managementCluster"></param>
         /// <param name="workloadCluster"></param>
         /// <returns></returns>
-        [HttpGet("{managementCluster}/{workloadCluster}")]
         [HttpGet("{managementCluster}/{workloadCluster}/kubeconfig")]
         public async Task<IActionResult> Get(string managementCluster, string workloadCluster)
         {
