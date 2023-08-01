@@ -7,7 +7,6 @@
 
 ## rbac ##
 - role get/list/watch to 'secrets' in argocd namespace
-  - todo
 
 ## installation ##
 - helm repo add lknite https://lknite.github.io/charts
