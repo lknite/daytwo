@@ -211,15 +211,16 @@ namespace gge.K8sControllers
                     }
                     else if (Environment.GetEnvironmentVariable(key) == "true")
                     {
-                        value = "";
+                        // append new parameter
+                        p.StartInfo.Arguments += $" --{name}";
                     }
                     else
                     {
                         value = Environment.GetEnvironmentVariable(key);
-                    }
 
-                    // append new parameter
-                    p.StartInfo.Arguments += $" --{name} {value}";
+                        // append new parameter
+                        p.StartInfo.Arguments += $" --{name} {value}";
+                    }
                 }
             }
             //
