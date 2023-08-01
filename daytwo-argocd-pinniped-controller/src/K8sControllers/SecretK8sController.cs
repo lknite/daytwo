@@ -219,7 +219,7 @@ namespace gge.K8sControllers
                     p.StartInfo.Arguments += $" --{name} {value}";
                 }
             }
-
+            //
             p.Start();
             p.WaitForExit();
 
