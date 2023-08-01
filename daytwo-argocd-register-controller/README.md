@@ -20,7 +20,9 @@
   - used to access workload cluster kubeconfig via namespaced secrets managed by clusterapi
 
 ## installation ##
-todo
+- helm repo add lknite https://lknite.github.io/charts
+- helm repo update lknite
+- helm install register-controller
 
 ## configuration environment variables ##
 ### required ###

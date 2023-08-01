@@ -10,9 +10,17 @@
   - todo
 
 ## installation ##
-todo
+- helm repo add lknite https://lknite.github.io/charts
+- helm repo update lknite
+- helm install pinniped-controller
 
 ## configuration environment variables ##
+- PINNIPED_OIDC_ISSUER: https://keycloak.vc-prod.k.home.net/realms/home.net
+- PINNIPED_OIDC_CLIENT_ID: kubernetes
+- PINNIPED_OIDC_SCOPES: openid,email,profile,offline_access
+- PINNIPED_CONCIERGE_AUTHENTICATOR_NAME: oidc-config
+- PINNIPED_CONCIERGE_AUTHENTICATOR_TYPE: jwt
+- PINNIPED_SKIP_VALIDATION: true
 
 ### optional ###
 - To specify an alternative location for argocd ('argocd' by default):
