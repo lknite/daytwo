@@ -34,6 +34,7 @@ namespace daytwo.Helpers
                     string? tmp = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
                     if (managementCluster != tmp)
                     {
+                        Console.WriteLine("cluster not managed by daytwo, skipping");
                         continue;
                     }
                 }
