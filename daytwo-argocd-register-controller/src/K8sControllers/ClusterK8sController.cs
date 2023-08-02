@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using System.Xml.Linq;
 using daytwo.crd.provider;
 using Microsoft.AspNetCore.Antiforgery;
+using System.Runtime.CompilerServices;
 
 namespace daytwo.K8sControllers
 {
@@ -307,7 +308,7 @@ namespace daytwo.K8sControllers
         /// </summary>
         /// <param name="clusterName"></param>
         /// <returns></returns>
-        public static async Task<KubernetesClientConfiguration> GetClusterKubeConfig(string clusterName, string clusterNamespace, string? managementCluster)
+        public async Task<KubernetesClientConfiguration> GetClusterKubeConfig(string clusterName, string clusterNamespace, string? managementCluster)
         {
             // clusterctl - n vc - test get kubeconfig vc - test
             // k -n vc-test get secrets vc-test-kubeconfig -o jsonpath='{.data.value}' | base64 -d
@@ -316,7 +317,7 @@ namespace daytwo.K8sControllers
             V1Secret secret = null;
             try
             {
-                secret = Globals.service.kubeclient.ReadNamespacedSecret(clusterName + "-kubeconfig", clusterNamespace);
+                secret = kubeclient.ReadNamespacedSecret(clusterName + "-kubeconfig", clusterNamespace);
             }
             catch (Exception ex)
             {
