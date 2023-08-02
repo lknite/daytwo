@@ -329,6 +329,17 @@ namespace daytwo.K8sControllers
             //Console.WriteLine("[cluster] kubeconfig:\n" + kubeconfig);
             //Convert.ToBase64String(bytes);
 
+            // locate context within kubeconfig
+            string[] lines = kubeconfig.Split("\n");
+            string context = string.Empty;
+            foreach (var line in lines)
+            {
+                if (line.StartsWith("current-context:")) {
+                    context = line.Substring("current-context: ".Length);
+                    break;
+                }
+            }
+
             // save kubeconfig to a temporary file
             //string path = Path.GetTempFileName();
             //string path = "/tmp/asdf.txt";
@@ -391,7 +402,7 @@ namespace daytwo.K8sControllers
                 cmds.Add("-c");
                 cmds.Add($"echo {Convert.ToBase64String(bytes)} > /tmp/{clusterName}.b64;"
                         + $"cat /tmp/{clusterName}.b64 | base64 -d > /tmp/{clusterName}.conf;"
-                        + $"argocd cluster add my-vcluster"
+                        + $"argocd cluster add {context}"
                         + $" -y"
                         + $" --upsert"
                         + $" --name {clusterName}"
