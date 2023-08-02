@@ -327,6 +327,7 @@ namespace daytwo.K8sControllers
             secret.Data.TryGetValue("value", out byte[] bytes);
             string kubeconfig = System.Text.Encoding.UTF8.GetString(bytes);
             Console.WriteLine("[cluster] kubeconfig:\n" + kubeconfig);
+            //Convert.ToBase64String(bytes);
 
             // save kubeconfig to a temporary file
             //string path = Path.GetTempFileName();
@@ -401,6 +402,7 @@ namespace daytwo.K8sControllers
                         + $" --insecure"
                         + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")};"
                         );
+                Console.WriteLine(cmds[2]);
                 Console.WriteLine("[cluster] before exec");
                 int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
                     pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, One, Globals.cancellationToken).ConfigureAwait(false);
