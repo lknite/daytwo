@@ -36,7 +36,9 @@ spec:
             {{- if eq "true" (include "common.ingress.supportsPathType" .) }}
             pathType: {{ .Values.ingress.pathType }}
             {{- end }}
-            backend: {{- include "common.ingress.backend" (dict "serviceName" {{.Release.Name}}-pinniped-controller "servicePort" "http" "context" $)  | nindent 14 }}
+            backend:
+              serviceName: {{.Release.Name}}-pinniped-controller
+              servicePort: http
     {{- end }}
     {{- range .Values.ingress.extraHosts }}
     - host: {{ tpl .name $ | quote }}
