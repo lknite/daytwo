@@ -44,7 +44,7 @@ namespace daytwo.Helpers
                 //Console.WriteLine("  - 6");
                 kubeconfig.SslCaCerts = new X509Certificate2Collection();
                 //Console.WriteLine("  - 7");
-                if (kubeconfig.SkipTlsVerify)
+                if (!kubeconfig.SkipTlsVerify)
                 {
                     kubeconfig.SslCaCerts.Add(
                             X509Certificate2.CreateFromPem(
