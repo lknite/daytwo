@@ -211,7 +211,7 @@ namespace daytwo.K8sControllers
             tmp = daytwo.Helpers.Main.GetClusterArgocdSecret(cluster.Name(), managementCluster);
             if (tmp == null)
             {
-                Console.WriteLine("unable to add argocd secret");
+                Console.WriteLine("unable to add argocd secret, or cluster not managed by daytwo");
                 return;
             }
 
