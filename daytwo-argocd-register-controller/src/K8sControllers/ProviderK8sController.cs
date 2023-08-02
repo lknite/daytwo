@@ -152,7 +152,7 @@ namespace daytwo.K8sControllers
 
         public async Task ProcessAdded(CrdProviderCluster provider)
         {
-            ProcessModified(provider);
+            await ProcessModified(provider);
         }
         public async Task ProcessModified(CrdProviderCluster provider)
         {

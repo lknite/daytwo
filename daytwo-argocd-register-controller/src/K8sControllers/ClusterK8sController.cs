@@ -135,7 +135,7 @@ namespace daytwo.K8sControllers
 
         public async Task ProcessAdded(CrdCluster tkc)
         {
-            ProcessModified(tkc);
+            await ProcessModified(tkc);
         }
         public async Task ProcessModified(CrdCluster cluster)
         {
@@ -317,7 +317,7 @@ namespace daytwo.K8sControllers
             V1Secret secret = null;
             try
             {
-                secret = kubeclient.ReadNamespacedSecret(clusterName + "-kubeconfig", clusterNamespace);
+                secret = await kubeclient.ReadNamespacedSecretAsync(clusterName + "-kubeconfig", clusterNamespace);
             }
             catch (Exception ex)
             {
