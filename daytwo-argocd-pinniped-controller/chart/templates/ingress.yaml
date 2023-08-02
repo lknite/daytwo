@@ -37,8 +37,10 @@ spec:
             pathType: {{ .Values.ingress.pathType }}
             {{- end }}
             backend:
-              serviceName: {{.Release.Name}}-pinniped
-              servicePort: http
+              service:
+                name: {{.Release.Name}}-pinniped
+                port:
+                  name: http
     {{- end }}
     {{- range .Values.ingress.extraHosts }}
     - host: {{ tpl .name $ | quote }}
