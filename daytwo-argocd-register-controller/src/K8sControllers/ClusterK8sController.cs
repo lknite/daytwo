@@ -413,7 +413,7 @@ namespace daytwo.K8sControllers
                         + $" --insecure"
                         + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")};"
                         );
-                Console.WriteLine(cmds[2]);
+                //Console.WriteLine(cmds[2]);
                 Console.WriteLine("[cluster] before exec");
                 int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
                     pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, One, Globals.cancellationToken).ConfigureAwait(false);
@@ -484,6 +484,10 @@ namespace daytwo.K8sControllers
             string _group = cluster.Spec.controlPlaneRef.apiVersion.Substring(0, cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/"));
             string _version = cluster.Spec.controlPlaneRef.apiVersion.Substring(cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/") + 1);
             string _plural = _api + "s";
+            Console.WriteLine("api: " + _api);
+            Console.WriteLine("group: " + _group);
+            Console.WriteLine("version: " + _version);
+            Console.WriteLine("plural: " + _plural);
 
             // check if provider is already present
             ProviderK8sController? item = providers.Find(item => (item.api == _api) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));
