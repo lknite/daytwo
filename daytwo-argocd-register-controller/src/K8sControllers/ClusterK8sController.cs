@@ -326,7 +326,7 @@ namespace daytwo.K8sControllers
             }
             secret.Data.TryGetValue("value", out byte[] bytes);
             string kubeconfig = System.Text.Encoding.UTF8.GetString(bytes);
-            //Console.WriteLine("[cluster] kubeconfig:\n" + kubeconfig);
+            Console.WriteLine("[cluster] kubeconfig:\n" + kubeconfig);
 
             // save kubeconfig to a temporary file
             //string path = Path.GetTempFileName();
