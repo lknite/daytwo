@@ -501,20 +501,18 @@ namespace daytwo.K8sControllers
 
 
                     GenericClient _generic = new GenericClient(kubeclient, "apiextensions.k8s.io", "v1", "customresourcedefinitions");
-                    CrdProviderCluster provider = await _generic.ReadAsync<CrdProviderCluster>(next.Name());
+                    CrdProviderCluster providerCrd = await _generic.ReadAsync<CrdProviderCluster>(next.Name());
 
-                    _group = provider.Spec.group;
-                    _version = provider.Spec.versions[0].name;
-                    _kind = provider.Spec.names.singular;
-                    _plural = provider.Spec.names.plural;
+                    _group = providerCrd.Spec.group;
+                    _version = providerCrd.Spec.versions[0].name;
+                    _kind = providerCrd.Spec.names.singular;
+                    _plural = providerCrd.Spec.names.plural;
                     Console.WriteLine($"_kind: {_kind}");
                     Console.WriteLine($"_group: {_group}");
                     Console.WriteLine($"_version: {_version}");
                     Console.WriteLine($"_plural: {_plural}");
-                    Console.WriteLine(JsonSerializer.Serialize(next));
 
 
-                    /*
                     // check if provider is already present
                     ProviderK8sController? item = providers.Find(item => (item.api == _kind) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));
                     if (item != null)
@@ -527,7 +525,7 @@ namespace daytwo.K8sControllers
                     {
                         // if not, start monitoring
                         ProviderK8sController provider = new ProviderK8sController(
-                                _kind, _group, _version, _kind +"s");
+                                _kind, _group, _version, _plural);
 
                         // add to list of providers we are monitoring
                         providers.Add(provider);
@@ -535,7 +533,6 @@ namespace daytwo.K8sControllers
                         // start listening
                         provider.Listen(managementCluster);
                     }
-                    */
                 }
             }
 
