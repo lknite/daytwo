@@ -208,7 +208,7 @@ namespace gge.K8sControllers
             {
                 Console.WriteLine(ex);
             }
-            Console.WriteLine(p.StartInfo.Arguments);
+            //Console.WriteLine(p.StartInfo.Arguments);
             //
             p.Start();
             p.WaitForExit();
