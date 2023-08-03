@@ -486,7 +486,7 @@ namespace daytwo.K8sControllers
             known.Add("tanzukubernetesclusters.run.tanzu.vmware.com");
 
             //
-            V1CustomResourceDefinitionList list = await Globals.service.kubeclient.ListCustomResourceDefinitionAsync();
+            V1CustomResourceDefinitionList list = await kubeclient.ListCustomResourceDefinitionAsync();
             foreach (var next in list)
             {
                 string _kind = string.Empty;
@@ -500,7 +500,7 @@ namespace daytwo.K8sControllers
                     //V1CustomResourceDefinition crd = await Globals.service.kubeclient.ReadCustomResourceDefinitionAsync(next.Name());
 
 
-                    GenericClient _generic = new GenericClient(Globals.service.kubeclient, "apiextensions.k8s.io", "v1", "customresourcedefinition");
+                    GenericClient _generic = new GenericClient(kubeclient, "apiextensions.k8s.io", "v1", "customresourcedefinitions");
                     CrdProviderCluster provider = await _generic.ReadAsync<CrdProviderCluster>(next.Name());
 
                     _group = provider.Spec.group;
