@@ -406,8 +406,8 @@ namespace daytwo.K8sControllers
                         + $" -y"
                         + $" --upsert"
                         + $" --name {clusterName}"
-                        + ((managementCluster != null) ? $" --annotation 'daytwo.aarr.xyz/management-cluster'={managementCluster}" : "")
-                        + $" --annotation 'daytwo.aarr.xyz/workload-cluster'={clusterName}"
+                        + ((managementCluster != null) ? $" --annotation 'daytwo.aarr.xyz/management-cluster'='{managementCluster}'" : "")
+                        + $" --annotation 'daytwo.aarr.xyz/workload-cluster'='{clusterName}'"
                         + $" --kubeconfig /tmp/{clusterName}.conf"
                         + $" --server=localhost:8080"
                         + $" --plaintext"
