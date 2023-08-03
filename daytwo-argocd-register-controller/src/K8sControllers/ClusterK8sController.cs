@@ -239,7 +239,7 @@ namespace daytwo.K8sControllers
             }
 
             // only remove from argocd if we added this cluster to argocd
-            string annotation = tmp.GetAnnotation("daytwo.aarr.xyz/resourceVersion");
+            string annotation = tmp.GetAnnotation("daytwo.aarr.xyz/management-cluster");
             if (annotation == null)
             {
                 Console.WriteLine("** annotation is null **");
@@ -480,6 +480,57 @@ namespace daytwo.K8sControllers
                 return;
             }
 
+
+            List<string> known = new List<string>();
+            known.Add("vclusters.infrastructure.cluster.x-k8s.io");
+            known.Add("tanzukubernetesclusters.run.tanzu.vmware.com");
+
+            //
+            V1CustomResourceDefinitionList list = await Globals.service.kubeclient.ListCustomResourceDefinitionAsync();
+            foreach (var next in list)
+            {
+                string _kind = string.Empty;
+                string _group = string.Empty;
+                string _version = string.Empty;
+                string _plural = string.Empty;
+                if (known.Contains(next.Name()))
+                {
+                    Console.WriteLine($"Known provider identified: {next.Name()}");
+                    next.GetApiGroupAndVersion(out _group, out _version);
+                    _kind = next.Kind;
+                    _plural = next.Kind + "s";
+                    Console.WriteLine($"_kind: {_kind}");
+                    Console.WriteLine($"_group: {_group}");
+                    Console.WriteLine($"_version: {_version}");
+                    Console.WriteLine($"_plural: {_plural}");
+
+
+                    /*
+                    // check if provider is already present
+                    ProviderK8sController? item = providers.Find(item => (item.api == _kind) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));
+                    if (item != null)
+                    {
+                        // provider already exists, nudge it to recheck this cluster which just had its secret updated
+                        CrdProviderCluster crd = await item.generic.ReadNamespacedAsync<CrdProviderCluster>(cluster.Namespace(), cluster.Name());
+                        item.ProcessModified(crd);
+                    }
+                    else //if (item == null)
+                    {
+                        // if not, start monitoring
+                        ProviderK8sController provider = new ProviderK8sController(
+                                _kind, _group, _version, _kind +"s");
+
+                        // add to list of providers we are monitoring
+                        providers.Add(provider);
+
+                        // start listening
+                        provider.Listen(managementCluster);
+                    }
+                    */
+                }
+            }
+
+            /*
             //
             string _api = cluster.Spec.controlPlaneRef.kind.ToLower();
             string _group = cluster.Spec.controlPlaneRef.apiVersion.Substring(0, cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/"));
@@ -510,6 +561,7 @@ namespace daytwo.K8sControllers
                 // start listening
                 provider.Listen(managementCluster);
             }
+            */
         }
     }
 }
