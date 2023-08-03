@@ -503,6 +503,7 @@ namespace daytwo.K8sControllers
                     Console.WriteLine($"_group: {_group}");
                     Console.WriteLine($"_version: {_version}");
                     Console.WriteLine($"_plural: {_plural}");
+                    Console.WriteLine(next);
 
 
                     /*
