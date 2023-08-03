@@ -497,7 +497,11 @@ namespace daytwo.K8sControllers
                 {
                     Console.WriteLine($"Known provider identified: {next.Name()}");
 
-                    CrdProviderCluster provider = await generic.ReadAsync<CrdProviderCluster>(next.Name());
+                    //V1CustomResourceDefinition crd = await Globals.service.kubeclient.ReadCustomResourceDefinitionAsync(next.Name());
+
+
+                    GenericClient _generic = new GenericClient(kubeclient, "apiextensions.k8s.io", "v1", "customresourcedefinition");
+                    CrdProviderCluster provider = await _generic.ReadAsync<CrdProviderCluster>(next.Name());
 
                     _group = provider.Spec.group;
                     _version = provider.Spec.versions[0].name;
