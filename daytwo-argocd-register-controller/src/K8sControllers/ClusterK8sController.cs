@@ -507,10 +507,10 @@ namespace daytwo.K8sControllers
                     _version = providerCrd.Spec.versions[0].name;
                     _kind = providerCrd.Spec.names.singular;
                     _plural = providerCrd.Spec.names.plural;
-                    Console.WriteLine($"_kind: {_kind}");
-                    Console.WriteLine($"_group: {_group}");
+                    Console.WriteLine($"   _kind: {_kind}");
+                    Console.WriteLine($"  _group: {_group}");
                     Console.WriteLine($"_version: {_version}");
-                    Console.WriteLine($"_plural: {_plural}");
+                    Console.WriteLine($" _plural: {_plural}");
 
 
                     // check if provider is already present
