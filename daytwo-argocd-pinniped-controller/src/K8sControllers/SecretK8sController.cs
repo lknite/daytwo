@@ -173,40 +173,32 @@ namespace gge.K8sControllers
             }
             };
 
-            Console.WriteLine("test:");
-            try
+            // append whatever parameters are passed in via environment variables
+            foreach (string key in Environment.GetEnvironmentVariables().Keys)
             {
-                // append whatever parameters are passed in via environment variables
-                foreach (string key in Environment.GetEnvironmentVariables().Keys)
+                // check if this is a pinniped parameter
+                if (key.StartsWith("PINNIPED_"))
                 {
-                    // check if this is a pinniped parameter
-                    if (key.StartsWith("PINNIPED_"))
+                    string name = key.Substring(9).ToLower().Replace("_", "-");
+                    string value = string.Empty;
+
+                    if (Environment.GetEnvironmentVariable(key) == "false")
                     {
-                        string name = key.Substring(9).ToLower().Replace("_", "-");
-                        string value = string.Empty;
+                        continue;
+                    }
+                    else if (Environment.GetEnvironmentVariable(key) == "true")
+                    {
+                        // append new parameter
+                        p.StartInfo.Arguments += $" --{name}";
+                    }
+                    else
+                    {
+                        value = Environment.GetEnvironmentVariable(key);
 
-                        if (Environment.GetEnvironmentVariable(key) == "false")
-                        {
-                            continue;
-                        }
-                        else if (Environment.GetEnvironmentVariable(key) == "true")
-                        {
-                            // append new parameter
-                            p.StartInfo.Arguments += $" --{name}";
-                        }
-                        else
-                        {
-                            value = Environment.GetEnvironmentVariable(key);
-
-                            // append new parameter
-                            p.StartInfo.Arguments += $" --{name} {value}";
-                        }
+                        // append new parameter
+                        p.StartInfo.Arguments += $" --{name} {value}";
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
             }
             //Console.WriteLine(p.StartInfo.Arguments);
             //
