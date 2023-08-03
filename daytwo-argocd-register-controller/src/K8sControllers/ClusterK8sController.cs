@@ -496,9 +496,13 @@ namespace daytwo.K8sControllers
                 if (known.Contains(next.Name()))
                 {
                     Console.WriteLine($"Known provider identified: {next.Name()}");
-                    next.GetApiGroupAndVersion(out _group, out _version);
-                    _kind = next.Kind;
-                    _plural = next.Kind + "s";
+
+                    CrdProviderCluster provider = await generic.ReadAsync<CrdProviderCluster>(next.Name());
+
+                    _group = provider.Spec.group;
+                    _version = provider.Spec.versions[0].name;
+                    _kind = provider.Spec.names.singular;
+                    _plural = provider.Spec.names.plural;
                     Console.WriteLine($"_kind: {_kind}");
                     Console.WriteLine($"_group: {_group}");
                     Console.WriteLine($"_version: {_version}");
