@@ -500,7 +500,7 @@ namespace daytwo.K8sControllers
                     //V1CustomResourceDefinition crd = await Globals.service.kubeclient.ReadCustomResourceDefinitionAsync(next.Name());
 
 
-                    GenericClient _generic = new GenericClient(kubeclient, "apiextensions.k8s.io", "v1", "customresourcedefinition");
+                    GenericClient _generic = new GenericClient(Globals.service.kubeclient, "apiextensions.k8s.io", "v1", "customresourcedefinition");
                     CrdProviderCluster provider = await _generic.ReadAsync<CrdProviderCluster>(next.Name());
 
                     _group = provider.Spec.group;
