@@ -497,41 +497,45 @@ namespace daytwo.K8sControllers
                 {
                     Console.WriteLine($"Known provider identified: {next.Name()}");
 
-                    //V1CustomResourceDefinition crd = await Globals.service.kubeclient.ReadCustomResourceDefinitionAsync(next.Name());
-
-
+                    // load up crd using our template in order to parse out the values we need
                     GenericClient _generic = new GenericClient(kubeclient, "apiextensions.k8s.io", "v1", "customresourcedefinitions");
                     CrdProviderCluster providerCrd = await _generic.ReadAsync<CrdProviderCluster>(next.Name());
 
                     _group = providerCrd.Spec.group;
-                    _version = providerCrd.Spec.versions[0].name;
                     _kind = providerCrd.Spec.names.singular;
                     _plural = providerCrd.Spec.names.plural;
-                    Console.WriteLine($"   _kind: {_kind}");
-                    Console.WriteLine($"  _group: {_group}");
-                    Console.WriteLine($"_version: {_version}");
-                    Console.WriteLine($" _plural: {_plural}");
-
-
-                    // check if provider is already present
-                    ProviderK8sController? item = providers.Find(item => (item.api == _kind) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));
-                    if (item != null)
+                    
+                    // there may be multiple versions, add provider for each
+                    foreach (var nextVersion in providerCrd.Spec.versions)
                     {
-                        // provider already exists, nudge it to recheck this cluster which just had its secret updated
-                        CrdProviderCluster crd = await item.generic.ReadNamespacedAsync<CrdProviderCluster>(cluster.Namespace(), cluster.Name());
-                        item.ProcessModified(crd);
-                    }
-                    else //if (item == null)
-                    {
-                        // if not, start monitoring
-                        ProviderK8sController provider = new ProviderK8sController(
-                                _kind, _group, _version, _plural);
+                        _version = nextVersion.name;
 
-                        // add to list of providers we are monitoring
-                        providers.Add(provider);
+                        Console.WriteLine($"   _kind: {_kind}");
+                        Console.WriteLine($"  _group: {_group}");
+                        Console.WriteLine($"_version: {_version}");
+                        Console.WriteLine($" _plural: {_plural}");
 
-                        // start listening
-                        provider.Listen(managementCluster);
+
+                        // check if provider is already present
+                        ProviderK8sController? item = providers.Find(item => (item.api == _kind) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));
+                        if (item != null)
+                        {
+                            // provider already exists, nudge it to recheck this cluster which just had its secret updated
+                            CrdProviderCluster crd = await item.generic.ReadNamespacedAsync<CrdProviderCluster>(cluster.Namespace(), cluster.Name());
+                            item.ProcessModified(crd);
+                        }
+                        else //if (item == null)
+                        {
+                            // if not, start monitoring
+                            ProviderK8sController provider = new ProviderK8sController(
+                                    _kind, _group, _version, _plural);
+
+                            // add to list of providers we are monitoring
+                            providers.Add(provider);
+
+                            // start listening
+                            provider.Listen(managementCluster);
+                        }
                     }
                 }
             }
