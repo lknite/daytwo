@@ -8,6 +8,8 @@ if [ ! -f /usr/local/bin/pinniped ]; then
     chmod +x pinniped && \
     mv pinniped /usr/local/bin/pinniped
   popd > /dev/null
+  echo "- here is the downloaded pinniped (if this fails then the download failed)"
+  ls /usr/local/bin/pinniped
 fi
 
 # Startup controller
