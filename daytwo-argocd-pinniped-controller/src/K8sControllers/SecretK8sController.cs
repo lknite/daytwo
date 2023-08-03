@@ -180,20 +180,6 @@ namespace gge.K8sControllers
                     WorkingDirectory = @"/tmp",
                     Arguments = "get kubeconfig"
                         + " --kubeconfig /tmp/kubeconfig"
-                        /*
-                        + ((Environment.GetEnvironmentVariable("PINNIPED_OIDC_ISSUER") != null) ?
-                            $" --oidc-issuer {Environment.GetEnvironmentVariable("PINNIPED_OIDC_ISSUER")}" : "")
-                        + ((Environment.GetEnvironmentVariable("PINNIPED_OIDC_CLIENT_ID") != null) ?
-                            $" --oidc-client-id {Environment.GetEnvironmentVariable("PINNIPED_OIDC_CLIENT_ID")}" : "")
-                        + ((Environment.GetEnvironmentVariable("PINNIPED_OIDC_SCOPES") != null) ?
-                            $" --oidc-scopes {Environment.GetEnvironmentVariable("PINNIPED_OIDC_SCOPES")}" : "")
-                        + ((Environment.GetEnvironmentVariable("PINNIPED_CONCIERGE_AUTHENTICATOR_NAME") != null) ?
-                            $" --concierge-authenticator-name {Environment.GetEnvironmentVariable("PINNIPED_CONCIERGE_AUTHENTICATOR_NAME")}" : "")
-                        + ((Environment.GetEnvironmentVariable("PINNIPED_CONCIERGE_AUTHENTICATOR_TYPE") != null) ?
-                            $" --concierge-authenticator-type {Environment.GetEnvironmentVariable("PINNIPED_CONCIERGE_AUTHENTICATOR_TYPE")}" : "")
-                        + ((Environment.GetEnvironmentVariable("PINNIPED_SKIP_VALIDATION") != null) ?
-                            ((Environment.GetEnvironmentVariable("PINNIPED_SKIP_VALIDATION") == "true") ? " --skip-validation" : "") : "")
-                        */
                 }
             };
             // append whatever parameters are passed in via environment variables
@@ -223,6 +209,7 @@ namespace gge.K8sControllers
                     }
                 }
             }
+            Console.WriteLine(p.StartInfo.Arguments);
             //
             p.Start();
             p.WaitForExit();
