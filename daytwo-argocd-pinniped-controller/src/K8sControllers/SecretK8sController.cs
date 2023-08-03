@@ -157,57 +157,56 @@ namespace gge.K8sControllers
             //Console.WriteLine(json);
             File.WriteAllText("/tmp/kubeconfig", json);
 
-            /*
-            pinniped get kubeconfig \
-              --oidc-issuer https://keycloak.vc-prod.k.home.net/realms/home.net \
-              --oidc-client-id default \
-              --oidc-scopes openid,email,profile,offline_access \
-              --kubeconfig ~/tmp/kubeconfig \
-              --concierge-authenticator-name oidc-config \
-              --concierge-authenticator-type jwt \
-              --skip-validation
-             */
             // generate pinniped kubeconfig
             Console.WriteLine("generate pinniped kubeconfig");
             var p = new Process
             {
                 StartInfo = {
-                    // pinniped get kubeconfig --kubeconfig /tmp/kubeconfig
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    RedirectStandardOutput = true,
-                    FileName = "pinniped",
-                    WorkingDirectory = @"/tmp",
-                    Arguments = "get kubeconfig"
-                        + " --kubeconfig /tmp/kubeconfig"
-                }
+                // pinniped get kubeconfig --kubeconfig /tmp/kubeconfig
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                FileName = "pinniped",
+                WorkingDirectory = @"/tmp",
+                Arguments = "get kubeconfig"
+                    + " --kubeconfig /tmp/kubeconfig"
+            }
             };
-            // append whatever parameters are passed in via environment variables
-            foreach (string key in Environment.GetEnvironmentVariables().Keys)
+
+            Console.WriteLine("test:");
+            try
             {
-                // check if this is a pinniped parameter
-                if (key.StartsWith("PINNIPED_"))
+                // append whatever parameters are passed in via environment variables
+                foreach (string key in Environment.GetEnvironmentVariables().Keys)
                 {
-                    string name = key.Substring(9).ToLower().Replace("_", "-");
-                    string value = string.Empty;
+                    // check if this is a pinniped parameter
+                    if (key.StartsWith("PINNIPED_"))
+                    {
+                        string name = key.Substring(9).ToLower().Replace("_", "-");
+                        string value = string.Empty;
 
-                    if (Environment.GetEnvironmentVariable(key) == "false")
-                    {
-                        continue;
-                    }
-                    else if (Environment.GetEnvironmentVariable(key) == "true")
-                    {
-                        // append new parameter
-                        p.StartInfo.Arguments += $" --{name}";
-                    }
-                    else
-                    {
-                        value = Environment.GetEnvironmentVariable(key);
+                        if (Environment.GetEnvironmentVariable(key) == "false")
+                        {
+                            continue;
+                        }
+                        else if (Environment.GetEnvironmentVariable(key) == "true")
+                        {
+                            // append new parameter
+                            p.StartInfo.Arguments += $" --{name}";
+                        }
+                        else
+                        {
+                            value = Environment.GetEnvironmentVariable(key);
 
-                        // append new parameter
-                        p.StartInfo.Arguments += $" --{name} {value}";
+                            // append new parameter
+                            p.StartInfo.Arguments += $" --{name} {value}";
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
             }
             Console.WriteLine(p.StartInfo.Arguments);
             //
