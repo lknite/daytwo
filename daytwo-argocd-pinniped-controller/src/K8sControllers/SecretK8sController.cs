@@ -214,28 +214,28 @@ namespace gge.K8sControllers
 
             // capture output
             string tmp = "";
-            Globals.log.LogInformation("parse output");
+            //Globals.log.LogInformation("parse output");
             while (!p.StandardOutput.EndOfStream)
             {
                 tmp += p.StandardOutput.ReadLine();
                 tmp += "\n";
             }
-            Globals.log.LogInformation("display output");
-            Globals.log.LogInformation(tmp);
+            //Globals.log.LogInformation("display output");
+            //Globals.log.LogInformation(tmp);
 
-            Globals.log.LogInformation("after generate pinniped kubeconfig");
+            //Globals.log.LogInformation("after generate pinniped kubeconfig");
 
             // debug, show stdout from the command
-            Globals.log.LogInformation("create 'www' folder structure");
+            //Globals.log.LogInformation("create 'www' folder structure");
             Directory.CreateDirectory($"/opt/www");
             Directory.CreateDirectory($"/opt/www/{managementCluster}");
             Directory.CreateDirectory($"/opt/www/{managementCluster}/{workloadCluster}");
 
             // save to file (accessible via GET)
-            Globals.log.LogInformation("copy to www folder");
+            //Globals.log.LogInformation("copy to www folder");
             try
             {
-                Globals.log.LogInformation("write to file: '"+ $"/opt/www/{managementCluster}/{workloadCluster}/kubeconfig" +"'");
+                //Globals.log.LogInformation("write to file: '"+ $"/opt/www/{managementCluster}/{workloadCluster}/kubeconfig" +"'");
                 File.WriteAllText($"/opt/www/{managementCluster}/{workloadCluster}/kubeconfig", tmp);
             }
             catch (Exception ex)
