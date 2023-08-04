@@ -51,7 +51,7 @@ namespace daytwo.K8sControllers
             */
 
             // start listening
-            Console.WriteLine($"**** Cluster.Add({api}s.{group}/{version})");
+            Globals.log.LogInformation($"**** Cluster.Add({api}s.{group}/{version})");
         }
 
         public async Task Listen(string managementCluster)
@@ -79,17 +79,17 @@ namespace daytwo.K8sControllers
                 // Prep semaphore (reset in case of exception)
                 semaphore = new SemaphoreSlim(1);
 
-                Console.WriteLine(DateTime.UtcNow +" (" + api +") Listen begins ...");
+                Globals.log.LogInformation(DateTime.UtcNow +" (" + api +") Listen begins ...");
                 try
                 {
                     await foreach (var (type, item) in generic.WatchNamespacedAsync<CrdCluster>(""))
                     {
-                        Console.WriteLine("");
-                        Console.WriteLine("(event) [" + type + "] " + plural + "." + group + "/" + version + ": " + item.Metadata.Name);
+                        Globals.log.LogInformation("");
+                        Globals.log.LogInformation("(event) [" + type + "] " + plural + "." + group + "/" + version + ": " + item.Metadata.Name);
 
                         // Acquire Semaphore
                         semaphore.Wait(Globals.cancellationToken);
-                        //Console.WriteLine("[" + item.Metadata.Name + "]");
+                        //Globals.log.LogInformation("[" + item.Metadata.Name + "]");
 
                         // Handle event type
                         switch (type)
@@ -110,25 +110,25 @@ namespace daytwo.K8sControllers
                         }
 
                         // Release semaphore
-                        //Console.WriteLine("done.");
+                        //Globals.log.LogInformation("done.");
                         semaphore.Release();
                     }
                 }
                 catch (k8s.Autorest.HttpOperationException ex)
                 {
-                    Console.WriteLine("Exception? " + ex);
+                    Globals.log.LogInformation("Exception? " + ex);
                     switch (ex.Response.StatusCode)
                     {
                         // crd is missing, sleep to avoid an error loop
                         case System.Net.HttpStatusCode.NotFound:
-                            Console.WriteLine("crd is missing, pausing for a second before retrying");
+                            Globals.log.LogInformation("crd is missing, pausing for a second before retrying");
                             Thread.Sleep(1000);
                             break;
                     }
                 }
                 catch (Exception ex)
                 {
-                    //Console.WriteLine("Exception occured while performing 'watch': " + ex);
+                    //Globals.log.LogInformation("Exception occured while performing 'watch': " + ex);
                 }
             }
         }
@@ -142,7 +142,7 @@ namespace daytwo.K8sControllers
             Dictionary<string, string> data = new Dictionary<string, string>();
             string patchStr = string.Empty;
 
-            Console.WriteLine("  - namespace: " + cluster.Namespace() + ", cluster: " + cluster.Name());
+            Globals.log.LogInformation("  - namespace: " + cluster.Namespace() + ", cluster: " + cluster.Name());
 
             // is this cluster in a ready state?
             if (!(
@@ -153,7 +153,7 @@ namespace daytwo.K8sControllers
                 ))
             {
                 // cluster not yet ready
-                Console.WriteLine("    - cluster not ready yet");
+                Globals.log.LogInformation("    - cluster not ready yet");
 
                 return;
             }
@@ -164,16 +164,16 @@ namespace daytwo.K8sControllers
             if (tmp != null)
             {
                 // timestamp was old technique, using resourceVersion now
-                //Console.WriteLine($"    -  cluster yaml timestamp: {cluster.Metadata.CreationTimestamp}");
-                //Console.WriteLine($"    - argocd secret timestamp: {tmp.Metadata.CreationTimestamp}");
-                Console.WriteLine($"    -          cluster yaml resourceVersion: {cluster.Metadata.ResourceVersion}");
+                //Globals.log.LogInformation($"    -  cluster yaml timestamp: {cluster.Metadata.CreationTimestamp}");
+                //Globals.log.LogInformation($"    - argocd secret timestamp: {tmp.Metadata.CreationTimestamp}");
+                Globals.log.LogInformation($"    -          cluster yaml resourceVersion: {cluster.Metadata.ResourceVersion}");
                 try
                 {
-                    Console.WriteLine($"    - argocd secret cluster resourceVersion: {tmp.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/resourceVersion"]}");
+                    Globals.log.LogInformation($"    - argocd secret cluster resourceVersion: {tmp.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/resourceVersion"]}");
                 }
                 catch
                 {
-                    Console.WriteLine($"    - argocd secret cluster resourceVersion: daytwo annotation missing, ignoring cluster");
+                    Globals.log.LogInformation($"    - argocd secret cluster resourceVersion: daytwo annotation missing, ignoring cluster");
                     return;
                 }
             }
@@ -181,7 +181,7 @@ namespace daytwo.K8sControllers
             // if cluster yaml is newer then secret, then we re-add to argocd
             if (tmp == null)
             {
-                Console.WriteLine("      - add cluster to argocd");
+                Globals.log.LogInformation("      - add cluster to argocd");
 
                 // add new cluster to argocd
                 //KubernetesClientConfiguration tmpkubeconfig = await GetClusterKubeConfig(cluster.Name(), cluster.Namespace());
@@ -190,14 +190,14 @@ namespace daytwo.K8sControllers
             else if (cluster.Metadata.ResourceVersion != tmp.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/resourceVersion"])
             //else if (DateTime.Compare((DateTime)cluster.Metadata.CreationTimestamp, (DateTime)tmp.Metadata.CreationTimestamp) > 0)
             {
-                Console.WriteLine("      - update argocd cluster secret");
+                Globals.log.LogInformation("      - update argocd cluster secret");
 
                 // add new cluster to argocd
                 //KubernetesClientConfiguration tmpkubeconfig = await GetClusterKubeConfig(cluster.Name(), cluster.Namespace());
             }
             else
             {
-                Console.WriteLine("      - cluster already added to argocd");
+                Globals.log.LogInformation("      - cluster already added to argocd");
 
                 //
                 await AddProvider(cluster);
@@ -212,7 +212,7 @@ namespace daytwo.K8sControllers
             tmp = daytwo.Helpers.Main.GetClusterArgocdSecret(cluster.Name(), managementCluster);
             if (tmp == null)
             {
-                Console.WriteLine("unable to add argocd secret, or cluster not managed by daytwo");
+                Globals.log.LogInformation("unable to add argocd secret, or cluster not managed by daytwo");
                 return;
             }
 
@@ -234,7 +234,7 @@ namespace daytwo.K8sControllers
             V1Secret tmp = daytwo.Helpers.Main.GetClusterArgocdSecret(cluster.Name(), managementCluster);
             if (tmp == null)
             {
-                Console.WriteLine("argocd is not managing this cluster, no need to remove it");
+                Globals.log.LogInformation("argocd is not managing this cluster, no need to remove it");
                 return;
             }
 
@@ -242,18 +242,18 @@ namespace daytwo.K8sControllers
             string annotation = tmp.GetAnnotation("daytwo.aarr.xyz/management-cluster");
             if (annotation == null)
             {
-                Console.WriteLine("** annotation is null **");
-                Console.WriteLine("** (don't delete cluster) **");
+                Globals.log.LogInformation("** annotation is null **");
+                Globals.log.LogInformation("** (don't delete cluster) **");
                 return;
             }
             /*
             else
             {
-                Console.WriteLine("** annotation is: "+ annotation);
+                Globals.log.LogInformation("** annotation is: "+ annotation);
             }
             */
 
-            Console.WriteLine("** argocd remove cluster ...");
+            Globals.log.LogInformation("** argocd remove cluster ...");
 
             // locate server pod
             V1PodList list = await Globals.service.kubeclient.ListNamespacedPodAsync(Globals.service.argocdNamespace);
@@ -271,7 +271,7 @@ namespace daytwo.K8sControllers
             // this shouldn't happen, but could if server is not running
             if (pod == null)
             {
-                Console.WriteLine("server pod not found, unable to remove cluster from argocd");
+                Globals.log.LogInformation("server pod not found, unable to remove cluster from argocd");
                 return;
             }
 
@@ -289,15 +289,15 @@ namespace daytwo.K8sControllers
                     );
             try
             {
-                Console.WriteLine("[cluster] before exec");
+                Globals.log.LogInformation("[cluster] before exec");
                 int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
                     pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, One, Globals.cancellationToken);
-                Console.WriteLine("[cluster] after exec");
+                Globals.log.LogInformation("[cluster] after exec");
             }
             catch
             {
             }
-            Console.WriteLine("[cluster] after exec (2)");
+            Globals.log.LogInformation("[cluster] after exec (2)");
         }
 
 
@@ -312,7 +312,7 @@ namespace daytwo.K8sControllers
         {
             // clusterctl - n vc - test get kubeconfig vc - test
             // k -n vc-test get secrets vc-test-kubeconfig -o jsonpath='{.data.value}' | base64 -d
-            Console.WriteLine($"[cluster] GetClusterKubeConfig ({clusterName}, {clusterNamespace})");
+            Globals.log.LogInformation($"[cluster] GetClusterKubeConfig ({clusterName}, {clusterNamespace})");
 
             V1Secret secret = null;
             try
@@ -321,12 +321,12 @@ namespace daytwo.K8sControllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Globals.log.LogInformation(ex.Message);
                 return null;
             }
             secret.Data.TryGetValue("value", out byte[] bytes);
             string kubeconfig = System.Text.Encoding.UTF8.GetString(bytes);
-            //Console.WriteLine("[cluster] kubeconfig:\n" + kubeconfig);
+            //Globals.log.LogInformation("[cluster] kubeconfig:\n" + kubeconfig);
             //Convert.ToBase64String(bytes);
 
             // locate context within kubeconfig
@@ -343,7 +343,7 @@ namespace daytwo.K8sControllers
             // save kubeconfig to a temporary file
             //string path = Path.GetTempFileName();
             //string path = "/tmp/asdf.txt";
-            //Console.WriteLine("tmp path: " + path);
+            //Globals.log.LogInformation("tmp path: " + path);
 
             // exec into server pod, see if we can use 'argocd' there
             var cmds = new List<string>();
@@ -369,7 +369,7 @@ namespace daytwo.K8sControllers
             // this shouldn't happen, but could if server is not running
             if (pod == null)
             {
-                Console.WriteLine("server pod not found");
+                Globals.log.LogInformation("server pod not found");
                 return null;
             }
 
@@ -381,17 +381,17 @@ namespace daytwo.K8sControllers
                 cmds.Add("pwd");
                 //cmds = new List<string>();
                 //cmds.Add("pwd");
-                Console.WriteLine("[cluster] (test) before exec");
+                Globals.log.LogInformation("[cluster] (test) before exec");
                 await Globals.service.kubeclient.NamespacedPodExecAsync(
                     pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, One, Globals.cancellationToken).ConfigureAwait(false);
-                Console.WriteLine("[cluster] (test) after exec");
+                Globals.log.LogInformation("[cluster] (test) after exec");
 
                 //await ExecInPod(Globals.service.kubeclient, pod, "pwd");
             }
             catch (Exception ex)
             {
-                Console.WriteLine("exception caught when performing 'exec', cmd ran though, ignoring exception for now");
-                //Console.WriteLine(ex.ToString());
+                Globals.log.LogInformation("exception caught when performing 'exec', cmd ran though, ignoring exception for now");
+                //Globals.log.LogInformation(ex.ToString());
             }
             */
 
@@ -414,18 +414,18 @@ namespace daytwo.K8sControllers
                         + $" --insecure"
                         + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")};"
                         );
-                //Console.WriteLine(cmds[2]);
-                Console.WriteLine("[cluster] before exec");
+                //Globals.log.LogInformation(cmds[2]);
+                Globals.log.LogInformation("[cluster] before exec");
                 int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
                     pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, One, Globals.cancellationToken).ConfigureAwait(false);
-                Console.WriteLine("[cluster] after exec");
+                Globals.log.LogInformation("[cluster] after exec");
             }
             catch (Exception ex)
             {
-                //Console.WriteLine("exception caught when performing 'exec', cmd ran though, ignoring exception for now");
-                //Console.WriteLine(ex.ToString());
+                //Globals.log.LogInformation("exception caught when performing 'exec', cmd ran though, ignoring exception for now");
+                //Globals.log.LogInformation(ex.ToString());
             }
-            Console.WriteLine("[cluster] after exec (2)");
+            Globals.log.LogInformation("[cluster] after exec (2)");
 
 
             return null;
@@ -434,7 +434,7 @@ namespace daytwo.K8sControllers
         /*
         public static void PrintEvenNumbers()
         {
-            //Console.WriteLine("all is done");
+            //Globals.log.LogInformation("all is done");
         }
         */
         public static Task One(Stream stdIn, Stream stdOut, Stream stdErr)
@@ -442,7 +442,7 @@ namespace daytwo.K8sControllers
             StreamReader sr = new StreamReader(stdOut);
             while (!sr.EndOfStream)
             {
-                Console.WriteLine(sr.ReadLine());
+                Globals.log.LogInformation(sr.ReadLine());
             }
 
             // returning null will cause an exception, but it also let's us return back to the processing
@@ -464,7 +464,7 @@ namespace daytwo.K8sControllers
             var stream = demux.GetStream(1, 1);
             stream.Read(buff, 0, 4096);
             var str = Encoding.Default.GetString(buff);
-            Console.WriteLine(str);
+            Globals.log.LogInformation(str);
 
             //return new Task(PrintEvenNumbers);
         }
@@ -495,7 +495,7 @@ namespace daytwo.K8sControllers
                 string _plural = string.Empty;
                 if (known.Contains(next.Name()))
                 {
-                    Console.WriteLine($"Known provider identified: {next.Name()}");
+                    Globals.log.LogInformation($"Known provider identified: {next.Name()}");
 
                     // load up crd using our template in order to parse out the values we need
                     GenericClient _generic = new GenericClient(kubeclient, "apiextensions.k8s.io", "v1", "customresourcedefinitions");
@@ -510,12 +510,6 @@ namespace daytwo.K8sControllers
                     {
                         _version = nextVersion.name;
 
-                        Console.WriteLine($"   _kind: {_kind}");
-                        Console.WriteLine($"  _group: {_group}");
-                        Console.WriteLine($"_version: {_version}");
-                        Console.WriteLine($" _plural: {_plural}");
-
-
                         // check if provider is already present
                         ProviderK8sController? item = providers.Find(item => (item.api == _kind) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));
                         if (item != null)
@@ -526,6 +520,11 @@ namespace daytwo.K8sControllers
                         }
                         else //if (item == null)
                         {
+                            Globals.log.LogInformation($"   _kind: {_kind}");
+                            Globals.log.LogInformation($"  _group: {_group}");
+                            Globals.log.LogInformation($"_version: {_version}");
+                            Globals.log.LogInformation($" _plural: {_plural}");
+
                             // if not, start monitoring
                             ProviderK8sController provider = new ProviderK8sController(
                                     _kind, _group, _version, _plural);
@@ -546,10 +545,10 @@ namespace daytwo.K8sControllers
             string _group = cluster.Spec.controlPlaneRef.apiVersion.Substring(0, cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/"));
             string _version = cluster.Spec.controlPlaneRef.apiVersion.Substring(cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/") + 1);
             string _plural = _api + "s";
-            Console.WriteLine("api: " + _api);
-            Console.WriteLine("group: " + _group);
-            Console.WriteLine("version: " + _version);
-            Console.WriteLine("plural: " + _plural);
+            Globals.log.LogInformation("api: " + _api);
+            Globals.log.LogInformation("group: " + _group);
+            Globals.log.LogInformation("version: " + _version);
+            Globals.log.LogInformation("plural: " + _plural);
 
             // check if provider is already present
             ProviderK8sController? item = providers.Find(item => (item.api == _api) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));

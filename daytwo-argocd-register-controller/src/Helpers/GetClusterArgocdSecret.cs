@@ -9,10 +9,10 @@ namespace daytwo.Helpers
     {
         public static V1Secret? GetClusterArgocdSecret(string clusterName, string? managementCluster = null)
         {
-            //Console.WriteLine("- GetClusterSecret, clusterName: "+ clusterName);
+            //Globals.log.LogInformation("- GetClusterSecret, clusterName: "+ clusterName);
             V1SecretList secrets = Globals.service.kubeclient.ListNamespacedSecret(Globals.service.argocdNamespace);
 
-            //Console.WriteLine("- argocd cluster secrets:");
+            //Globals.log.LogInformation("- argocd cluster secrets:");
             foreach (V1Secret secret in secrets)
             {
                 // is there a label indicating this is a cluster secret?
@@ -40,7 +40,7 @@ namespace daytwo.Helpers
 
                 // is this the cluster we are looking for?
                 string name = Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length);
-                //Console.WriteLine("  - name: " + name +", tkcName: "+ tkc.Metadata.Name);
+                //Globals.log.LogInformation("  - name: " + name +", tkcName: "+ tkc.Metadata.Name);
                 if (name != clusterName)
                 {
                     continue;

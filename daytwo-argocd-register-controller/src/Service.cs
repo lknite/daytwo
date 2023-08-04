@@ -87,8 +87,8 @@ namespace daytwo
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            Console.WriteLine("***");
-            Console.WriteLine("* TODO: Clean shutdown");
+            Globals.log.LogInformation("***");
+            Globals.log.LogInformation("* TODO: Clean shutdown");
 
             return Task.CompletedTask;
         }
