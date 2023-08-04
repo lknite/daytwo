@@ -31,9 +31,9 @@ register:
   ##
   argocdServerUri: "https://argocd"
 
-  ## @param argocdAllowInsecure When connecting with server ignore tls certificate failure
+  ## @param argocdInsecureSkipTlsVerify When connecting with argocd server ignore tls certificate failure
   ##
-  argocdAllowInsecure: "false"
+  argocdInsecureSkipTlsVerify: "false"
 
   ## @param argocdNamespace Used if targeting an argocd installation in an alternative namespace
   ##
