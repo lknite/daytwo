@@ -30,6 +30,8 @@ spec:
             secretKeyRef:
               name: {{ .Values.register.argocdAuthTokenSecret }}
               key: token
+        - name: ARGOCD_SERVER_URI
+          value: {{ .Values.register.argocdServerUri }}
         - name: ARGOCD_NAMESPACE
           value: {{ .Values.register.argocdNamespace }}
         - name: INSTALL_VERSION
