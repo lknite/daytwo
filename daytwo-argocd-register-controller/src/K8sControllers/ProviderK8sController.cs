@@ -96,17 +96,17 @@ namespace daytwo.K8sControllers
                 // Prep semaphore (reset in case of exception)
                 semaphore = new SemaphoreSlim(1);
 
-                Globals.log.LogInformation("(" + api +") Listen begins ...");
+                Globals.log.LogInformation(new EventId(1, api), "(" + api +") Listen begins ...");
                 try
                 {
                     await foreach (var (type, item) in generic.WatchNamespacedAsync<CrdProviderCluster>(""))
                     {
-                        Globals.log.LogInformation("");
-                        Globals.log.LogInformation("(event) [" + type + "] " + plural + "." + group + "/" + version + ": " + item.Metadata.Name);
+                        Globals.log.LogInformation(new EventId(1, api), "");
+                        Globals.log.LogInformation(new EventId(1, api), "(event) [" + type + "] " + plural + "." + group + "/" + version + ": " + item.Metadata.Name);
 
                         // Acquire Semaphore
                         semaphore.Wait(Globals.cancellationToken);
-                        //Globals.log.LogInformation("[" + item.Metadata.Name + "]");
+                        //Globals.log.LogInformation(new EventId(1, api), "[" + item.Metadata.Name + "]");
 
                         // Handle event type
                         switch (type)
@@ -127,7 +127,7 @@ namespace daytwo.K8sControllers
                         }
 
                         // Release semaphore
-                        //Globals.log.LogInformation("done.");
+                        //Globals.log.LogInformation(new EventId(1, api), "done.");
                         semaphore.Release();
                     }
                 }
@@ -145,7 +145,7 @@ namespace daytwo.K8sControllers
                 }
                 catch (Exception ex)
                 {
-                    //Globals.log.LogInformation("Exception occured while performing 'watch': " + ex);
+                    //Globals.log.LogInformation(new EventId(1, api), "Exception occured while performing 'watch': " + ex);
                 }
             }
         }
@@ -159,32 +159,32 @@ namespace daytwo.K8sControllers
             Dictionary<string, string> data = new Dictionary<string, string>();
             string patchStr = string.Empty;
 
-            Globals.log.LogInformation("Addition/Modify detected: " + provider.Metadata.Name);
+            Globals.log.LogInformation(new EventId(1, api), "Addition/Modify detected: " + provider.Metadata.Name);
 
             // acquire argocd cluster secret to so we can sync labels
             V1Secret? secret = daytwo.Helpers.Main.GetClusterArgocdSecret(provider.Name(), managementCluster);
             if (secret == null)
             {
-                Globals.log.LogInformation("(vcluster) unable to locate argocd secret");
+                Globals.log.LogInformation(new EventId(1, api), "(vcluster) unable to locate argocd secret");
                 return;
             }
 
             // check if daytwo is managing this secret
             if (secret.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/resourceVersion"] == null)
             {
-                Globals.log.LogInformation("(vcluster) secret is not managed by daytwo, ignoring");
+                Globals.log.LogInformation(new EventId(1, api), "(vcluster) secret is not managed by daytwo, ignoring");
                 return;
             }
 
             // locate argocd cluster secret representing this cluster
-            Globals.log.LogInformation("** sync 'addons' ...");
+            Globals.log.LogInformation(new EventId(1, api), "** sync 'addons' ...");
 
             //
             var before = JsonSerializer.SerializeToDocument(secret);
             bool isChange = false;
 
             // add missing labels to argocd cluster secret
-            Globals.log.LogInformation("- add missing labels to argocd cluster secret:");
+            Globals.log.LogInformation(new EventId(1, api), "- add missing labels to argocd cluster secret:");
             foreach (var l in provider.Metadata.Labels)
             {
                 /*
@@ -222,14 +222,14 @@ namespace daytwo.K8sControllers
                 // if not found, add to cluster secret
                 if (!found)
                 {
-                    Globals.log.LogInformation("  - " + l.Key + ": " + l.Value);
+                    Globals.log.LogInformation(new EventId(1, api), "  - " + l.Key + ": " + l.Value);
                     secret.SetLabel(l.Key, l.Value);
                     isChange = true;
                 }
             }
 
             // remove deleted labels from argocd cluster secret
-            Globals.log.LogInformation("- remove deleted labels from argocd cluster secret:");
+            Globals.log.LogInformation(new EventId(1, api), "- remove deleted labels from argocd cluster secret:");
             foreach (var label in secret.Labels())
             {
                 // avoid deleting argocd labels
@@ -273,7 +273,7 @@ namespace daytwo.K8sControllers
                 // if not found, remove to cluster secret
                 if (!found)
                 {
-                    Globals.log.LogInformation("  - " + label.Key + ": " + label.Value);
+                    Globals.log.LogInformation(new EventId(1, api), "  - " + label.Key + ": " + label.Value);
                     secret.SetLabel(label.Key, null);
                     isChange = true;
                 }
@@ -282,15 +282,15 @@ namespace daytwo.K8sControllers
             // if no changes then return now without patching
             if (!isChange)
             {
-                Globals.log.LogInformation("- no changes detected, update complete");
+                Globals.log.LogInformation(new EventId(1, api), "- no changes detected, update complete");
                 return;
             }
 
             // display adjusted label list
-            Globals.log.LogInformation("resulting label list:");
+            Globals.log.LogInformation(new EventId(1, api), "resulting label list:");
             foreach (var next in secret.Labels())
             {
-                Globals.log.LogInformation("- "+ next.Key +": "+ next.Value);
+                Globals.log.LogInformation(new EventId(1, api), "- "+ next.Key +": "+ next.Value);
             }
 
             // generate json patch
@@ -301,7 +301,7 @@ namespace daytwo.K8sControllers
             patch.Replace(x => x.Metadata.Labels, secret.Labels());
             patchStr = Newtonsoft.Json.JsonConvert.SerializeObject(patch);
             patchStr = patchStr.Replace("/Metadata/Labels", "/metadata/labels");
-            Globals.log.LogInformation("patch:");
+            Globals.log.LogInformation(new EventId(1, api), "patch:");
             Globals.log.LogInformation(patchStr);
             */
             try
@@ -318,7 +318,7 @@ namespace daytwo.K8sControllers
         }
         public async Task ProcessDeleted(CrdProviderCluster provider)
         {
-            Globals.log.LogInformation("Deleted detected: " + provider.Metadata.Name);
+            Globals.log.LogInformation(new EventId(1, api), "Deleted detected: " + provider.Metadata.Name);
         }
     }
 }
