@@ -130,7 +130,7 @@ namespace gge.K8sControllers
         }
         public async Task ProcessModified(V1Secret secret)
         {
-            Console.WriteLine("update configmap");
+            Globals.log.LogInformation("update configmap");
 
             string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
             string workloadCluster = Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length);
@@ -158,7 +158,7 @@ namespace gge.K8sControllers
             File.WriteAllText("/tmp/tmpkubeconfig", json);
 
             // generate pinniped kubeconfig
-            Console.WriteLine("generate pinniped kubeconfig");
+            Globals.log.LogInformation("generate pinniped kubeconfig");
             var p = new Process
             {
                 StartInfo = {
@@ -208,46 +208,46 @@ namespace gge.K8sControllers
             // if there was an error, we stop here
             if (p.ExitCode != 0)
             {
-                Console.WriteLine("error generating pinniped kubeconfig");
+                Globals.log.LogInformation("error generating pinniped kubeconfig");
                 return;
             }
 
             // capture output
             string tmp = "";
-            Console.WriteLine("parse output");
+            Globals.log.LogInformation("parse output");
             while (!p.StandardOutput.EndOfStream)
             {
                 tmp += p.StandardOutput.ReadLine();
                 tmp += "\n";
             }
-            Console.WriteLine("display output");
-            Console.WriteLine(tmp);
+            Globals.log.LogInformation("display output");
+            Globals.log.LogInformation(tmp);
 
-            Console.WriteLine("after generate pinniped kubeconfig");
+            Globals.log.LogInformation("after generate pinniped kubeconfig");
 
             // debug, show stdout from the command
-            Console.WriteLine("create 'www' folder structure");
+            Globals.log.LogInformation("create 'www' folder structure");
             Directory.CreateDirectory($"/opt/www");
             Directory.CreateDirectory($"/opt/www/{managementCluster}");
             Directory.CreateDirectory($"/opt/www/{managementCluster}/{workloadCluster}");
 
             // save to file (accessible via GET)
-            Console.WriteLine("copy to www folder");
+            Globals.log.LogInformation("copy to www folder");
             try
             {
-                Console.WriteLine("write to file: '"+ $"/opt/www/{managementCluster}/{workloadCluster}/kubeconfig" +"'");
+                Globals.log.LogInformation("write to file: '"+ $"/opt/www/{managementCluster}/{workloadCluster}/kubeconfig" +"'");
                 File.WriteAllText($"/opt/www/{managementCluster}/{workloadCluster}/kubeconfig", tmp);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                Globals.log.LogInformation(ex.ToString());
             }
 
             return;
         }
         public async Task ProcessDeleted(V1Secret secret)
         {
-            Console.WriteLine("remove from configmap");
+            Globals.log.LogInformation("remove from configmap");
             return;
         }
     }
