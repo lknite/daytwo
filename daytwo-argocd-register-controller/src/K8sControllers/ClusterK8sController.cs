@@ -321,8 +321,8 @@ namespace daytwo.K8sControllers
                     + $" --server={Environment.GetEnvironmentVariable("ARGOCD_SERVER_URI")}"
                     //+ $" --server=localhost:8080"
                     //+ $" --plaintext"
-                    + ((Environment.GetEnvironmentVariable("ARGOCD_INSECURE") != null) ?
-                        ((Environment.GetEnvironmentVariable("ARGOCD_INSECURE").Equals("true", StringComparison.CurrentCultureIgnoreCase)) ?
+                    + ((Environment.GetEnvironmentVariable("ARGOCD_INSECURE_SKIP_TLS_VERIFY") != null) ?
+                        ((Environment.GetEnvironmentVariable("ARGOCD_INSECURE_SKIP_TLS_VERIFY").Equals("true", StringComparison.CurrentCultureIgnoreCase)) ?
                             $" --insecure" : "")
                         : "")
                     + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")};"
@@ -496,8 +496,8 @@ namespace daytwo.K8sControllers
                         + $" --server={Environment.GetEnvironmentVariable("ARGOCD_SERVER_URI")}"
                         //+ $" --server=localhost:8080"
                         //+ $" --plaintext"
-                        + ((Environment.GetEnvironmentVariable("ARGOCD_INSECURE") != null) ?
-                            ((Environment.GetEnvironmentVariable("ARGOCD_INSECURE").Equals("true", StringComparison.CurrentCultureIgnoreCase)) ?
+                        + ((Environment.GetEnvironmentVariable("ARGOCD_INSECURE_SKIP_TLS_VERIFY") != null) ?
+                            ((Environment.GetEnvironmentVariable("ARGOCD_INSECURE_SKIP_TLS_VERIFY").Equals("true", StringComparison.CurrentCultureIgnoreCase)) ?
                                 $" --insecure" : "")
                             : "")
                         + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")};"
