@@ -54,7 +54,7 @@ namespace gge.K8sControllers
                 // Prep semaphore (reset in case of exception)
                 semaphore = new SemaphoreSlim(1);
 
-                Console.WriteLine(DateTime.UtcNow +" (" + api +") Listen begins ...");
+                Globals.log.LogInformation(DateTime.UtcNow +" (" + api +") Listen begins ...");
                 try
                 {
                     await foreach (var (type, item) in generic.WatchNamespacedAsync<V1Secret>(Globals.service.argocdNamespace))
@@ -62,22 +62,22 @@ namespace gge.K8sControllers
                         // check that this secret is an argocd cluster secret
                         if (item.Labels() == null)
                         {
-                            //Console.WriteLine("- ignoring, not a cluster secret");
+                            //Globals.log.LogInformation("- ignoring, not a cluster secret");
                             continue;
                         }
                         if (!item.Labels().TryGetValue("argocd.argoproj.io/secret-type", out var value))
                         {
-                            //Console.WriteLine("- ignoring, not a cluster secret");
+                            //Globals.log.LogInformation("- ignoring, not a cluster secret");
                             continue;
                         }
                         if (value != "cluster")
                         {
-                            //Console.WriteLine("- ignoring, not a cluster secret");
+                            //Globals.log.LogInformation("- ignoring, not a cluster secret");
                             continue;
                         }
 
-                        Console.WriteLine("");
-                        Console.WriteLine("(event) [" + type + "] " + plural + "." + group + "/" + version + ": " + item.Metadata.Name);
+                        Globals.log.LogInformation("");
+                        Globals.log.LogInformation("(event) [" + type + "] " + plural + "." + group + "/" + version + ": " + item.Metadata.Name);
 
                         // Acquire Semaphore
                         semaphore.Wait(Globals.cancellationToken);
@@ -101,25 +101,25 @@ namespace gge.K8sControllers
                         }
 
                         // Release semaphore
-                        //Console.WriteLine("done.");
+                        //Globals.log.LogInformation("done.");
                         semaphore.Release();
                     }
                 }
                 catch (k8s.Autorest.HttpOperationException ex)
                 {
-                    Console.WriteLine("Exception? " + ex);
+                    Globals.log.LogInformation("Exception? " + ex);
                     switch (ex.Response.StatusCode)
                     {
                         // crd is missing, sleep to avoid an error loop
                         case System.Net.HttpStatusCode.NotFound:
-                            Console.WriteLine("crd is missing, pausing for a second before retrying");
+                            Globals.log.LogInformation("crd is missing, pausing for a second before retrying");
                             Thread.Sleep(1000);
                             break;
                     }
                 }
                 catch (Exception ex)
                 {
-                    //Console.WriteLine("Exception occured while performing 'watch': " + ex);
+                    //Globals.log.LogInformation("Exception occured while performing 'watch': " + ex);
                 }
             }
         }
@@ -145,16 +145,16 @@ namespace gge.K8sControllers
             /*
             try
             {
-                Console.WriteLine(JsonSerializer.Serialize(kubeconfig));
+                Globals.log.LogInformation(JsonSerializer.Serialize(kubeconfig));
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Globals.log.LogInformation(ex);
             }
-            Console.WriteLine("try serialize (2)");
+            Globals.log.LogInformation("try serialize (2)");
             */
             string json = Main.SerializeKubernetesClientConfig(kubeconfig, workloadCluster);
-            //Console.WriteLine(json);
+            //Globals.log.LogInformation(json);
             File.WriteAllText("/tmp/tmpkubeconfig", json);
 
             // generate pinniped kubeconfig
@@ -200,7 +200,7 @@ namespace gge.K8sControllers
                     }
                 }
             }
-            //Console.WriteLine(p.StartInfo.Arguments);
+            //Globals.log.LogInformation(p.StartInfo.Arguments);
             //
             p.Start();
             p.WaitForExit();
