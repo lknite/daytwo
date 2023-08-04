@@ -32,6 +32,8 @@ spec:
               key: token
         - name: ARGOCD_NAMESPACE
           value: {{ .Values.register.argocdNamespace }}
+        - name: INSTALL_VERSION
+          value: "{{ .Values.register.argocdVersion }}"
         volumeMounts:
         {{- if .Values.extraVolumeMounts }}
           {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}

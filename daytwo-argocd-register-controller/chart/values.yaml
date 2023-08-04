@@ -31,6 +31,11 @@ register:
   ##
   argocdNamespace: "argocd"
 
+  ## @param argocdVersion What version of pinniped to download and use inside container
+  ## e.g. https://github.com/argoproj/argo-cd/releases/download/$VERSION/argocd-linux-amd64
+  ##
+  argocdVersion: "v2.7.10"
+
 ## @param extraVolumes Optionally specify extra list of additional volumes
 ##
 extraVolumes: []
