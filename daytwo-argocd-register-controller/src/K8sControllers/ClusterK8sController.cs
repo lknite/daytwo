@@ -321,10 +321,17 @@ namespace daytwo.K8sControllers
                     + $" --server={Environment.GetEnvironmentVariable("ARGOCD_SERVER_URI")}"
                     //+ $" --server=localhost:8080"
                     //+ $" --plaintext"
-                    + $" --insecure"
+                    + ((Environment.GetEnvironmentVariable("ARGOCD_INSECURE") != null) ?
+                        ((Environment.GetEnvironmentVariable("ARGOCD_INSECURE").Equals("true", StringComparison.CurrentCultureIgnoreCase)) ?
+                            $" --insecure" : "")
+                        : "")
                     + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")};"
                     + "\""
                     ;
+
+            //Globals.log.LogInformation(p.StartInfo.Arguments);
+            p.Start();
+            p.WaitForExit();
         }
 
 
@@ -489,12 +496,15 @@ namespace daytwo.K8sControllers
                         + $" --server={Environment.GetEnvironmentVariable("ARGOCD_SERVER_URI")}"
                         //+ $" --server=localhost:8080"
                         //+ $" --plaintext"
-                        + $" --insecure"
+                        + ((Environment.GetEnvironmentVariable("ARGOCD_INSECURE") != null) ?
+                            ((Environment.GetEnvironmentVariable("ARGOCD_INSECURE").Equals("true", StringComparison.CurrentCultureIgnoreCase)) ?
+                                $" --insecure" : "")
+                            : "")
                         + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")};"
                         + "\""
                         ;
 
-            Globals.log.LogInformation(p.StartInfo.Arguments);
+            //Globals.log.LogInformation(p.StartInfo.Arguments);
             p.Start();
             p.WaitForExit();
 
