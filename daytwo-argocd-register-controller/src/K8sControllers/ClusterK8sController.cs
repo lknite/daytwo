@@ -315,12 +315,14 @@ namespace daytwo.K8sControllers
             };
 
             p.StartInfo.Arguments += " "
+                    + '"'
                     + $"/usr/local/bin/argocd cluster rm {cluster.Name()}"
                     + $" -y"
                     + $" --server=localhost:8080"
                     + $" --plaintext"
                     + $" --insecure"
                     + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")};"
+                    + '"'
                     ;
         }
 
@@ -467,14 +469,15 @@ namespace daytwo.K8sControllers
             }
             };
 
-            File.WriteAllText("/tmp/{clustername}.conf", kubeconfig);
+            File.WriteAllText($"/tmp/{clusterName}.conf", kubeconfig);
 
             /*
             p.StartInfo.Arguments += " "
                         + $"echo {Convert.ToBase64String(bytes)} > /tmp/{clusterName}.b64;"
                         + $"cat /tmp/{clusterName}.b64 | base64 -d > /tmp/{clusterName}.conf;"
             */
-            p.StartInfo.Arguments += " "
+            p.StartInfo.Arguments += ' '
+                        + '"'
                         + $"/usr/local/bin/argocd cluster add {context}"
                         + $" -y"
                         + $" --upsert"
@@ -486,6 +489,7 @@ namespace daytwo.K8sControllers
                         + $" --plaintext"
                         + $" --insecure"
                         + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")};"
+                        + '"'
                         ;
 
             Globals.log.LogInformation(p.StartInfo.Arguments);
