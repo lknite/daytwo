@@ -144,6 +144,7 @@ namespace daytwo.K8sControllers
             string patchStr = string.Empty;
 
             Globals.log.LogInformation("  - namespace: " + cluster.Namespace() + ", cluster: " + cluster.Name());
+            Globals.log.LogInformation("  - status: " + ((cluster.Status != null) ? cluster.Status.phase : ""));
 
             // is this cluster in a ready state?
             if (!(
@@ -355,7 +356,7 @@ namespace daytwo.K8sControllers
             }
             catch (Exception ex)
             {
-                Globals.log.LogInformation(ex.Message);
+                Globals.log.LogInformation("[cluster] locating cluster secret failed: "+ ex.Message);
                 return null;
             }
             secret.Data.TryGetValue("value", out byte[] bytes);
