@@ -117,12 +117,12 @@ namespace daytwo.K8sControllers
                 }
                 catch (k8s.Autorest.HttpOperationException ex)
                 {
-                    Globals.log.LogInformation(new EventId(1, api), "Exception? " + ex);
+                    Globals.log.LogInformation(new EventId(0, api), "Exception? " + ex);
                     switch (ex.Response.StatusCode)
                     {
                         // crd is missing, sleep to avoid an error loop
                         case System.Net.HttpStatusCode.NotFound:
-                            Globals.log.LogInformation("crd is missing, pausing for a second before retrying");
+                            Globals.log.LogInformation(new EventId(0, api), "crd is missing, pausing for a second before retrying");
                             Thread.Sleep(1000);
                             break;
                     }
