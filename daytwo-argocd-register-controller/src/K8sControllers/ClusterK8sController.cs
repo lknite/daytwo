@@ -19,6 +19,7 @@ using System.Xml.Linq;
 using daytwo.crd.provider;
 using Microsoft.AspNetCore.Antiforgery;
 using System.Runtime.CompilerServices;
+using System.Diagnostics;
 
 namespace daytwo.K8sControllers
 {
@@ -255,6 +256,7 @@ namespace daytwo.K8sControllers
 
             Globals.log.LogInformation("** argocd remove cluster ...");
 
+            /*
             // locate server pod
             V1PodList list = await Globals.service.kubeclient.ListNamespacedPodAsync(Globals.service.argocdNamespace);
             V1Pod pod = null;
@@ -276,7 +278,6 @@ namespace daytwo.K8sControllers
             }
 
             // todo get clustername used in provided kubeconfig
-
             var cmds = new List<string>();
             cmds.Add("sh");
             cmds.Add("-c");
@@ -298,6 +299,29 @@ namespace daytwo.K8sControllers
             {
             }
             Globals.log.LogInformation("[cluster] after exec (2)");
+            */
+
+            var p = new Process
+            {
+                StartInfo = {
+                // pinniped get kubeconfig --kubeconfig /tmp/kubeconfig
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                FileName = "sh",
+                WorkingDirectory = @"/tmp",
+                Arguments = "-c"
+            }
+            };
+
+            p.StartInfo.Arguments += " "
+                    + $"argocd cluster rm {cluster.Name()}"
+                    + $" -y"
+                    + $" --server=localhost:8080"
+                    + $" --plaintext"
+                    + $" --insecure"
+                    + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")};"
+                    ;
         }
 
 
@@ -340,6 +364,7 @@ namespace daytwo.K8sControllers
                 }
             }
 
+            /*
             // save kubeconfig to a temporary file
             //string path = Path.GetTempFileName();
             //string path = "/tmp/asdf.txt";
@@ -372,9 +397,9 @@ namespace daytwo.K8sControllers
                 Globals.log.LogInformation("server pod not found");
                 return null;
             }
+            */
 
             /*
-            // test
             try
             {
                 cmds = new List<string>();
@@ -395,6 +420,7 @@ namespace daytwo.K8sControllers
             }
             */
 
+            /*
             try
             {
                 cmds = new List<string>();
@@ -426,6 +452,39 @@ namespace daytwo.K8sControllers
                 //Globals.log.LogInformation(ex.ToString());
             }
             Globals.log.LogInformation("[cluster] after exec (2)");
+            */
+
+            var p = new Process
+            {
+                StartInfo = {
+                // pinniped get kubeconfig --kubeconfig /tmp/kubeconfig
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                FileName = "sh",
+                WorkingDirectory = @"/tmp",
+                Arguments = "-c"
+            }
+            };
+
+            p.StartInfo.Arguments += " "
+                        + $"echo {Convert.ToBase64String(bytes)} > /tmp/{clusterName}.b64;"
+                        + $"cat /tmp/{clusterName}.b64 | base64 -d > /tmp/{clusterName}.conf;"
+                        + $"argocd cluster add {context}"
+                        + $" -y"
+                        + $" --upsert"
+                        + $" --name {clusterName}"
+                        + ((managementCluster != null) ? $" --annotation 'daytwo.aarr.xyz/management-cluster'='{managementCluster}'" : "")
+                        + $" --annotation 'daytwo.aarr.xyz/workload-cluster'='{clusterName}'"
+                        + $" --kubeconfig /tmp/{clusterName}.conf"
+                        + $" --server=localhost:8080"
+                        + $" --plaintext"
+                        + $" --insecure"
+                        + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")};"
+                        ;
+
+            p.Start();
+            p.WaitForExit();
 
 
             return null;
