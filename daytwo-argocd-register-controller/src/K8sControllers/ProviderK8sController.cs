@@ -138,7 +138,7 @@ namespace daytwo.K8sControllers
                     {
                         // crd is missing, sleep to avoid an error loop
                         case System.Net.HttpStatusCode.NotFound:
-                            Globals.log.LogInformation(new EventId(1, api), "listen recieved: 404, crd is missing or crd resource was deleted");
+                            Globals.log.LogInformation(new EventId(1, api), "listen recieved: 404, is clusters.cluster.x-k8s.io crd is missing?");
                             Thread.Sleep(1000);
                             break;
                     }
