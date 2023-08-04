@@ -74,6 +74,7 @@ namespace daytwo.K8sControllers
             SemaphoreSlim semaphore;
 
             // Start up all provider listeners
+            Globals.log.LogInformation("Starting up provider listeners ...");
             await AddProviders();
 
 
