@@ -18,6 +18,7 @@ using System.Xml.Linq;
 using System.Net.Sockets;
 using System.Diagnostics;
 using daytwo.Helpers;
+using Microsoft.Win32;
 
 namespace gge.K8sControllers
 {
@@ -32,6 +33,9 @@ namespace gge.K8sControllers
         public KubernetesClientConfiguration kubeconfig = null;
 
         public GenericClient generic = null;
+
+        // handle timing issue if argocd secret exists but pinniped generation failed
+        bool reCheck = false;
 
 
         public async Task Listen()
@@ -97,6 +101,15 @@ namespace gge.K8sControllers
                             //    break;
                             case WatchEventType.Modified:
                                 await ProcessModified(item);
+
+                                // if reCheck is true, restart listen, this will readd all secrets
+                                if (reCheck)
+                                {
+                                    Thread.Sleep(60 * 1000);
+                                    reCheck = false;
+                                        break;
+                                }
+
                                 break;
                         }
 
@@ -128,6 +141,7 @@ namespace gge.K8sControllers
         {
             ProcessModified(secret);
         }
+        /*
         public async Task Recheck(V1Secret secret)
         {
             // interval between retry
@@ -136,6 +150,7 @@ namespace gge.K8sControllers
             Globals.log.LogInformation("Recheck, retrying generate pinniped kubeconfig");
             ProcessModified(secret);
         }
+        */
         public async Task ProcessModified(V1Secret secret)
         {
             Globals.log.LogInformation("update configmap");
@@ -217,9 +232,7 @@ namespace gge.K8sControllers
             if (p.ExitCode != 0)
             {
                 Globals.log.LogInformation("error generating pinniped kubeconfig");
-
-                Globals.log.LogInformation("starting thread to recheck this secret");
-                Recheck(secret);
+                reCheck = true;
 
                 return;
             }
