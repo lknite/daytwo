@@ -47,6 +47,5 @@ namespace daytwo.Helpers
 
             return kubeconfig;
         }
-
     }
 }
