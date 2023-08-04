@@ -13,14 +13,9 @@ namespace daytwo.Helpers
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
 
-            string managementCluster = string.Empty;
-            if (secret.GetAnnotation("daytwo.aarr.xyz/management-cluster") != null)
-            {
-                managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
-            }
 
             // form a kubeconfig via the argocd secret
-            Globals.log.LogInformation(managementCluster, "- get kubeconfig from argocd secret:"
+            Globals.log.LogInformation("- get kubeconfig from argocd secret:"
                     + $" name: {Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length)}"
                     + $", server: {Encoding.UTF8.GetString(secret.Data["server"], 0, secret.Data["server"].Length)}"
                     );
