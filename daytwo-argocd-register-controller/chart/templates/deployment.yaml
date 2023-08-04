@@ -32,6 +32,8 @@ spec:
               key: token
         - name: ARGOCD_SERVER_URI
           value: {{ .Values.register.argocdServerUri }}
+        - name: ARGOCD_INSECURE_SKIP_TLS_VERIFY
+          value: {{ .Values.register.argocdInsecureSkipTlsVerify }}
         - name: ARGOCD_NAMESPACE
           value: {{ .Values.register.argocdNamespace }}
         - name: INSTALL_VERSION
