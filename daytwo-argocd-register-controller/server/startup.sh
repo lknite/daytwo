@@ -5,7 +5,7 @@ if [ ! -f /usr/local/bin/argocd ]; then
   echo "- installing argocd cli (first run only)"
   pushd /tmp > /dev/null
 
-  curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/download/$INSTALL_VERSION/argocd-linux-amd64
+  curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/download/$INSTALL_VERSION/argocd-linux-amd64 --insecure
   install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
   rm argocd-linux-amd64
   
