@@ -514,7 +514,7 @@ namespace daytwo.K8sControllers
                         + "\""
                         ;
 
-            Globals.log.LogInformation(p.StartInfo.Arguments);
+            //Globals.log.LogInformation(p.StartInfo.Arguments);
             p.Start();
             p.WaitForExit();
 
