@@ -36,6 +36,7 @@ namespace gge.K8sControllers
 
         // handle timing issue if argocd secret exists but pinniped generation failed
         bool reCheck = false;
+        int reCheckSeconds = 60;
 
 
         public async Task Listen()
@@ -105,7 +106,7 @@ namespace gge.K8sControllers
                                 // if reCheck is true, restart listen, this will readd all secrets
                                 if (reCheck)
                                 {
-                                    Thread.Sleep(60 * 1000);
+                                    Thread.Sleep(reCheckSeconds * 1000);
                                     reCheck = false;
                                     throw new Exception();
                                 }
@@ -231,7 +232,7 @@ namespace gge.K8sControllers
             // if there was an error, we stop here
             if (p.ExitCode != 0)
             {
-                Globals.log.LogInformation("error generating pinniped kubeconfig, starting recheck algo");
+                Globals.log.LogInformation($"error generating pinniped kubeconfig, rechecking in {reCheckSeconds} seconds");
                 reCheck = true;
 
                 return;
