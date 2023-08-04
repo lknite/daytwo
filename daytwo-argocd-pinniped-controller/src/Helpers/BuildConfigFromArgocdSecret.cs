@@ -41,10 +41,13 @@ namespace daytwo.Helpers
             kubeconfig.ClientCertificateKeyData = o.GetProperty("tlsClientConfig").GetProperty("keyData").GetString();
             // convert caData into an x509 cert & add
             kubeconfig.SslCaCerts = new X509Certificate2Collection();
-            kubeconfig.SslCaCerts.Add(
+            if (!kubeconfig.SkipTlsVerify)
+            {
+                kubeconfig.SslCaCerts.Add(
                     X509Certificate2.CreateFromPem(
                         Base64Decode(o.GetProperty("tlsClientConfig").GetProperty("caData").GetString()).AsSpan()
                 ));
+            }
 
             return kubeconfig;
         }
