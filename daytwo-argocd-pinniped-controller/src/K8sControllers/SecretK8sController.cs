@@ -130,17 +130,13 @@ namespace gge.K8sControllers
         }
         public async Task Recheck(V1Secret secret)
         {
-            // keep watching forever, retrying pinniped add at an interval
-            while (true)
-            {
-                // interval between checks
-                Thread.Sleep(60 * 1000);
+            // interval between retry
+            Thread.Sleep(60 * 1000);
 
-                Globals.log.LogInformation("Recheck, retrying generate pinniped kubeconfig");
-                ProcessModified(secret, true);
-            }
+            Globals.log.LogInformation("Recheck, retrying generate pinniped kubeconfig");
+            ProcessModified(secret);
         }
-        public async Task ProcessModified(V1Secret secret, bool isRecheck = false)
+        public async Task ProcessModified(V1Secret secret)
         {
             Globals.log.LogInformation("update configmap");
 
@@ -221,11 +217,9 @@ namespace gge.K8sControllers
             if (p.ExitCode != 0)
             {
                 Globals.log.LogInformation("error generating pinniped kubeconfig");
-                if (!isRecheck)
-                {
-                    Globals.log.LogInformation("starting thread to recheck this secret");
-                    Recheck(secret);
-                }
+
+                Globals.log.LogInformation("starting thread to recheck this secret");
+                Recheck(secret);
 
                 return;
             }
