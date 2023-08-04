@@ -23,7 +23,7 @@ namespace daytwo.Controllers
         [HttpGet("{managementCluster}/{workloadCluster}/kubeconfig")]
         public async Task<IActionResult> Get(string managementCluster, string workloadCluster)
         {
-            Console.WriteLine($"GET {managementCluster}/{workloadCluster}");
+            Globals.log.LogInformation($"GET {managementCluster}/{workloadCluster}");
 
             String tmp = string.Empty;
             try
@@ -32,7 +32,7 @@ namespace daytwo.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Globals.log.LogInformation(ex.Message);
                 return StatusCode(StatusCodes.Status404NotFound);
             }
 

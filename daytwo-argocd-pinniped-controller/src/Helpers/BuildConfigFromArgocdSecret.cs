@@ -13,15 +13,15 @@ namespace daytwo.Helpers
             Dictionary<string, string> data = new Dictionary<string, string>();
 
             // form a kubeconfig via the argocd secret
-            Console.WriteLine("- form kubeconfig from argocd cluster secret ...");
+            Globals.log.LogInformation("- form kubeconfig from argocd cluster secret ...");
 
             // we have a cluster secret, check its name/server
             data.Add("name", Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length));
             data.Add("server", Encoding.UTF8.GetString(secret.Data["server"], 0, secret.Data["server"].Length));
             data.Add("config", Encoding.UTF8.GetString(secret.Data["config"], 0, secret.Data["config"].Length));
 
-            Console.WriteLine("  -        name: " + data["name"]);
-            Console.WriteLine("  -      server: " + data["server"]);
+            Globals.log.LogInformation("  -        name: " + data["name"]);
+            Globals.log.LogInformation("  -      server: " + data["server"]);
 
             // parse kubeconfig json data from argocd secret
             JsonElement o = JsonSerializer.Deserialize<JsonElement>(data["config"]);
