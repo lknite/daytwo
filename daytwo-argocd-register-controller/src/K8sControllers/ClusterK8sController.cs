@@ -315,7 +315,7 @@ namespace daytwo.K8sControllers
             };
 
             p.StartInfo.Arguments += " "
-                    + $"argocd cluster rm {cluster.Name()}"
+                    + $"/usr/local/bin/argocd cluster rm {cluster.Name()}"
                     + $" -y"
                     + $" --server=localhost:8080"
                     + $" --plaintext"
@@ -470,7 +470,7 @@ namespace daytwo.K8sControllers
             p.StartInfo.Arguments += " "
                         + $"echo {Convert.ToBase64String(bytes)} > /tmp/{clusterName}.b64;"
                         + $"cat /tmp/{clusterName}.b64 | base64 -d > /tmp/{clusterName}.conf;"
-                        + $"argocd cluster add {context}"
+                        + $"/usr/local/bin/argocd cluster add {context}"
                         + $" -y"
                         + $" --upsert"
                         + $" --name {clusterName}"
@@ -483,6 +483,7 @@ namespace daytwo.K8sControllers
                         + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")};"
                         ;
 
+            Globals.log.LogInformation(p.StartInfo.Arguments);
             p.Start();
             p.WaitForExit();
 
