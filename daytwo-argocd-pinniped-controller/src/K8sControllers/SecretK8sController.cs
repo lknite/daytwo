@@ -142,16 +142,6 @@ namespace gge.K8sControllers
         {
             ProcessModified(secret);
         }
-        /*
-        public async Task Recheck(V1Secret secret)
-        {
-            // interval between retry
-            Thread.Sleep(60 * 1000);
-
-            Globals.log.LogInformation("Recheck, retrying generate pinniped kubeconfig");
-            ProcessModified(secret);
-        }
-        */
         public async Task ProcessModified(V1Secret secret)
         {
             Globals.log.LogInformation("update configmap");
@@ -273,7 +263,18 @@ namespace gge.K8sControllers
         }
         public async Task ProcessDeleted(V1Secret secret)
         {
-            Globals.log.LogInformation("remove from configmap");
+            Globals.log.LogInformation("remove pinniped kubeconfig");
+
+            string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
+            string workloadCluster = Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length);
+
+            if (managementCluster == null)
+            {
+                managementCluster = "tmp";
+            }
+
+            File.Delete($"/opt/www/{managementCluster}/{workloadCluster}/kubeconfig");
+
             return;
         }
     }
