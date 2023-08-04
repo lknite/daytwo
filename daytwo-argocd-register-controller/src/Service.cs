@@ -42,6 +42,7 @@ namespace daytwo
             List<string> required = new List<string>();
             required.Add("MANAGEMENT_CLUSTERS");
             required.Add("ARGOCD_AUTH_TOKEN");
+            required.Add("ARGOCD_SERVER_URI");
             foreach (string req in required)
             {
                 if ((Environment.GetEnvironmentVariable(req) == null)
