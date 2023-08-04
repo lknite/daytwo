@@ -335,7 +335,7 @@ namespace daytwo.K8sControllers
                         ((Environment.GetEnvironmentVariable("ARGOCD_INSECURE_SKIP_TLS_VERIFY").Equals("true", StringComparison.CurrentCultureIgnoreCase)) ?
                             $" --insecure" : "")
                         : "")
-                    + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")};"
+                    + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")}"
                     + "\""
                     ;
 
@@ -510,7 +510,7 @@ namespace daytwo.K8sControllers
                             ((Environment.GetEnvironmentVariable("ARGOCD_INSECURE_SKIP_TLS_VERIFY").Equals("true", StringComparison.CurrentCultureIgnoreCase)) ?
                                 $" --insecure" : "")
                             : "")
-                        + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")};"
+                        + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")}"
                         + "\""
                         ;
 
