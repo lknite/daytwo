@@ -74,7 +74,7 @@ namespace daytwo.K8sControllers
             SemaphoreSlim semaphore;
 
             // Start up all provider listeners
-            await AddProviders(cluster);
+            await AddProviders();
 
 
             // Watch is a tcp connection therefore it can drop, use a while loop to restart as needed.
