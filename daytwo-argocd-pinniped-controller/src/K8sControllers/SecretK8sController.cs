@@ -155,7 +155,7 @@ namespace gge.K8sControllers
             */
             string json = Main.SerializeKubernetesClientConfig(kubeconfig, workloadCluster);
             //Console.WriteLine(json);
-            File.WriteAllText("/tmp/kubeconfig", json);
+            File.WriteAllText("/tmp/tmpkubeconfig", json);
 
             // generate pinniped kubeconfig
             Console.WriteLine("generate pinniped kubeconfig");
@@ -169,7 +169,7 @@ namespace gge.K8sControllers
                 FileName = "pinniped",
                 WorkingDirectory = @"/tmp",
                 Arguments = "get kubeconfig"
-                    + " --kubeconfig /tmp/kubeconfig"
+                    + " --kubeconfig /tmp/tmpkubeconfig"
             }
             };
 
