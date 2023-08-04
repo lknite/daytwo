@@ -61,10 +61,13 @@ namespace daytwo.K8sControllers
             this.managementCluster = managementCluster;
 
             // locate the provisioning cluster argocd secret
+            Globals.log.LogInformation("GetClusterArgocdSecret");
             V1Secret? secret = daytwo.Helpers.Main.GetClusterArgocdSecret(managementCluster);
             // use secret to create kubeconfig
+            Globals.log.LogInformation("BuildConfigFromArgocdSecret");
             kubeconfig = daytwo.Helpers.Main.BuildConfigFromArgocdSecret(secret);
             // use kubeconfig to create client
+            Globals.log.LogInformation("Create kubeclient");
             kubeclient = new Kubernetes(kubeconfig);
 
             //
