@@ -73,6 +73,9 @@ namespace daytwo.K8sControllers
             // Enforce only processing one watch event at a time
             SemaphoreSlim semaphore;
 
+            // Start up all provider listeners
+            await AddProviders(cluster);
+
 
             // Watch is a tcp connection therefore it can drop, use a while loop to restart as needed.
             while (true)
@@ -202,7 +205,7 @@ namespace daytwo.K8sControllers
                 Globals.log.LogInformation("      - cluster already added to argocd");
 
                 //
-                await AddProvider(cluster);
+                //await AddProvider(cluster);
 
                 return;
             }
@@ -225,7 +228,7 @@ namespace daytwo.K8sControllers
             Globals.service.kubeclient.CoreV1.PatchNamespacedSecret(
                 new V1Patch(tmp, V1Patch.PatchType.MergePatch), tmp.Name(), tmp.Namespace());
 
-            await AddProvider(cluster);
+            //await AddProvider(cluster);
             
 
             return;
@@ -552,7 +555,7 @@ namespace daytwo.K8sControllers
         }
         */
 
-        public async Task AddProvider(CrdCluster cluster)
+        public async Task AddProviders() //CrdCluster cluster)
         {
             // Check for environment variable asking us not to copy labels
             string? disable = Environment.GetEnvironmentVariable("OPTION_DISABLE_LABEL_COPY");
@@ -594,13 +597,7 @@ namespace daytwo.K8sControllers
 
                         // check if provider is already present
                         ProviderK8sController? item = providers.Find(item => (item.api == _kind) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));
-                        if (item != null)
-                        {
-                            // provider already exists, nudge it to recheck this cluster which just had its secret updated
-                            CrdProviderCluster crd = await item.generic.ReadNamespacedAsync<CrdProviderCluster>(cluster.Namespace(), cluster.Name());
-                            item.ProcessModified(crd);
-                        }
-                        else //if (item == null)
+                        if (item == null)
                         {
                             Globals.log.LogInformation($"   _kind: {_kind}");
                             Globals.log.LogInformation($"  _group: {_group}");
@@ -617,6 +614,14 @@ namespace daytwo.K8sControllers
                             // start listening
                             provider.Listen(managementCluster);
                         }
+                        /*
+                        else
+                        {
+                            // provider already exists, nudge it to recheck this cluster which just had its secret updated
+                            CrdProviderCluster crd = await item.generic.ReadNamespacedAsync<CrdProviderCluster>(cluster.Namespace(), cluster.Name());
+                            item.ProcessModified(crd);
+                        }
+                        */
                     }
                 }
             }
