@@ -107,7 +107,7 @@ namespace gge.K8sControllers
                                 {
                                     Thread.Sleep(60 * 1000);
                                     reCheck = false;
-                                        break;
+                                    throw new Exception();
                                 }
 
                                 break;
@@ -231,7 +231,7 @@ namespace gge.K8sControllers
             // if there was an error, we stop here
             if (p.ExitCode != 0)
             {
-                Globals.log.LogInformation("error generating pinniped kubeconfig");
+                Globals.log.LogInformation("error generating pinniped kubeconfig, starting recheck algo");
                 reCheck = true;
 
                 return;
