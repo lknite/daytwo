@@ -23,8 +23,8 @@ namespace daytwo.Helpers
             data.Add("server", Encoding.UTF8.GetString(secret.Data["server"], 0, secret.Data["server"].Length));
             data.Add("config", Encoding.UTF8.GetString(secret.Data["config"], 0, secret.Data["config"].Length));
 
-            Globals.log.LogInformation("  -        name: " + data["name"]);
-            Globals.log.LogInformation("  -      server: " + data["server"]);
+            //Globals.log.LogInformation("  -        name: " + data["name"]);
+            //Globals.log.LogInformation("  -      server: " + data["server"]);
 
             // parse kubeconfig json data from argocd secret
             JsonElement o = JsonSerializer.Deserialize<JsonElement>(data["config"]);
