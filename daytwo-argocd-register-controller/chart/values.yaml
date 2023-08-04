@@ -27,6 +27,10 @@ register:
   ##
   argocdAuthTokenSecret: "auth-token"
 
+  ## @param argocdServerUri Used when adding a cluster, will use the auth-token provided above
+  ##
+  argocdServerUri: "argocd"
+
   ## @param argocdNamespace Used if targeting an argocd installation in an alternative namespace
   ##
   argocdNamespace: "argocd"
