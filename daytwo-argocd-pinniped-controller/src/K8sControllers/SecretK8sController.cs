@@ -107,6 +107,7 @@ namespace gge.K8sControllers
                                 if (reCheck)
                                 {
                                     Thread.Sleep(reCheckSeconds * 1000);
+                                    Globals.log.LogInformation("begin recheck");
                                     reCheck = false;
                                     throw new Exception();
                                 }
@@ -134,6 +135,7 @@ namespace gge.K8sControllers
                 catch (Exception ex)
                 {
                     //Globals.log.LogInformation("Exception occured while performing 'watch': " + ex);
+                    Globals.log.LogInformation(new EventId(100, "asdf"), "exception caught");
                 }
             }
         }
