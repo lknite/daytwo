@@ -80,7 +80,7 @@ namespace daytwo.K8sControllers
                 // Prep semaphore (reset in case of exception)
                 semaphore = new SemaphoreSlim(1);
 
-                Globals.log.LogInformation(DateTime.UtcNow +" (" + api +") Listen begins ...");
+                Globals.log.LogInformation(DateTime.UtcNow +" ("+ api +") Listen begins ...");
                 try
                 {
                     await foreach (var (type, item) in generic.WatchNamespacedAsync<CrdCluster>(""))
@@ -117,7 +117,7 @@ namespace daytwo.K8sControllers
                 }
                 catch (k8s.Autorest.HttpOperationException ex)
                 {
-                    Globals.log.LogInformation("Exception? " + ex);
+                    Globals.log.LogInformation(new EventId(1, api), "Exception? " + ex);
                     switch (ex.Response.StatusCode)
                     {
                         // crd is missing, sleep to avoid an error loop
