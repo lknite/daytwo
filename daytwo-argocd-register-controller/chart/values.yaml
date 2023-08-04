@@ -29,7 +29,11 @@ register:
 
   ## @param argocdServerUri Used when adding a cluster, will use the auth-token provided above
   ##
-  argocdServerUri: "argocd"
+  argocdServerUri: "https://argocd"
+
+  ## @param argocdAllowInsecure When connecting with server ignore tls certificate failure
+  ##
+  argocdAllowInsecure: "false"
 
   ## @param argocdNamespace Used if targeting an argocd installation in an alternative namespace
   ##
