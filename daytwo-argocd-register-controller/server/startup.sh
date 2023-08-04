@@ -10,8 +10,8 @@ if [ ! -f /usr/local/bin/argocd ]; then
   rm argocd-linux-amd64
   
   popd > /dev/null
-  echo "- here is the downloaded argocd (if this fails then the download failed)"
-  ls /usr/local/bin/argocd
+  echo "- install version: $INSTALL_VERSION"
+  echo "- downloaded binary: `ls /usr/local/bin/argocd`"
 fi
 
 # Startup controller
