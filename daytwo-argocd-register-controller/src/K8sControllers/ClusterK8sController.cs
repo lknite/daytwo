@@ -146,8 +146,10 @@ namespace daytwo.K8sControllers
             Dictionary<string, string> data = new Dictionary<string, string>();
             string patchStr = string.Empty;
 
-            Globals.log.LogInformation("  - namespace: " + cluster.Namespace() + ", cluster: " + cluster.Name());
-            Globals.log.LogInformation("  - status: " + ((cluster.Status != null) ? cluster.Status.phase : ""));
+            Globals.log.LogInformation(
+                        "  - namespace: " + cluster.Namespace()
+                        + ", cluster: " + cluster.Name()
+                        + ((cluster.Status != null) ? $", status: {cluster.Status.phase}" : ""));
 
             // is this cluster in a ready state?
             if (!(
