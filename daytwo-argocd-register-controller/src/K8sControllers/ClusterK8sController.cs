@@ -467,9 +467,14 @@ namespace daytwo.K8sControllers
             }
             };
 
+            File.WriteAllText("/tmp/{clustername}.conf", kubeconfig);
+
+            /*
             p.StartInfo.Arguments += " "
                         + $"echo {Convert.ToBase64String(bytes)} > /tmp/{clusterName}.b64;"
                         + $"cat /tmp/{clusterName}.b64 | base64 -d > /tmp/{clusterName}.conf;"
+            */
+            p.StartInfo.Arguments += " "
                         + $"/usr/local/bin/argocd cluster add {context}"
                         + $" -y"
                         + $" --upsert"
