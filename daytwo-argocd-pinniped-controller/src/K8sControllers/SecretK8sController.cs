@@ -72,20 +72,9 @@ namespace gge.K8sControllers
                     V1SecretList list = await kubeclient.ListNamespacedSecretAsync(Globals.service.argocdNamespace);
                     foreach (var item in list)
                     {
-                        // check that this secret is an argocd cluster secret
-                        if (item.Labels() == null)
+                        //
+                        if (!Main.IsArgocdClusterSecret(item))
                         {
-                            //Globals.log.LogInformation("- ignoring, not a cluster secret");
-                            continue;
-                        }
-                        if (!item.Labels().TryGetValue("argocd.argoproj.io/secret-type", out var value))
-                        {
-                            //Globals.log.LogInformation("- ignoring, not a cluster secret");
-                            continue;
-                        }
-                        if (value != "cluster")
-                        {
-                            //Globals.log.LogInformation("- ignoring, not a cluster secret");
                             continue;
                         }
 
@@ -112,28 +101,19 @@ namespace gge.K8sControllers
                             found = false;
                             foreach (V1Secret secret in list)
                             {
-                                // check that this secret is an argocd cluster secret
-                                if (secret.Labels() == null)
+                                //
+                                if (!Main.IsArgocdClusterSecret(secret))
                                 {
-                                    //Globals.log.LogInformation("- ignoring, not a cluster secret");
-                                    continue;
-                                }
-                                if (!secret.Labels().TryGetValue("argocd.argoproj.io/secret-type", out var value))
-                                {
-                                    //Globals.log.LogInformation("- ignoring, not a cluster secret");
-                                    continue;
-                                }
-                                if (value != "cluster")
-                                {
-                                    //Globals.log.LogInformation("- ignoring, not a cluster secret");
                                     continue;
                                 }
 
                                 string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
+                                /*
                                 foreach (var asdf in secret.Data.Keys)
                                 {
                                     Globals.log.LogInformation($"key: {asdf}");
                                 }
+                                */
                                 string workloadCluster = Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length);
 
                                 if (managementCluster == null)
@@ -185,20 +165,8 @@ namespace gge.K8sControllers
                 {
                     await foreach (var (type, item) in generic.WatchNamespacedAsync<V1Secret>(Globals.service.argocdNamespace))
                     {
-                        // check that this secret is an argocd cluster secret
-                        if (item.Labels() == null)
+                        if (!Main.IsArgocdClusterSecret(item))
                         {
-                            //Globals.log.LogInformation("- ignoring, not a cluster secret");
-                            continue;
-                        }
-                        if (!item.Labels().TryGetValue("argocd.argoproj.io/secret-type", out var value))
-                        {
-                            //Globals.log.LogInformation("- ignoring, not a cluster secret");
-                            continue;
-                        }
-                        if (value != "cluster")
-                        {
-                            //Globals.log.LogInformation("- ignoring, not a cluster secret");
                             continue;
                         }
 
