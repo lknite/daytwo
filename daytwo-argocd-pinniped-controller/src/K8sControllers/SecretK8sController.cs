@@ -88,12 +88,16 @@ namespace gge.K8sControllers
 
                     //**
                     // check if existing pinniped secrets have a matching secret
-                    var files = from file in Directory.EnumerateFiles("/opt/www") select file;
-                    Globals.log.LogInformation("Files: {0}", files.Count<string>().ToString());
-                    Globals.log.LogInformation("List of Files");
-                    foreach (var file in files)
+
+                    if (Directory.Exists("/opt/www"))
                     {
-                        Globals.log.LogInformation("{0}", file);
+                        var files = from file in Directory.EnumerateFiles("/opt/www") select file;
+                        Globals.log.LogInformation("Files: {0}", files.Count<string>().ToString());
+                        Globals.log.LogInformation("List of Files");
+                        foreach (var file in files)
+                        {
+                            Globals.log.LogInformation("{0}", file);
+                        }
                     }
                 }
                 catch (Exception ex)
