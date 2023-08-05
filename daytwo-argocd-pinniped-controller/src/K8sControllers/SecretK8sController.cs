@@ -241,35 +241,29 @@ namespace gge.K8sControllers
         }
         public async Task ProcessModified(V1Secret secret)
         {
-            Globals.log.LogInformation("update configmap");
-
             string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
             string workloadCluster = Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length);
 
             if (managementCluster == null)
             {
                 managementCluster = "tmp";
+                Globals.log.LogInformation($"syncing argocd cluster secret: {workloadCluster}");
+            }
+            else
+            {
+                Globals.log.LogInformation($"syncing argocd cluster secret: {managementCluster}/{workloadCluster}");
             }
 
             //
             KubernetesClientConfiguration kubeconfig = Main.BuildConfigFromArgocdSecret(secret);
-            /*
-            try
-            {
-                Globals.log.LogInformation(JsonSerializer.Serialize(kubeconfig));
-            }
-            catch (Exception ex)
-            {
-                Globals.log.LogInformation(ex);
-            }
-            Globals.log.LogInformation("try serialize (2)");
-            */
+
+            //
             string json = Main.SerializeKubernetesClientConfig(kubeconfig, workloadCluster);
             //Globals.log.LogInformation(json);
             File.WriteAllText("/tmp/tmpkubeconfig", json);
 
             // generate pinniped kubeconfig
-            Globals.log.LogInformation("generate pinniped kubeconfig");
+            Globals.log.LogInformation("- generate pinniped kubeconfig");
             var p = new Process
             {
                 StartInfo = {
