@@ -145,7 +145,7 @@ namespace daytwo.K8sControllers
                 }
                 catch (Exception ex)
                 {
-                    //Globals.log.LogInformation(new EventId(1, api), "Exception occured while performing 'watch': " + ex);
+                    Globals.log.LogInformation(new EventId(1, api), "Exception occured while performing 'watch': " + ex);
                 }
             }
         }
