@@ -291,7 +291,7 @@ namespace gge.K8sControllers
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 RedirectStandardOutput = true,
-                FileName = "pinniped",
+                FileName = "/usr/local/bin/pinniped",
                 WorkingDirectory = @"/tmp",
                 Arguments = "get kubeconfig"
                     + " --kubeconfig /tmp/tmpkubeconfig"
@@ -325,7 +325,7 @@ namespace gge.K8sControllers
                     }
                 }
             }
-            //Globals.log.LogInformation(p.StartInfo.Arguments);
+            Globals.log.LogInformation(p.StartInfo.Arguments);
             //
             p.Start();
             p.WaitForExit();
