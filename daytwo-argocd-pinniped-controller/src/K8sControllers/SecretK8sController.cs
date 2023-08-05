@@ -49,6 +49,53 @@ namespace gge.K8sControllers
             //
             generic = new GenericClient(kubeclient, group, version, plural);
 
+            // update at an interval, this is required vs using events because:
+            // 1. pinniped may not be ready when the secret is modified, therefore an
+            //    additional check is needed, but there is no modified event to trigger one
+            // 2. attempts to 'retry' using a thread have so far been unsuccessful, causing
+            //    delete events to be missed
+            while (true)
+            {
+                //**
+                // add pinniped secrets
+
+                // acquire list of all arogcd secrets
+                V1SecretList list = await kubeclient.ListNamespacedSecretAsync(Globals.service.argocdNamespace);
+                foreach (var item in list)
+                {
+                    // check that this secret is an argocd cluster secret
+                    if (item.Labels() == null)
+                    {
+                        //Globals.log.LogInformation("- ignoring, not a cluster secret");
+                        continue;
+                    }
+                    if (!item.Labels().TryGetValue("argocd.argoproj.io/secret-type", out var value))
+                    {
+                        //Globals.log.LogInformation("- ignoring, not a cluster secret");
+                        continue;
+                    }
+                    if (value != "cluster")
+                    {
+                        //Globals.log.LogInformation("- ignoring, not a cluster secret");
+                        continue;
+                    }
+
+                    // attempt to add pinniped kubeconfig
+                    await ProcessAdded(item);
+                }
+
+                //**
+                // check if existing pinniped secrets have a matching secret
+
+
+                // intermittent delay in between checks
+                Globals.log.LogInformation("sleeping");
+                Thread.Sleep(60 * 1000);
+            }
+
+
+
+            /*
             // Enforce only processing one watch event at a time
             SemaphoreSlim semaphore;
 
@@ -138,11 +185,12 @@ namespace gge.K8sControllers
                     Globals.log.LogInformation(new EventId(100, "asdf"), "exception caught");
                 }
             }
+            */
         }
 
         public async Task ProcessAdded(V1Secret secret)
         {
-            ProcessModified(secret);
+            await ProcessModified(secret);
         }
         public async Task ProcessModified(V1Secret secret)
         {
