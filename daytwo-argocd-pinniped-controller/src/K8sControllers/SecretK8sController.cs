@@ -56,42 +56,49 @@ namespace gge.K8sControllers
             //    delete events to be missed
             while (true)
             {
-                //**
-                // add pinniped secrets
-
-                // acquire list of all arogcd secrets
-                V1SecretList list = await kubeclient.ListNamespacedSecretAsync(Globals.service.argocdNamespace);
-                foreach (var item in list)
+                try
                 {
-                    // check that this secret is an argocd cluster secret
-                    if (item.Labels() == null)
+                    //**
+                    // add pinniped secrets
+
+                    // acquire list of all arogcd secrets
+                    V1SecretList list = await kubeclient.ListNamespacedSecretAsync(Globals.service.argocdNamespace);
+                    foreach (var item in list)
                     {
-                        //Globals.log.LogInformation("- ignoring, not a cluster secret");
-                        continue;
-                    }
-                    if (!item.Labels().TryGetValue("argocd.argoproj.io/secret-type", out var value))
-                    {
-                        //Globals.log.LogInformation("- ignoring, not a cluster secret");
-                        continue;
-                    }
-                    if (value != "cluster")
-                    {
-                        //Globals.log.LogInformation("- ignoring, not a cluster secret");
-                        continue;
+                        // check that this secret is an argocd cluster secret
+                        if (item.Labels() == null)
+                        {
+                            //Globals.log.LogInformation("- ignoring, not a cluster secret");
+                            continue;
+                        }
+                        if (!item.Labels().TryGetValue("argocd.argoproj.io/secret-type", out var value))
+                        {
+                            //Globals.log.LogInformation("- ignoring, not a cluster secret");
+                            continue;
+                        }
+                        if (value != "cluster")
+                        {
+                            //Globals.log.LogInformation("- ignoring, not a cluster secret");
+                            continue;
+                        }
+
+                        // attempt to add pinniped kubeconfig
+                        await ProcessAdded(item);
                     }
 
-                    // attempt to add pinniped kubeconfig
-                    await ProcessAdded(item);
+                    //**
+                    // check if existing pinniped secrets have a matching secret
+                    var files = from file in Directory.EnumerateFiles("/opt/www") select file;
+                    Globals.log.LogInformation("Files: {0}", files.Count<string>().ToString());
+                    Globals.log.LogInformation("List of Files");
+                    foreach (var file in files)
+                    {
+                        Globals.log.LogInformation("{0}", file);
+                    }
                 }
-
-                //**
-                // check if existing pinniped secrets have a matching secret
-                var files = from file in Directory.EnumerateFiles("/opt/www") select file;
-                Globals.log.LogInformation("Files: {0}", files.Count<string>().ToString());
-                Globals.log.LogInformation("List of Files");
-                foreach (var file in files)
+                catch (Exception ex)
                 {
-                    Globals.log.LogInformation("{0}", file);
+                    Globals.log.LogInformation($"{ex.Message}", ex);
                 }
 
 
