@@ -35,11 +35,14 @@ namespace gge.K8sControllers
         public GenericClient generic = null;
 
         // handle timing issue if argocd secret exists but pinniped generation failed
-        bool reCheck = false;
-        int reCheckSeconds = 60;
+        //bool reCheck = false;
+        //int reCheckSeconds = 60;
+
+        // Enforce only processing one watch event at a time
+        SemaphoreSlim semaphore = null;
 
 
-        public async Task Listen()
+        public SecretK8sController()
         {
             // use secret to create kubeconfig
             kubeconfig = KubernetesClientConfiguration.BuildDefaultConfig();
@@ -49,13 +52,21 @@ namespace gge.K8sControllers
             //
             generic = new GenericClient(kubeclient, group, version, plural);
 
-            // update at an interval, this is required vs using events because:
-            // 1. pinniped may not be ready when the secret is modified, therefore an
-            //    additional check is needed, but there is no modified event to trigger one
-            // 2. attempts to 'retry' using a thread have so far been unsuccessful, causing
-            //    delete events to be missed
+            // Prep semaphore for only 1 action at a time
+            semaphore = new SemaphoreSlim(1);
+        }
+
+        public async Task Intermittent(int seconds)
+        {
             while (true)
             {
+                // intermittent delay in between checks
+                Globals.log.LogInformation("sleeping");
+                Thread.Sleep(seconds * 1000);
+
+                // Acquire Semaphore
+                semaphore.Wait(Globals.cancellationToken);
+
                 try
                 {
                     //**
@@ -87,8 +98,9 @@ namespace gge.K8sControllers
                     }
 
                     //**
-                    // check if existing pinniped secrets have a matching secret
+                    // remove pinniped secrets
 
+                    // check if existing pinniped secrets have a matching secret
                     if (Directory.Exists("/opt/www"))
                     {
                         var files = from file in Directory.EnumerateFiles("/opt/www") select file;
@@ -105,25 +117,22 @@ namespace gge.K8sControllers
                     Globals.log.LogInformation($"{ex.Message}", ex);
                 }
 
-
-                // intermittent delay in between checks
-                Globals.log.LogInformation("sleeping");
-                Thread.Sleep(60 * 1000);
+                try
+                {
+                    // Release semaphore
+                    semaphore.Release();
+                }
+                catch
+                {
+                    // release will fail if exception was before semaphore was acquired, ignore
+                }
             }
-
-
-
-            /*
-            // Enforce only processing one watch event at a time
-            SemaphoreSlim semaphore;
-
-
+        }
+        public async Task Listen()
+        {
             // Watch is a tcp connection therefore it can drop, use a while loop to restart as needed.
             while (true)
             {
-                // Prep semaphore (reset in case of exception)
-                semaphore = new SemaphoreSlim(1);
-
                 Globals.log.LogInformation(DateTime.UtcNow +" (" + api +") Listen begins ...");
                 try
                 {
@@ -168,6 +177,7 @@ namespace gge.K8sControllers
                             case WatchEventType.Modified:
                                 await ProcessModified(item);
 
+                                /*
                                 // if reCheck is true, restart listen, this will readd all secrets
                                 if (reCheck)
                                 {
@@ -176,12 +186,12 @@ namespace gge.K8sControllers
                                     reCheck = false;
                                     throw new Exception();
                                 }
+                                */
 
                                 break;
                         }
 
                         // Release semaphore
-                        //Globals.log.LogInformation("done.");
                         semaphore.Release();
                     }
                 }
@@ -196,14 +206,33 @@ namespace gge.K8sControllers
                             Thread.Sleep(1000);
                             break;
                     }
+
+                    try
+                    {
+                        // Release semaphore
+                        semaphore.Release();
+                    }
+                    catch
+                    {
+                        // release will fail if exception was before semaphore was acquired, ignore
+                    }
                 }
                 catch (Exception ex)
                 {
                     //Globals.log.LogInformation("Exception occured while performing 'watch': " + ex);
-                    Globals.log.LogInformation(new EventId(100, "asdf"), "exception caught");
+                    //Globals.log.LogInformation(new EventId(100, "asdf"), "exception caught");
+
+                    try
+                    {
+                        // Release semaphore
+                        semaphore.Release();
+                    }
+                    catch
+                    {
+                        // release will fail if exception was before semaphore was acquired, ignore
+                    }
                 }
             }
-            */
         }
 
         public async Task ProcessAdded(V1Secret secret)
