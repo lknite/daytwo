@@ -65,6 +65,9 @@ namespace daytwo.K8sControllers
 
         public ProviderK8sController(string managementCluster, string api, string group, string version, string plural)
         {
+            // start listening
+            Globals.log.LogInformation($"**** Provider.Add({api}s.{group}.{version})");
+
             // initialize properties
             this.api = api;
             this.group = group;
@@ -86,9 +89,6 @@ namespace daytwo.K8sControllers
 
             // Prep semaphore for only 1 action at a time
             semaphore = new SemaphoreSlim(1);
-
-            // start listening
-            Globals.log.LogInformation($"**** Provider.Add({api}s.{group}.{version})");
         }
         public async Task Intermittent(int seconds)
         {
