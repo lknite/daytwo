@@ -278,7 +278,10 @@ namespace gge.K8sControllers
             }
 
             //
-            string json = Main.SerializeKubernetesClientConfig(kubeconfig, workloadCluster);
+            KubernetesClientConfiguration tmpkubeconfig = Main.BuildConfigFromArgocdSecret(secret);
+
+            //
+            string json = Main.SerializeKubernetesClientConfig(tmpkubeconfig, workloadCluster);
             //Globals.log.LogInformation(json);
             File.WriteAllText("/tmp/tmpkubeconfig", json);
             File.WriteAllText($"/tmp/{workloadCluster}.conf", json);
