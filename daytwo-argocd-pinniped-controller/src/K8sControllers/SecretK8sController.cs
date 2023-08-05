@@ -99,7 +99,7 @@ namespace gge.K8sControllers
                     // check if existing pinniped secrets have a matching secret
                     if (Directory.Exists("/opt/www"))
                     {
-                        var files = from file in Directory.EnumerateFiles("/opt/www") select file;
+                        var files = from file in Directory.EnumerateFiles("/opt/www", "*/kubeconfig") select file;
                         Globals.log.LogInformation("Files: {0}", files.Count<string>().ToString());
                         Globals.log.LogInformation("List of Files");
                         foreach (var file in files)
