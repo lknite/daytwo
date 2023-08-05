@@ -328,6 +328,7 @@ namespace daytwo.K8sControllers
                     + "\""
                     + $"/usr/local/bin/argocd cluster rm {cluster.Name()}"
                     + $" -y"
+                    + $" --grpc-web"
                     + $" --server={Environment.GetEnvironmentVariable("ARGOCD_SERVER_URI")}"
                     //+ $" --server=localhost:8080"
                     //+ $" --plaintext"
@@ -498,6 +499,7 @@ namespace daytwo.K8sControllers
                         + "\""
                         + $"/usr/local/bin/argocd cluster add {context}"
                         + $" -y"
+                        + $" --grpc-web"
                         + $" --upsert"
                         + $" --name {clusterName}"
                         + ((managementCluster != null) ? $" --annotation 'daytwo.aarr.xyz/management-cluster'='{managementCluster}'" : "")
