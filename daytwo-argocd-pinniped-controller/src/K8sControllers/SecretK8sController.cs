@@ -258,6 +258,7 @@ namespace gge.K8sControllers
         {
             string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
             string workloadCluster = Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length);
+            string resourceVersion = Encoding.UTF8.GetString(secret.Data["resourceVersion"], 0, secret.Data["resourceVersion"].Length);
 
             if (managementCluster == null)
             {
@@ -269,8 +270,12 @@ namespace gge.K8sControllers
                 Globals.log.LogInformation($"syncing argocd cluster secret: {managementCluster}/{workloadCluster}");
             }
 
-            //
-            KubernetesClientConfiguration kubeconfig = Main.BuildConfigFromArgocdSecret(secret);
+            // Check if we already created a pinniped config from this argocd cluster secret
+            if (File.Exists($"/opt/www/{managementCluster}/{workloadCluster}/resourceVersion-{resourceVersion}"))
+            {
+                Globals.log.LogInformation("- pinniped kubeconfig is up-to-date");
+                return;
+            }
 
             //
             string json = Main.SerializeKubernetesClientConfig(kubeconfig, workloadCluster);
@@ -356,8 +361,11 @@ namespace gge.K8sControllers
             //Globals.log.LogInformation("copy to www folder");
             try
             {
-                //Globals.log.LogInformation("write to file: '"+ $"/opt/www/{managementCluster}/{workloadCluster}/kubeconfig" +"'");
+                // write out pinniped kubeconfig
                 File.WriteAllText($"/opt/www/{managementCluster}/{workloadCluster}/kubeconfig", tmp);
+
+                // also write out argocd resourceVersion, use to check for up-to-date pinniped config
+                File.WriteAllText($"/opt/www/{managementCluster}/{workloadCluster}/resourceVersion-{resourceVersion}", "");
             }
             catch (Exception ex)
             {
