@@ -15,19 +15,11 @@ namespace daytwo.Helpers
             //Globals.log.LogInformation("- argocd cluster secrets:");
             foreach (V1Secret secret in secrets)
             {
-                // is there a label indicating this is a cluster secret?
-                if (secret.Labels() == null)
+                if (!IsArgocdClusterSecret(secret))
                 {
                     continue;
                 }
-                if (!secret.Labels().TryGetValue("argocd.argoproj.io/secret-type", out var value))
-                {
-                    continue;
-                }
-                if (value != "cluster")
-                {
-                    continue;
-                }
+
                 // is this secret associated with the specified management cluster?
                 if (managementCluster != null)
                 {
