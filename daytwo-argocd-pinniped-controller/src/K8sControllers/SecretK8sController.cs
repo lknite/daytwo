@@ -89,7 +89,7 @@ namespace gge.K8sControllers
                     bool found = false;
                     if (Directory.Exists("/opt/www"))
                     {
-                        var files = from file in Directory.EnumerateFiles("/opt/www", "*kubeconfig", SearchOption.AllDirectories) select file;
+                        var files = from file in Directory.EnumerateFiles("/opt/www", "*", SearchOption.AllDirectories) select file;
                         //Globals.log.LogInformation("Files: {0}", files.Count<string>().ToString());
                         //Globals.log.LogInformation("List of Files");
                         foreach (var file in files)
