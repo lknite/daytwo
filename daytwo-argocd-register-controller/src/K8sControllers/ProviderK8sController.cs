@@ -95,7 +95,7 @@ namespace daytwo.K8sControllers
             while (true)
             {
                 // intermittent delay in between checks
-                Globals.log.LogInformation("sleeping");
+                Globals.log.LogInformation(new EventId(1, api), "sleeping");
                 Thread.Sleep(seconds * 1000);
 
                 // Acquire Semaphore
@@ -240,32 +240,33 @@ namespace daytwo.K8sControllers
             Dictionary<string, string> data = new Dictionary<string, string>();
             string patchStr = string.Empty;
 
-            Globals.log.LogInformation(new EventId(1, api), "Addition/Modify detected: " + provider.Metadata.Name);
+            //Globals.log.LogInformation(new EventId(1, api), "Addition/Modify detected: " + provider.Metadata.Name);
 
             // acquire argocd cluster secret to so we can sync labels
             V1Secret? secret = daytwo.Helpers.Main.GetClusterArgocdSecret(provider.Name(), managementCluster);
             if (secret == null)
             {
-                Globals.log.LogInformation(new EventId(1, api), "(vcluster) unable to locate argocd secret");
+                Globals.log.LogInformation(new EventId(1, api), "- unable to locate argocd secret");
                 return;
             }
 
             // check if daytwo is managing this secret
             if (secret.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/resourceVersion"] == null)
             {
-                Globals.log.LogInformation(new EventId(1, api), "(vcluster) secret is not managed by daytwo, ignoring");
+                Globals.log.LogInformation(new EventId(1, api), "- secret is not managed by daytwo, ignoring");
                 return;
             }
 
             // locate argocd cluster secret representing this cluster
-            Globals.log.LogInformation(new EventId(1, api), "** sync 'addons' ...");
+            //Globals.log.LogInformation(new EventId(1, api), "** sync 'addons' ...");
 
             //
             var before = JsonSerializer.SerializeToDocument(secret);
             bool isChange = false;
 
             // add missing labels to argocd cluster secret
-            Globals.log.LogInformation(new EventId(1, api), "- add missing labels to argocd cluster secret:");
+            //Globals.log.LogInformation(new EventId(1, api), "- add missing labels to argocd cluster secret:");
+            List<string> history = new List<string>();
             foreach (var l in provider.Metadata.Labels)
             {
                 /*
@@ -303,14 +304,27 @@ namespace daytwo.K8sControllers
                 // if not found, add to cluster secret
                 if (!found)
                 {
-                    Globals.log.LogInformation(new EventId(1, api), "  - " + l.Key + ": " + l.Value);
+                    history.Add(l.Key + ": " + l.Value);
+
                     secret.SetLabel(l.Key, l.Value);
                     isChange = true;
                 }
             }
 
+            // add to log if there was an update
+            if (history.Count > 0)
+            {
+                Globals.log.LogInformation(new EventId(1, api), "- add missing labels to argocd cluster secret:");
+
+                foreach (var next in history)
+                {
+                    Globals.log.LogInformation(new EventId(1, api), "  - " + next);
+                }
+            }
+
             // remove deleted labels from argocd cluster secret
-            Globals.log.LogInformation(new EventId(1, api), "- remove deleted labels from argocd cluster secret:");
+            //Globals.log.LogInformation(new EventId(1, api), "- remove deleted labels from argocd cluster secret:");
+            history = new List<string>();
             foreach (var label in secret.Labels())
             {
                 // avoid deleting argocd labels
@@ -354,9 +368,21 @@ namespace daytwo.K8sControllers
                 // if not found, remove to cluster secret
                 if (!found)
                 {
-                    Globals.log.LogInformation(new EventId(1, api), "  - " + label.Key + ": " + label.Value);
+                    history.Add(label.Key + ": " + label.Value);
+
                     secret.SetLabel(label.Key, null);
                     isChange = true;
+                }
+            }
+
+            // add to log if there was an update
+            if (history.Count > 0)
+            {
+                Globals.log.LogInformation(new EventId(1, api), "- remove deleted labels from argocd cluster secret:");
+
+                foreach (var next in history)
+                {
+                    Globals.log.LogInformation(new EventId(1, api), "  - " + next);
                 }
             }
 
@@ -367,12 +393,14 @@ namespace daytwo.K8sControllers
                 return;
             }
 
+            /*
             // display adjusted label list
             Globals.log.LogInformation(new EventId(1, api), "resulting label list:");
             foreach (var next in secret.Labels())
             {
                 Globals.log.LogInformation(new EventId(1, api), "- "+ next.Key +": "+ next.Value);
             }
+            */
 
             // generate json patch
             var patch = before.CreatePatch(secret);
