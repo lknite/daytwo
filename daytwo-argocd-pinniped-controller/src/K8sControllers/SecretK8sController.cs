@@ -258,7 +258,7 @@ namespace gge.K8sControllers
         {
             string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
             string workloadCluster = Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length);
-            string resourceVersion = Encoding.UTF8.GetString(secret.Data["resourceVersion"], 0, secret.Data["resourceVersion"].Length);
+            string resourceVersion = secret.Metadata.ResourceVersion;
 
             if (managementCluster == null)
             {
