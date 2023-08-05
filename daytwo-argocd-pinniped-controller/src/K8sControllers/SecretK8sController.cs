@@ -34,10 +34,6 @@ namespace gge.K8sControllers
 
         public GenericClient generic = null;
 
-        // handle timing issue if argocd secret exists but pinniped generation failed
-        //bool reCheck = false;
-        //int reCheckSeconds = 60;
-
         // Enforce only processing one watch event at a time
         SemaphoreSlim semaphore = null;
 

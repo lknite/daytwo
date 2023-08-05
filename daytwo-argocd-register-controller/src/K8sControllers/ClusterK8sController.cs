@@ -528,6 +528,7 @@ namespace daytwo.K8sControllers
             //Globals.log.LogInformation("all is done");
         }
         */
+        /*
         public static Task One(Stream stdIn, Stream stdOut, Stream stdErr)
         {
             StreamReader sr = new StreamReader(stdOut);
@@ -540,6 +541,7 @@ namespace daytwo.K8sControllers
             return null;
             //return new Task(PrintEvenNumbers);
         }
+        */
 
         /*
         private static async Task ExecInPod(IKubernetes client, V1Pod pod, string cmd)
@@ -612,13 +614,19 @@ namespace daytwo.K8sControllers
 
                             // if not, start monitoring
                             ProviderK8sController provider = new ProviderK8sController(
+                                    managementCluster,
                                     _kind, _group, _version, _plural);
 
                             // add to list of providers we are monitoring
                             providers.Add(provider);
 
+                            // sync everything at the specified interval, needed in case:
+                            // - a delete event was missed
+                            // - provider modify event will cause pinniped kubeconfig generation but pinniped may not be ready
+                            provider.Intermittent(1 * 60);
+                            // instantly perform work in response to events
                             // start listening
-                            provider.Listen(managementCluster);
+                            //provider.Listen();
                         }
                         /*
                         else

@@ -18,6 +18,7 @@ using System.Reflection.Emit;
 using Json.Patch;
 using daytwo.Helpers;
 using daytwo.crd.provider;
+using System.Threading;
 
 namespace daytwo.K8sControllers
 {
@@ -58,8 +59,11 @@ namespace daytwo.K8sControllers
 
         public GenericClient generic = null;
 
+        // Enforce only processing one watch event at a time
+        SemaphoreSlim semaphore = null;
 
-        public ProviderK8sController(string api, string group, string version, string plural)
+
+        public ProviderK8sController(string managementCluster, string api, string group, string version, string plural)
         {
             // initialize properties
             this.api = api;
@@ -67,12 +71,6 @@ namespace daytwo.K8sControllers
             this.version = version;
             this.plural = plural;
 
-            // start listening
-            Globals.log.LogInformation($"**** Provider.Add({api}s.{group}.{version})");
-        }
-
-        public async Task Listen(string managementCluster)
-        {
             // remember which management cluster is using this provider type
             this.managementCluster = managementCluster;
 
@@ -86,16 +84,80 @@ namespace daytwo.K8sControllers
             //
             generic = new GenericClient(kubeclient, group, version, plural);
 
-            // Enforce only processing one watch event at a time
-            SemaphoreSlim semaphore;
+            // Prep semaphore for only 1 action at a time
+            semaphore = new SemaphoreSlim(1);
 
+            // start listening
+            Globals.log.LogInformation($"**** Provider.Add({api}s.{group}.{version})");
+        }
+        public async Task Intermittent(int seconds)
+        {
+            while (true)
+            {
+                // intermittent delay in between checks
+                Globals.log.LogInformation("sleeping");
+                Thread.Sleep(seconds * 1000);
 
+                // Acquire Semaphore
+                semaphore.Wait(Globals.cancellationToken);
+
+                try
+                {
+                    //**
+                    // add: sync labels from provider resource to argocd cluster secret
+
+                    // acquire list of all provider resources
+                    CustomResourceList<CrdProviderCluster> list = await generic.ListNamespacedAsync<CustomResourceList<CrdProviderCluster>>("");
+                    foreach (var item in list.Items)
+                    {
+                        /*
+                        // check that this secret is an argocd cluster secret
+                        if (item.Labels() == null)
+                        {
+                            //Globals.log.LogInformation("- ignoring, not a cluster secret");
+                            continue;
+                        }
+                        if (!item.Labels().TryGetValue("argocd.argoproj.io/secret-type", out var value))
+                        {
+                            //Globals.log.LogInformation("- ignoring, not a cluster secret");
+                            continue;
+                        }
+                        if (value != "cluster")
+                        {
+                            //Globals.log.LogInformation("- ignoring, not a cluster secret");
+                            continue;
+                        }
+                        */
+
+                        // sync labels
+                        await ProcessAdded(item);
+                    }
+
+                    //**
+                    // remove: nothing to do here
+                }
+                catch (Exception ex)
+                {
+                    Globals.log.LogInformation($"{ex.Message}", ex);
+                }
+
+                try
+                {
+                    // Release semaphore
+                    semaphore.Release();
+                }
+                catch
+                {
+                    // release will fail if exception was before semaphore was acquired, ignore
+                }
+            }
+        }
+
+        public async Task Listen()
+        {
             // Watch is a tcp connection therefore it can drop, use a while loop to restart as needed.
             while (true)
             {
-                // Prep semaphore (reset in case of exception)
-                semaphore = new SemaphoreSlim(1);
-
                 Globals.log.LogInformation(new EventId(1, api), "(" + api +") Listen begins ...");
                 try
                 {
@@ -127,7 +189,6 @@ namespace daytwo.K8sControllers
                         }
 
                         // Release semaphore
-                        //Globals.log.LogInformation(new EventId(1, api), "done.");
                         semaphore.Release();
                     }
                 }
@@ -142,10 +203,30 @@ namespace daytwo.K8sControllers
                             Thread.Sleep(1000);
                             break;
                     }
+
+                    try
+                    {
+                        // Release semaphore
+                        semaphore.Release();
+                    }
+                    catch
+                    {
+                        // release will fail if exception was before semaphore was acquired, ignore
+                    }
                 }
                 catch (Exception ex)
                 {
                     //Globals.log.LogInformation(new EventId(1, api), "Exception occured while performing 'watch': " + ex);
+
+                    try
+                    {
+                        // Release semaphore
+                        semaphore.Release();
+                    }
+                    catch
+                    {
+                        // release will fail if exception was before semaphore was acquired, ignore
+                    }
                 }
             }
         }
