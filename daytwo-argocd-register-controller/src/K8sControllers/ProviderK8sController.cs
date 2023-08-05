@@ -246,14 +246,14 @@ namespace daytwo.K8sControllers
             V1Secret? secret = daytwo.Helpers.Main.GetClusterArgocdSecret(provider.Name(), managementCluster);
             if (secret == null)
             {
-                Globals.log.LogInformation(new EventId(1, api), "- unable to locate argocd secret");
+                //Globals.log.LogInformation(new EventId(1, api), "- unable to locate argocd secret");
                 return;
             }
 
             // check if daytwo is managing this secret
             if (secret.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/resourceVersion"] == null)
             {
-                Globals.log.LogInformation(new EventId(1, api), "- secret is not managed by daytwo, ignoring");
+                //Globals.log.LogInformation(new EventId(1, api), "- secret is not managed by daytwo, ignoring");
                 return;
             }
 
@@ -266,7 +266,7 @@ namespace daytwo.K8sControllers
 
             // add missing labels to argocd cluster secret
             //Globals.log.LogInformation(new EventId(1, api), "- add missing labels to argocd cluster secret:");
-            List<string> history = new List<string>();
+            List<string> historyAdd = new List<string>();
             foreach (var l in provider.Metadata.Labels)
             {
                 /*
@@ -304,27 +304,17 @@ namespace daytwo.K8sControllers
                 // if not found, add to cluster secret
                 if (!found)
                 {
-                    history.Add(l.Key + ": " + l.Value);
+                    historyAdd.Add(l.Key + ": " + l.Value);
 
                     secret.SetLabel(l.Key, l.Value);
                     isChange = true;
                 }
             }
 
-            // add to log if there was an update
-            if (history.Count > 0)
-            {
-                Globals.log.LogInformation(new EventId(1, api), "- add missing labels to argocd cluster secret:");
-
-                foreach (var next in history)
-                {
-                    Globals.log.LogInformation(new EventId(1, api), "  - " + next);
-                }
-            }
-
+            
             // remove deleted labels from argocd cluster secret
             //Globals.log.LogInformation(new EventId(1, api), "- remove deleted labels from argocd cluster secret:");
-            history = new List<string>();
+            List<string> historyRemove = new List<string>();
             foreach (var label in secret.Labels())
             {
                 // avoid deleting argocd labels
@@ -368,28 +358,44 @@ namespace daytwo.K8sControllers
                 // if not found, remove to cluster secret
                 if (!found)
                 {
-                    history.Add(label.Key + ": " + label.Value);
+                    historyRemove.Add(label.Key + ": " + label.Value);
 
                     secret.SetLabel(label.Key, null);
                     isChange = true;
                 }
             }
 
-            // add to log if there was an update
-            if (history.Count > 0)
+            if (isChange)
             {
-                Globals.log.LogInformation(new EventId(1, api), "- remove deleted labels from argocd cluster secret:");
+                Globals.log.LogInformation(new EventId(1, api), "Addition/Modify detected: " + provider.Metadata.Name);
 
-                foreach (var next in history)
+                // add to log if there was an update
+                if (historyAdd.Count > 0)
                 {
-                    Globals.log.LogInformation(new EventId(1, api), "  - " + next);
-                }
-            }
+                    Globals.log.LogInformation(new EventId(1, api), "- add missing labels to argocd cluster secret:");
 
+                    foreach (var next in historyAdd)
+                    {
+                        Globals.log.LogInformation(new EventId(1, api), "  - " + next);
+                    }
+                }
+
+                // add to log if there was an update
+                if (historyRemove.Count > 0)
+                {
+                    Globals.log.LogInformation(new EventId(1, api), "- remove deleted labels from argocd cluster secret:");
+
+                    foreach (var next in historyRemove)
+                    {
+                        Globals.log.LogInformation(new EventId(1, api), "  - " + next);
+                    }
+                }
+
+            }
             // if no changes then return now without patching
-            if (!isChange)
+            else
             {
-                Globals.log.LogInformation(new EventId(1, api), "- no changes detected, update complete");
+                //Globals.log.LogInformation(new EventId(1, api), "- no changes detected, update complete");
                 return;
             }
 
