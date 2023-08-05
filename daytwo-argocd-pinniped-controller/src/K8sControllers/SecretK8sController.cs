@@ -313,9 +313,7 @@ namespace gge.K8sControllers
             // if there was an error, we stop here
             if (p.ExitCode != 0)
             {
-                Globals.log.LogInformation($"error generating pinniped kubeconfig");
-                //Globals.log.LogInformation($"error generating pinniped kubeconfig, rechecking in {reCheckSeconds} seconds");
-                //reCheck = true;
+                Globals.log.LogInformation($"- error generating pinniped kubeconfig");
 
                 return;
             }
