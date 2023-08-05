@@ -120,6 +120,8 @@ namespace gge.K8sControllers
                                     managementCluster = "tmp";
                                 }
 
+                                Globals.log.LogInformation($"parts[3]: {parts[3]}");
+                                Globals.log.LogInformation($"parts[4]: {parts[4]}");
                                 if ((managementCluster == parts[3]) && (workloadCluster == parts[4]))
                                 {
                                     found = true;
