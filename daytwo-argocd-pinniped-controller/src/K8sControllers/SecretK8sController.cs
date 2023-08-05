@@ -281,6 +281,7 @@ namespace gge.K8sControllers
             string json = Main.SerializeKubernetesClientConfig(kubeconfig, workloadCluster);
             //Globals.log.LogInformation(json);
             File.WriteAllText("/tmp/tmpkubeconfig", json);
+            File.WriteAllText($"/tmp/{workloadCluster}.conf", json);
 
             // generate pinniped kubeconfig
             Globals.log.LogInformation("- generate pinniped kubeconfig");
