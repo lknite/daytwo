@@ -78,6 +78,12 @@ namespace gge.K8sControllers
                             continue;
                         }
 
+                        // only process if required label is present
+                        if(item.GetLabel("addons-pinniped-concierge") == null)
+                        {
+                            continue;
+                        }
+
                         // attempt to add pinniped kubeconfig
                         await ProcessAdded(item);
                     }
