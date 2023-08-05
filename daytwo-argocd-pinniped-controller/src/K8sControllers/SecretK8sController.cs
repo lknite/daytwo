@@ -110,9 +110,13 @@ namespace gge.K8sControllers
 
                             // does this pinniped kubeconfig match up with an existing cluster?
                             found = false;
-                            foreach (var secret in list)
+                            foreach (V1Secret secret in list)
                             {
                                 string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
+                                foreach (var asdf in secret.Data.Keys)
+                                {
+                                    Globals.log.LogInformation($"key: {asdf}");
+                                }
                                 string workloadCluster = Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length);
 
                                 if (managementCluster == null)
