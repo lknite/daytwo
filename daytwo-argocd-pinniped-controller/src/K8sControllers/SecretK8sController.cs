@@ -86,6 +86,13 @@ namespace gge.K8sControllers
 
                 //**
                 // check if existing pinniped secrets have a matching secret
+                var files = from file in Directory.EnumerateFiles("/opt/www") select file;
+                Console.WriteLine("Files: {0}", files.Count<string>().ToString());
+                Console.WriteLine("List of Files");
+                foreach (var file in files)
+                {
+                    Console.WriteLine("{0}", file);
+                }
 
 
                 // intermittent delay in between checks
