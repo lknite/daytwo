@@ -97,6 +97,7 @@ namespace gge.K8sControllers
                     // remove pinniped secrets
 
                     // check if existing pinniped secrets have a matching secret
+                    bool found = false;
                     if (Directory.Exists("/opt/www"))
                     {
                         var files = from file in Directory.EnumerateFiles("/opt/www", "*kubeconfig", SearchOption.AllDirectories) select file;
@@ -105,6 +106,33 @@ namespace gge.K8sControllers
                         foreach (var file in files)
                         {
                             Globals.log.LogInformation("{0}", file);
+                            string[] parts = file.Split('/');
+
+                            // does this pinniped kubeconfig match up with an existing cluster?
+                            found = false;
+                            foreach (var secret in list)
+                            {
+                                string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
+                                string workloadCluster = Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length);
+
+                                if (managementCluster == null)
+                                {
+                                    managementCluster = "tmp";
+                                }
+
+                                if ((managementCluster == parts[3]) && (workloadCluster == parts[4]))
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            // if not, then remove stale pinniped kubeconfig
+                            if (!found) 
+                            {
+                                Globals.log.LogInformation($"Removing stale pinniped kubeconfig: {file}");
+                                File.Delete(file);
+                            }
                         }
                     }
                 }
