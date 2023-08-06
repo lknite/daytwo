@@ -22,7 +22,7 @@ $@"
 @"
     insecure-skip-tls-verify: true
 ")
-+ @"
++ $@"
     server: {kubeconfig.Host}
   name: {name}
 contexts:
