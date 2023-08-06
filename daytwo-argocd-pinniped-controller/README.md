@@ -14,7 +14,7 @@
 ## installation ##
 - helm repo add lknite https://lknite.github.io/charts
 - helm repo update lknite
-- helm install pinniped-controller
+- helm install argocd-pinniped-controller
 
 ## configuration environment variables ##
 - PINNIPED_OIDC_ISSUER: https://keycloak.vc-prod.k.home.net/realms/home.net
