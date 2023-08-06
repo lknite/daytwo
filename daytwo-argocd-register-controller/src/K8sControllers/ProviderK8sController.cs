@@ -91,7 +91,7 @@ namespace daytwo.K8sControllers
             semaphore = new SemaphoreSlim(1);
 
             // Start the intermittent timer
-            new Thread(new ThreadStart(Timer));
+            (new Thread(new ThreadStart(Timer))).Start();
         }
         public void Timer()
         {
