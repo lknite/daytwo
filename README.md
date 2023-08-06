@@ -17,6 +17,10 @@ environment always matches what is in git.
 - clusterapi (a.k.a. capi)
 - tanzu (which uses capi)
 
+## compatible, label copy
+- vcluster
+- tanzukubernetescluster
+
 ## controllers
 - [daytwo-argocd-register-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-register-controller)
   - watches for new clusters to reach a ready state and automatically adds them to argocd
