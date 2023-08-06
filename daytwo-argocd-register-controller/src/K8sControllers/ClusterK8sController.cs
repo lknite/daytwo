@@ -625,7 +625,10 @@ namespace daytwo.K8sControllers
                             // sync everything at the specified interval, needed in case:
                             // - a delete event was missed
                             // - provider modify event will cause pinniped kubeconfig generation but pinniped may not be ready
-                            provider.Intermittent(1 * 60);
+
+                            // we use the timer instead to ensure the intermittent is on a non-blocking thread
+                            //provider.Intermittent(1 * 60);
+
                             // instantly perform work in response to events
                             // start listening
                             //provider.Listen();

@@ -89,14 +89,28 @@ namespace daytwo.K8sControllers
 
             // Prep semaphore for only 1 action at a time
             semaphore = new SemaphoreSlim(1);
+
+            // Start the intermittent timer
+            new Thread(new ThreadStart(Timer));
         }
-        public async Task Intermittent(int seconds)
+        public void Timer()
         {
+            while (!Globals.cancellationToken.IsCancellationRequested)
+            {
+                Thread.Sleep(60 * 1000);
+
+                Intermittent();
+            }
+        }
+        public async Task Intermittent()//(int seconds)
+        {
+            /*
             while (true)
             {
                 // intermittent delay in between checks
                 Globals.log.LogInformation(new EventId(1, api), "sleeping");
                 Thread.Sleep(seconds * 1000);
+            */
 
                 // Acquire Semaphore
                 semaphore.Wait(Globals.cancellationToken);
@@ -150,7 +164,7 @@ namespace daytwo.K8sControllers
                 {
                     // release will fail if exception was before semaphore was acquired, ignore
                 }
-            }
+            //}
         }
 
         public async Task Listen()
