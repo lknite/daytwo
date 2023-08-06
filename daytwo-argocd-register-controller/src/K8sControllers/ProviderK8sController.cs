@@ -97,6 +97,7 @@ namespace daytwo.K8sControllers
         {
             while (!Globals.cancellationToken.IsCancellationRequested)
             {
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "sleeping");
                 Thread.Sleep(60 * 1000);
 
                 Intermittent();
@@ -108,7 +109,7 @@ namespace daytwo.K8sControllers
             while (true)
             {
                 // intermittent delay in between checks
-                Globals.log.LogInformation(new EventId(1, api), "sleeping");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "sleeping");
                 Thread.Sleep(seconds * 1000);
             */
 
@@ -172,17 +173,17 @@ namespace daytwo.K8sControllers
             // Watch is a tcp connection therefore it can drop, use a while loop to restart as needed.
             while (true)
             {
-                Globals.log.LogInformation(new EventId(1, api), "(" + api +") Listen begins ...");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "(" + api +") Listen begins ...");
                 try
                 {
                     await foreach (var (type, item) in generic.WatchNamespacedAsync<CrdProviderCluster>(""))
                     {
-                        Globals.log.LogInformation(new EventId(1, api), "");
-                        Globals.log.LogInformation(new EventId(1, api), "(event) [" + type + "] " + plural + "." + group + "/" + version + ": " + item.Metadata.Name);
+                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "");
+                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "(event) [" + type + "] " + plural + "." + group + "/" + version + ": " + item.Metadata.Name);
 
                         // Acquire Semaphore
                         semaphore.Wait(Globals.cancellationToken);
-                        //Globals.log.LogInformation(new EventId(1, api), "[" + item.Metadata.Name + "]");
+                        //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "[" + item.Metadata.Name + "]");
 
                         // Handle event type
                         switch (type)
@@ -208,12 +209,12 @@ namespace daytwo.K8sControllers
                 }
                 catch (k8s.Autorest.HttpOperationException ex)
                 {
-                    Globals.log.LogInformation(new EventId(1, api), "Exception: " + ex);
+                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "Exception: " + ex);
                     switch (ex.Response.StatusCode)
                     {
                         // crd is missing, sleep to avoid an error loop
                         case System.Net.HttpStatusCode.NotFound:
-                            Globals.log.LogInformation(new EventId(1, api), "listen recieved: 404, is clusters.cluster.x-k8s.io crd is missing?");
+                            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "listen recieved: 404, is clusters.cluster.x-k8s.io crd is missing?");
                             Thread.Sleep(1000);
                             break;
                     }
@@ -230,7 +231,7 @@ namespace daytwo.K8sControllers
                 }
                 catch (Exception ex)
                 {
-                    //Globals.log.LogInformation(new EventId(1, api), "Exception occured while performing 'watch': " + ex);
+                    //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "Exception occured while performing 'watch': " + ex);
 
                     try
                     {
@@ -254,32 +255,32 @@ namespace daytwo.K8sControllers
             Dictionary<string, string> data = new Dictionary<string, string>();
             string patchStr = string.Empty;
 
-            //Globals.log.LogInformation(new EventId(1, api), "Addition/Modify detected: " + provider.Metadata.Name);
+            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "Addition/Modify detected: " + provider.Metadata.Name);
 
             // acquire argocd cluster secret to so we can sync labels
             V1Secret? secret = daytwo.Helpers.Main.GetClusterArgocdSecret(provider.Name(), managementCluster);
             if (secret == null)
             {
-                //Globals.log.LogInformation(new EventId(1, api), "- unable to locate argocd secret");
+                //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "- unable to locate argocd secret");
                 return;
             }
 
             // check if daytwo is managing this secret
             if (secret.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/resourceVersion"] == null)
             {
-                //Globals.log.LogInformation(new EventId(1, api), "- secret is not managed by daytwo, ignoring");
+                //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "- secret is not managed by daytwo, ignoring");
                 return;
             }
 
             // locate argocd cluster secret representing this cluster
-            //Globals.log.LogInformation(new EventId(1, api), "** sync 'addons' ...");
+            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "** sync 'addons' ...");
 
             //
             var before = JsonSerializer.SerializeToDocument(secret);
             bool isChange = false;
 
             // add missing labels to argocd cluster secret
-            //Globals.log.LogInformation(new EventId(1, api), "- add missing labels to argocd cluster secret:");
+            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "- add missing labels to argocd cluster secret:");
             List<string> historyAdd = new List<string>();
             foreach (var l in provider.Metadata.Labels)
             {
@@ -327,7 +328,7 @@ namespace daytwo.K8sControllers
 
             
             // remove deleted labels from argocd cluster secret
-            //Globals.log.LogInformation(new EventId(1, api), "- remove deleted labels from argocd cluster secret:");
+            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "- remove deleted labels from argocd cluster secret:");
             List<string> historyRemove = new List<string>();
             foreach (var label in secret.Labels())
             {
@@ -381,27 +382,27 @@ namespace daytwo.K8sControllers
 
             if (isChange)
             {
-                Globals.log.LogInformation(new EventId(1, api), "Addition/Modify detected: " + provider.Metadata.Name);
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "Addition/Modify detected: " + provider.Metadata.Name);
 
                 // add to log if there was an update
                 if (historyAdd.Count > 0)
                 {
-                    Globals.log.LogInformation(new EventId(1, api), "- add missing labels to argocd cluster secret:");
+                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "- add missing labels to argocd cluster secret:");
 
                     foreach (var next in historyAdd)
                     {
-                        Globals.log.LogInformation(new EventId(1, api), "  - " + next);
+                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "  - " + next);
                     }
                 }
 
                 // add to log if there was an update
                 if (historyRemove.Count > 0)
                 {
-                    Globals.log.LogInformation(new EventId(1, api), "- remove deleted labels from argocd cluster secret:");
+                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "- remove deleted labels from argocd cluster secret:");
 
                     foreach (var next in historyRemove)
                     {
-                        Globals.log.LogInformation(new EventId(1, api), "  - " + next);
+                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "  - " + next);
                     }
                 }
 
@@ -409,16 +410,16 @@ namespace daytwo.K8sControllers
             // if no changes then return now without patching
             else
             {
-                //Globals.log.LogInformation(new EventId(1, api), "- no changes detected, update complete");
+                //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "- no changes detected, update complete");
                 return;
             }
 
             /*
             // display adjusted label list
-            Globals.log.LogInformation(new EventId(1, api), "resulting label list:");
+            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "resulting label list:");
             foreach (var next in secret.Labels())
             {
-                Globals.log.LogInformation(new EventId(1, api), "- "+ next.Key +": "+ next.Value);
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "- "+ next.Key +": "+ next.Value);
             }
             */
 
@@ -430,7 +431,7 @@ namespace daytwo.K8sControllers
             patch.Replace(x => x.Metadata.Labels, secret.Labels());
             patchStr = Newtonsoft.Json.JsonConvert.SerializeObject(patch);
             patchStr = patchStr.Replace("/Metadata/Labels", "/metadata/labels");
-            Globals.log.LogInformation(new EventId(1, api), "patch:");
+            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "patch:");
             Globals.log.LogInformation(patchStr);
             */
             try
@@ -447,7 +448,7 @@ namespace daytwo.K8sControllers
         }
         public async Task ProcessDeleted(CrdProviderCluster provider)
         {
-            Globals.log.LogInformation(new EventId(1, api), "Deleted detected: " + provider.Metadata.Name);
+            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "Deleted detected: " + provider.Metadata.Name);
         }
     }
 }
