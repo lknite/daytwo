@@ -22,7 +22,7 @@
 ## installation ##
 - helm repo add lknite https://lknite.github.io/charts
 - helm repo update lknite
-- helm install register-controller
+- helm install argocd-register-controller
 
 ## configuration environment variables ##
 ### required ###
