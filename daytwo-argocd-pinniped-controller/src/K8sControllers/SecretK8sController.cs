@@ -113,6 +113,12 @@ namespace gge.K8sControllers
                                     continue;
                                 }
 
+                                // only process if required label is present
+                                if (secret.GetLabel("addons-pinniped-concierge") == null)
+                                {
+                                    continue;
+                                }
+
                                 string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
                                 /*
                                 foreach (var asdf in secret.Data.Keys)
@@ -348,6 +354,7 @@ namespace gge.K8sControllers
                 return;
             }
 
+            /*
             // capture output
             string tmp = "";
             //Globals.log.LogInformation("parse output");
@@ -358,6 +365,7 @@ namespace gge.K8sControllers
             }
             //Globals.log.LogInformation("display output");
             //Globals.log.LogInformation(tmp);
+            */
 
             //Globals.log.LogInformation("after generate pinniped kubeconfig");
 
