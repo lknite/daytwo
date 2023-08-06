@@ -6,8 +6,6 @@ namespace daytwo.Helpers
     {
         public static string? SerializeKubernetesClientConfig(KubernetesClientConfiguration kubeconfig, string name)
         {
-            string pem = kubeconfig.SslCaCerts[0].ExportCertificatePem();
-
             return $@"
 apiVersion: v1
 kind: Config
@@ -16,7 +14,7 @@ clusters:
 "
 + ((!kubeconfig.SkipTlsVerify) ?
 $@"
-    certificate-authority-data: {Base64Encode(pem.ToString())}
+    certificate-authority-data: {Base64Encode(kubeconfig.SslCaCerts[0].ExportCertificatePem().ToString())}
 "
 :
 @"
