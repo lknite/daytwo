@@ -100,6 +100,7 @@ namespace daytwo.K8sControllers
                 Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "sleeping");
                 Thread.Sleep(60 * 1000);
 
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "Intermittent");
                 Intermittent();
             }
         }
