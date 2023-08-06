@@ -354,7 +354,6 @@ namespace gge.K8sControllers
                 return;
             }
 
-            /*
             // capture output
             string tmp = "";
             //Globals.log.LogInformation("parse output");
@@ -365,7 +364,6 @@ namespace gge.K8sControllers
             }
             //Globals.log.LogInformation("display output");
             //Globals.log.LogInformation(tmp);
-            */
 
             //Globals.log.LogInformation("after generate pinniped kubeconfig");
 
