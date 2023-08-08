@@ -14,7 +14,7 @@ namespace daytwo.Helpers
 
 
             // form a kubeconfig via the argocd secret
-            Globals.log.LogInformation("- get kubeconfig from argocd secret:"
+            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "- get kubeconfig from argocd secret:"
                     + $" name: {Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length)}"
                     + $", server: {Encoding.UTF8.GetString(secret.Data["server"], 0, secret.Data["server"].Length)}"
                     );
@@ -24,8 +24,8 @@ namespace daytwo.Helpers
             data.Add("server", Encoding.UTF8.GetString(secret.Data["server"], 0, secret.Data["server"].Length));
             data.Add("config", Encoding.UTF8.GetString(secret.Data["config"], 0, secret.Data["config"].Length));
 
-            //Globals.log.LogInformation("  -        name: " + data["name"]);
-            //Globals.log.LogInformation("  -      server: " + data["server"]);
+            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "  -        name: " + data["name"]);
+            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "  -      server: " + data["server"]);
 
             // parse kubeconfig json data from argocd secret
             JsonElement o = JsonSerializer.Deserialize<JsonElement>(data["config"]);

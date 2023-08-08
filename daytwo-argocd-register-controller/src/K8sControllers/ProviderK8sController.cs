@@ -129,17 +129,17 @@ namespace daytwo.K8sControllers
                     // check that this secret is an argocd cluster secret
                     if (item.Labels() == null)
                     {
-                        //Globals.log.LogInformation("- ignoring, not a cluster secret");
+                        //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "- ignoring, not a cluster secret");
                         continue;
                     }
                     if (!item.Labels().TryGetValue("argocd.argoproj.io/secret-type", out var value))
                     {
-                        //Globals.log.LogInformation("- ignoring, not a cluster secret");
+                        //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "- ignoring, not a cluster secret");
                         continue;
                     }
                     if (value != "cluster")
                     {
-                        //Globals.log.LogInformation("- ignoring, not a cluster secret");
+                        //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "- ignoring, not a cluster secret");
                         continue;
                     }
                     */
