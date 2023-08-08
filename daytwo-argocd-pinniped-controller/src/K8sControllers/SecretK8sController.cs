@@ -99,8 +99,8 @@ namespace gge.K8sControllers
                     }
 
                     // if requiredLabel is defined, only process if is present
-                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
-                            $"REQUIRED_LABEL: {Environment.GetEnvironmentVariable("REQUIRED_LABEL")}");
+                    //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
+                    //        $"REQUIRED_LABEL: {Environment.GetEnvironmentVariable("REQUIRED_LABEL")}");
                     if ((Environment.GetEnvironmentVariable("REQUIRED_LABEL") != null)
                         && (Environment.GetEnvironmentVariable("REQUIRED_LABEL").Length > 0))
                     {
