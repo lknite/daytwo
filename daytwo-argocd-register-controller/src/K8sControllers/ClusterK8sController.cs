@@ -22,6 +22,7 @@ using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using System.Threading;
 using k8s.KubeConfigModels;
+using System.Net.Sockets;
 
 namespace daytwo.K8sControllers
 {
@@ -343,13 +344,11 @@ namespace daytwo.K8sControllers
 
             // has this cluster been added to argocd?
             V1Secret? tmp = daytwo.Helpers.Main.GetClusterArgocdSecret(cluster.Name(), managementCluster);
-
+            /*
             if (tmp != null)
             {
-                // timestamp was old technique, using resourceVersion now
-                //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"    -  cluster yaml timestamp: {cluster.Metadata.CreationTimestamp}");
-                //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"    - argocd secret timestamp: {tmp.Metadata.CreationTimestamp}");
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"    -          cluster yaml resourceVersion: {cluster.Metadata.ResourceVersion}");
+                // use resourceVersion to determine if cluster secret has been updated
+                //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"    -          cluster yaml resourceVersion: {cluster.Metadata.ResourceVersion}");
                 try
                 {
                     Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"    - argocd secret cluster resourceVersion: {tmp.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/resourceVersion"]}");
@@ -359,6 +358,14 @@ namespace daytwo.K8sControllers
                     Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"    - argocd secret cluster resourceVersion: daytwo annotation missing, ignoring cluster");
                     return;
                 }
+            }
+            */
+
+            // check to see that this argocd cluster secret is managed by daytwo
+            string annotation = tmp.GetAnnotation("daytwo.aarr.xyz/resourceVersion");
+            if (annotation == null)
+            {
+                return;
             }
 
             // if cluster yaml is newer then secret, then we re-add to argocd
