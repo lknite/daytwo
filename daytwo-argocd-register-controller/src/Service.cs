@@ -74,13 +74,18 @@ namespace daytwo
             foreach (var cluster in clusters)
             {
                 // Now that we have our kubeconfig, go ahead and instantiate the k8s controllers
-                ClusterK8sController clusterController = new ClusterK8sController();
+                ClusterK8sController clusterController = new ClusterK8sController(cluster);
 
                 // We could add so we have a list of management clusters we are tracking, but there is no need
                 // clusters.Add(clusterController);
 
-                // Start up all the k8s controllers
-                clusterController.Listen(cluster);
+                // Start the k8s event listener
+                //clusterController.Listen(/*cluster*/);
+                // Start the intermittent timer
+                //(new Thread(new ThreadStart(clusterController.Timer))).Start();
+
+                // Start k8s event listener & intermittent timer
+                clusterController.Start();
             }
 
             return Task.CompletedTask;

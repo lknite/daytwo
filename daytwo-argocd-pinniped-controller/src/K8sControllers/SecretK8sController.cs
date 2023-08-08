@@ -51,120 +51,139 @@ namespace gge.K8sControllers
             // Prep semaphore for only 1 action at a time
             semaphore = new SemaphoreSlim(1);
         }
-
-        public async Task Intermittent(int seconds)
+        public async Task Start()
         {
+            // Start the k8s event listener
+            Listen();
+            // Start the intermittent timer
+            (new Thread(new ThreadStart(Timer))).Start();
+        }
+        public void Timer()
+        {
+            while (!Globals.cancellationToken.IsCancellationRequested)
+            {
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "sleeping");
+                Thread.Sleep(60 * 1000);
+
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "Intermittent");
+                Intermittent();
+            }
+        }
+
+        public async Task Intermittent(/*int seconds*/)
+        {
+            /*
             while (true)
             {
                 // intermittent delay in between checks
                 Globals.log.LogInformation("sleeping");
                 Thread.Sleep(seconds * 1000);
+            */
 
-                // Acquire Semaphore
-                semaphore.Wait(Globals.cancellationToken);
+            // Acquire Semaphore
+            semaphore.Wait(Globals.cancellationToken);
 
-                try
+            try
+            {
+                //**
+                // add pinniped secrets
+
+                // acquire list of all arogcd secrets
+                V1SecretList list = await kubeclient.ListNamespacedSecretAsync(Globals.service.argocdNamespace);
+                foreach (var item in list)
                 {
-                    //**
-                    // add pinniped secrets
-
-                    // acquire list of all arogcd secrets
-                    V1SecretList list = await kubeclient.ListNamespacedSecretAsync(Globals.service.argocdNamespace);
-                    foreach (var item in list)
+                    //
+                    if (!Main.IsArgocdClusterSecret(item))
                     {
-                        //
-                        if (!Main.IsArgocdClusterSecret(item))
-                        {
-                            continue;
-                        }
-
-                        // only process if required label is present
-                        if(item.GetLabel("addons-pinniped-concierge") == null)
-                        {
-                            continue;
-                        }
-
-                        // attempt to add pinniped kubeconfig
-                        await ProcessAdded(item);
+                        continue;
                     }
 
-                    //**
-                    // remove pinniped secrets
-
-                    // check if existing pinniped secrets have a matching secret
-                    bool found = false;
-                    if (Directory.Exists("/opt/www"))
+                    // only process if required label is present
+                    if (item.GetLabel("addons-pinniped-concierge") == null)
                     {
-                        var files = from file in Directory.EnumerateFiles("/opt/www", "*", SearchOption.AllDirectories) select file;
-                        //Globals.log.LogInformation("Files: {0}", files.Count<string>().ToString());
-                        //Globals.log.LogInformation("List of Files");
-                        foreach (var file in files)
+                        continue;
+                    }
+
+                    // attempt to add pinniped kubeconfig
+                    await ProcessAdded(item);
+                }
+
+                //**
+                // remove pinniped secrets
+
+                // check if existing pinniped secrets have a matching secret
+                bool found = false;
+                if (Directory.Exists("/opt/www"))
+                {
+                    var files = from file in Directory.EnumerateFiles("/opt/www", "*", SearchOption.AllDirectories) select file;
+                    //Globals.log.LogInformation("Files: {0}", files.Count<string>().ToString());
+                    //Globals.log.LogInformation("List of Files");
+                    foreach (var file in files)
+                    {
+                        //Globals.log.LogInformation("{0}", file);
+                        string[] parts = file.Split('/');
+
+                        // does this pinniped kubeconfig match up with an existing cluster?
+                        found = false;
+                        foreach (V1Secret secret in list)
                         {
-                            //Globals.log.LogInformation("{0}", file);
-                            string[] parts = file.Split('/');
-
-                            // does this pinniped kubeconfig match up with an existing cluster?
-                            found = false;
-                            foreach (V1Secret secret in list)
+                            //
+                            if (!Main.IsArgocdClusterSecret(secret))
                             {
-                                //
-                                if (!Main.IsArgocdClusterSecret(secret))
-                                {
-                                    continue;
-                                }
-
-                                // only process if required label is present
-                                if (secret.GetLabel("addons-pinniped-concierge") == null)
-                                {
-                                    continue;
-                                }
-
-                                string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
-                                /*
-                                foreach (var asdf in secret.Data.Keys)
-                                {
-                                    Globals.log.LogInformation($"key: {asdf}");
-                                }
-                                */
-                                string workloadCluster = Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length);
-
-                                if (managementCluster == null)
-                                {
-                                    managementCluster = "tmp";
-                                }
-
-                                //Globals.log.LogInformation($"parts[3]: {parts[3]}");
-                                //Globals.log.LogInformation($"parts[4]: {parts[4]}");
-                                if ((managementCluster == parts[3]) && (workloadCluster == parts[4]))
-                                {
-                                    found = true;
-                                    break;
-                                }
+                                continue;
                             }
 
-                            // if not, then remove stale pinniped kubeconfig
-                            if (!found) 
+                            // only process if required label is present
+                            if (secret.GetLabel("addons-pinniped-concierge") == null)
                             {
-                                Globals.log.LogInformation($"Removing stale pinniped kubeconfig: {file}");
-                                File.Delete(file);
+                                continue;
                             }
+
+                            string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
+                            /*
+                            foreach (var asdf in secret.Data.Keys)
+                            {
+                                Globals.log.LogInformation($"key: {asdf}");
+                            }
+                            */
+                            string workloadCluster = Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length);
+
+                            if (managementCluster == null)
+                            {
+                                managementCluster = "tmp";
+                            }
+
+                            //Globals.log.LogInformation($"parts[3]: {parts[3]}");
+                            //Globals.log.LogInformation($"parts[4]: {parts[4]}");
+                            if ((managementCluster == parts[3]) && (workloadCluster == parts[4]))
+                            {
+                                found = true;
+                                break;
+                            }
+                        }
+
+                        // if not, then remove stale pinniped kubeconfig
+                        if (!found)
+                        {
+                            Globals.log.LogInformation($"Removing stale pinniped kubeconfig: {file}");
+                            File.Delete(file);
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    Globals.log.LogInformation($"{ex.Message}", ex);
-                }
+            }
+            catch (Exception ex)
+            {
+                Globals.log.LogInformation($"{ex.Message}", ex);
+            }
 
-                try
-                {
-                    // Release semaphore
-                    semaphore.Release();
-                }
-                catch
-                {
-                    // release will fail if exception was before semaphore was acquired, ignore
-                }
+            try
+            {
+                // Release semaphore
+                semaphore.Release();
+            }
+            catch
+            {
+                // release will fail if exception was before semaphore was acquired, ignore
             }
         }
         public async Task Listen()

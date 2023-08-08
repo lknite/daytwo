@@ -91,6 +91,13 @@ namespace daytwo.K8sControllers
             semaphore = new SemaphoreSlim(1);
 
             // Start the intermittent timer
+            //(new Thread(new ThreadStart(Timer))).Start();
+        }
+        public async Task Start()
+        {
+            // Start the k8s event listener
+            Listen();
+            // Start the intermittent timer
             (new Thread(new ThreadStart(Timer))).Start();
         }
         public void Timer()
@@ -106,67 +113,58 @@ namespace daytwo.K8sControllers
         }
         public async Task Intermittent()//(int seconds)
         {
-            /*
-            while (true)
+            // Acquire Semaphore
+            semaphore.Wait(Globals.cancellationToken);
+
+            try
             {
-                // intermittent delay in between checks
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "sleeping");
-                Thread.Sleep(seconds * 1000);
-            */
+                //**
+                // add: sync labels from provider resource to argocd cluster secret
 
-                // Acquire Semaphore
-                semaphore.Wait(Globals.cancellationToken);
-
-                try
+                // acquire list of all provider resources
+                CustomResourceList<CrdProviderCluster> list = await generic.ListNamespacedAsync<CustomResourceList<CrdProviderCluster>>("");
+                foreach (var item in list.Items)
                 {
-                    //**
-                    // add: sync labels from provider resource to argocd cluster secret
-
-                    // acquire list of all provider resources
-                    CustomResourceList<CrdProviderCluster> list = await generic.ListNamespacedAsync<CustomResourceList<CrdProviderCluster>>("");
-                    foreach (var item in list.Items)
+                    /*
+                    // check that this secret is an argocd cluster secret
+                    if (item.Labels() == null)
                     {
-                        /*
-                        // check that this secret is an argocd cluster secret
-                        if (item.Labels() == null)
-                        {
-                            //Globals.log.LogInformation("- ignoring, not a cluster secret");
-                            continue;
-                        }
-                        if (!item.Labels().TryGetValue("argocd.argoproj.io/secret-type", out var value))
-                        {
-                            //Globals.log.LogInformation("- ignoring, not a cluster secret");
-                            continue;
-                        }
-                        if (value != "cluster")
-                        {
-                            //Globals.log.LogInformation("- ignoring, not a cluster secret");
-                            continue;
-                        }
-                        */
-
-                        // sync labels
-                        await ProcessAdded(item);
+                        //Globals.log.LogInformation("- ignoring, not a cluster secret");
+                        continue;
                     }
+                    if (!item.Labels().TryGetValue("argocd.argoproj.io/secret-type", out var value))
+                    {
+                        //Globals.log.LogInformation("- ignoring, not a cluster secret");
+                        continue;
+                    }
+                    if (value != "cluster")
+                    {
+                        //Globals.log.LogInformation("- ignoring, not a cluster secret");
+                        continue;
+                    }
+                    */
 
-                    //**
-                    // remove: nothing to do here
-                }
-                catch (Exception ex)
-                {
-                    Globals.log.LogInformation($"{ex.Message}", ex);
+                    // sync labels
+                    await ProcessAdded(item);
                 }
 
-                try
-                {
-                    // Release semaphore
-                    semaphore.Release();
-                }
-                catch
-                {
-                    // release will fail if exception was before semaphore was acquired, ignore
-                }
-            //}
+                //**
+                // remove: nothing to do here
+            }
+            catch (Exception ex)
+            {
+                Globals.log.LogInformation($"{ex.Message}", ex);
+            }
+
+            try
+            {
+                // Release semaphore
+                semaphore.Release();
+            }
+            catch
+            {
+                // release will fail if exception was before semaphore was acquired, ignore
+            }
         }
 
         public async Task Listen()

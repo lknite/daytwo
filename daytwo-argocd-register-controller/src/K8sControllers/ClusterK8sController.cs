@@ -20,43 +20,37 @@ using daytwo.crd.provider;
 using Microsoft.AspNetCore.Antiforgery;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
+using System.Threading;
+using k8s.KubeConfigModels;
 
 namespace daytwo.K8sControllers
 {
     public class ClusterK8sController
     {
-        public string managementCluster;
-
         static string api = "cluster";
         static string group = "cluster.x-k8s.io";
         static string version = "v1beta1";
         static string plural = api + "s";
+
+        public string managementCluster;
 
         public Kubernetes kubeclient = null;
         public KubernetesClientConfiguration kubeconfig = null;
 
         public GenericClient generic = null;
 
+        // Enforce only processing one watch event at a time
+        SemaphoreSlim semaphore = null;
+
         // providers here as they are associated with each management cluster
         public List<ProviderK8sController> providers = new List<ProviderK8sController>();
 
 
-        public ClusterK8sController() //string api, string group, string version, string plural)
+        public ClusterK8sController(string managementCluster) //string api, string group, string version, string plural)
         {
-            /*
-            // initialize properties
-            this.api = api;
-            this.group = group;
-            this.version = version;
-            this.plural = plural;
-            */
-
             // start listening
             Globals.log.LogInformation($"**** Cluster.Add({api}s.{group}/{version})");
-        }
 
-        public async Task Listen(string managementCluster)
-        {
             // remember the management cluster
             this.managementCluster = managementCluster;
 
@@ -73,8 +67,151 @@ namespace daytwo.K8sControllers
             //
             generic = new GenericClient(kubeclient, group, version, plural);
 
-            // Enforce only processing one watch event at a time
-            SemaphoreSlim semaphore;
+            // Prep semaphore for only 1 action at a time
+            semaphore = new SemaphoreSlim(1);
+
+            // Start the intermittent timer
+            //(new Thread(new ThreadStart(Timer))).Start();
+        }
+        public async Task Start()
+        {
+            // Start the k8s event listener
+            Listen();
+            // Start the intermittent timer
+            (new Thread(new ThreadStart(Timer))).Start();
+        }
+        public void Timer()
+        {
+            while (!Globals.cancellationToken.IsCancellationRequested)
+            {
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "sleeping");
+                Thread.Sleep(60 * 1000);
+
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "Intermittent");
+                Intermittent();
+            }
+        }
+        public async Task Intermittent()//(int seconds)
+        {
+            // Acquire Semaphore
+            semaphore.Wait(Globals.cancellationToken);
+
+            try
+            {
+                //**
+                // add: loop through clusters and add to argocd if missing or out of sync
+
+                /*
+                // acquire list of all provider resources
+                CustomResourceList<CrdProviderCluster> list = await generic.ListNamespacedAsync<CustomResourceList<CrdProviderCluster>>("");
+                foreach (var item in list.Items)
+                {
+                    // sync labels
+                    await ProcessAdded(item);
+                }
+                */
+
+                //**
+                // remove: loop through argocd secrets and remove if no cluster exists
+
+                // acquire list of all arogcd secrets
+                V1SecretList secrets = await kubeclient.ListNamespacedSecretAsync(Globals.service.argocdNamespace);
+                foreach (var secret in secrets)
+                {
+                    // skip if not an argocd cluster secret
+                    if (!Helpers.Main.IsArgocdClusterSecret(secret))
+                    {
+                        continue;
+                    }
+
+                    // loop through clusters to see if we have one matching this secret
+                    bool found = false;
+                    CustomResourceList<CrdCluster> clusters = await generic.ListNamespacedAsync<CustomResourceList<CrdCluster>>("");
+                    foreach (var cluster in clusters.Items)
+                    {
+                        if ((managementCluster == secret.GetAnnotation("daytwo.aarr.xyz/management-cluster"))
+                            && (cluster.Name() == secret.GetAnnotation("daytwo.aarr.xyz/workload-cluster")))
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found)
+                    {
+                        Globals.log.LogInformation($"[intermittent] argocd cluster rm {secret.GetLabel("daytwo.aarr.xyz/workload-cluster")}");
+                        /*
+                        var p = new Process
+                        {
+                            StartInfo = {
+                                // pinniped get kubeconfig --kubeconfig /tmp/kubeconfig
+                                UseShellExecute = false,
+                                CreateNoWindow = true,
+                                RedirectStandardOutput = true,
+                                FileName = "sh",
+                                WorkingDirectory = @"/tmp",
+                                Arguments = "-c"
+                            }
+                        };
+
+                        p.StartInfo.Arguments += " "
+                        + "\""
+                                + $"/usr/local/bin/argocd cluster rm {cluster.Name()}"
+                                + $" -y"
+                                + $" --grpc-web"
+                                + $" --server={Environment.GetEnvironmentVariable("ARGOCD_SERVER_URI")}"
+                                //+ $" --server=localhost:8080"
+                                //+ $" --plaintext"
+                                + ((Environment.GetEnvironmentVariable("ARGOCD_INSECURE_SKIP_TLS_VERIFY") != null) ?
+                                    ((Environment.GetEnvironmentVariable("ARGOCD_INSECURE_SKIP_TLS_VERIFY").Equals("true", StringComparison.CurrentCultureIgnoreCase)) ?
+                                        $" --insecure" : "")
+                                    : "")
+                                + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")}"
+                                + "\""
+                                ;
+
+                        //Globals.log.LogInformation(p.StartInfo.Arguments);
+                        p.Start();
+                        p.WaitForExit();
+                        */
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Globals.log.LogInformation($"{ex.Message}", ex);
+            }
+
+            try
+            {
+                // Release semaphore
+                semaphore.Release();
+            }
+            catch
+            {
+                // release will fail if exception was before semaphore was acquired, ignore
+            }
+            //}
+        }
+        public async Task Listen(/*string managementCluster*/)
+        {
+            /*
+            // remember the management cluster
+            this.managementCluster = managementCluster;
+
+            // locate the provisioning cluster argocd secret
+            //Globals.log.LogInformation("GetClusterArgocdSecret");
+            V1Secret? secret = daytwo.Helpers.Main.GetClusterArgocdSecret(managementCluster);
+            // use secret to create kubeconfig
+            //Globals.log.LogInformation("BuildConfigFromArgocdSecret");
+            kubeconfig = daytwo.Helpers.Main.BuildConfigFromArgocdSecret(secret);
+            // use kubeconfig to create client
+            //Globals.log.LogInformation("Create kubeclient");
+            kubeclient = new Kubernetes(kubeconfig);
+
+            //
+            generic = new GenericClient(kubeclient, group, version, plural);
+            */
 
             // Start up all provider listeners
             Globals.log.LogInformation("Starting up provider listeners ...");
@@ -133,10 +270,30 @@ namespace daytwo.K8sControllers
                             Thread.Sleep(1000);
                             break;
                     }
+
+                    try
+                    {
+                        // Release semaphore
+                        semaphore.Release();
+                    }
+                    catch
+                    {
+                        // release will fail if exception was before semaphore was acquired, ignore
+                    }
                 }
                 catch (Exception ex)
                 {
                     //Globals.log.LogInformation("Exception occured while performing 'watch': " + ex);
+
+                    try
+                    {
+                        // Release semaphore
+                        semaphore.Release();
+                    }
+                    catch
+                    {
+                        // release will fail if exception was before semaphore was acquired, ignore
+                    }
                 }
             }
         }
@@ -626,12 +783,13 @@ namespace daytwo.K8sControllers
                             // - a delete event was missed
                             // - provider modify event will cause pinniped kubeconfig generation but pinniped may not be ready
 
-                            // we use the timer instead to ensure the intermittent is on a non-blocking thread
-                            //provider.Intermittent(1 * 60);
-
-                            // instantly perform work in response to events
-                            // start listening
+                            // Start the k8s event listener
                             //provider.Listen();
+                            // Start the intermittent timer
+                            //(new Thread(new ThreadStart(provider.Timer))).Start();
+
+                            // Start k8s event listener & intermittent timer
+                            provider.Start();
                         }
                         /*
                         else
