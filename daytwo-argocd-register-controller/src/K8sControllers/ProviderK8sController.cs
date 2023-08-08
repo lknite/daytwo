@@ -66,7 +66,7 @@ namespace daytwo.K8sControllers
         public ProviderK8sController(string managementCluster, string api, string group, string version, string plural)
         {
             // start listening
-            Globals.log.LogInformation($"**** Provider.Add({api}s.{group}.{version})");
+            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"**** Provider.Add({api}s.{group}.{version})");
 
             // initialize properties
             this.api = api;
@@ -153,7 +153,7 @@ namespace daytwo.K8sControllers
             }
             catch (Exception ex)
             {
-                Globals.log.LogInformation($"{ex.Message}", ex);
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"{ex.Message}", ex);
             }
 
             try

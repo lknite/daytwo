@@ -49,7 +49,7 @@ namespace daytwo.K8sControllers
         public ClusterK8sController(string managementCluster) //string api, string group, string version, string plural)
         {
             // start listening
-            Globals.log.LogInformation($"**** Cluster.Add({api}s.{group}/{version})");
+            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"**** Cluster.Add({api}s.{group}/{version})");
 
             // remember the management cluster
             this.managementCluster = managementCluster;
@@ -188,7 +188,7 @@ namespace daytwo.K8sControllers
             }
             catch (Exception ex)
             {
-                Globals.log.LogInformation($"{ex.Message}", ex);
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"{ex.Message}", ex);
             }
 
             try
@@ -341,16 +341,16 @@ namespace daytwo.K8sControllers
             if (tmp != null)
             {
                 // timestamp was old technique, using resourceVersion now
-                //Globals.log.LogInformation($"    -  cluster yaml timestamp: {cluster.Metadata.CreationTimestamp}");
-                //Globals.log.LogInformation($"    - argocd secret timestamp: {tmp.Metadata.CreationTimestamp}");
-                Globals.log.LogInformation($"    -          cluster yaml resourceVersion: {cluster.Metadata.ResourceVersion}");
+                //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"    -  cluster yaml timestamp: {cluster.Metadata.CreationTimestamp}");
+                //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"    - argocd secret timestamp: {tmp.Metadata.CreationTimestamp}");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"    -          cluster yaml resourceVersion: {cluster.Metadata.ResourceVersion}");
                 try
                 {
-                    Globals.log.LogInformation($"    - argocd secret cluster resourceVersion: {tmp.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/resourceVersion"]}");
+                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"    - argocd secret cluster resourceVersion: {tmp.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/resourceVersion"]}");
                 }
                 catch
                 {
-                    Globals.log.LogInformation($"    - argocd secret cluster resourceVersion: daytwo annotation missing, ignoring cluster");
+                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"    - argocd secret cluster resourceVersion: daytwo annotation missing, ignoring cluster");
                     return;
                 }
             }
@@ -523,7 +523,7 @@ namespace daytwo.K8sControllers
         {
             // clusterctl - n vc - test get kubeconfig vc - test
             // k -n vc-test get secrets vc-test-kubeconfig -o jsonpath='{.data.value}' | base64 -d
-            Globals.log.LogInformation($"[cluster] GetClusterKubeConfig ({clusterName}, {clusterNamespace})");
+            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"[cluster] GetClusterKubeConfig ({clusterName}, {clusterNamespace})");
 
             V1Secret secret = null;
             try
@@ -756,7 +756,7 @@ namespace daytwo.K8sControllers
                 string _plural = string.Empty;
                 if (known.Contains(next.Name()))
                 {
-                    Globals.log.LogInformation($"Known provider identified: {next.Name()}");
+                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"Known provider identified: {next.Name()}");
 
                     // load up crd using our template in order to parse out the values we need
                     GenericClient _generic = new GenericClient(kubeclient, "apiextensions.k8s.io", "v1", "customresourcedefinitions");
@@ -775,10 +775,10 @@ namespace daytwo.K8sControllers
                         ProviderK8sController? item = providers.Find(item => (item.api == _kind) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));
                         if (item == null)
                         {
-                            Globals.log.LogInformation($"   _kind: {_kind}");
-                            Globals.log.LogInformation($"  _group: {_group}");
-                            Globals.log.LogInformation($"_version: {_version}");
-                            Globals.log.LogInformation($" _plural: {_plural}");
+                            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"   _kind: {_kind}");
+                            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"  _group: {_group}");
+                            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"_version: {_version}");
+                            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $" _plural: {_plural}");
 
                             // if not, start monitoring
                             ProviderK8sController provider = new ProviderK8sController(
