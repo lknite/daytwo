@@ -148,7 +148,7 @@ namespace daytwo.K8sControllers
                     if (!found)
                     {
                         Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"argocd cluster rm {secret.GetAnnotation("daytwo.aarr.xyz/workload-cluster")}");
-                        /*
+
                         var p = new Process
                         {
                             StartInfo = {
@@ -163,8 +163,8 @@ namespace daytwo.K8sControllers
                         };
 
                         p.StartInfo.Arguments += " "
-                        + "\""
-                                + $"/usr/local/bin/argocd cluster rm {cluster.Name()}"
+                                + "\""
+                                + $"/usr/local/bin/argocd cluster rm {secret.GetAnnotation("daytwo.aarr.xyz/workload-cluster")}"
                                 + $" -y"
                                 + $" --grpc-web"
                                 + $" --server={Environment.GetEnvironmentVariable("ARGOCD_SERVER_URI")}"
@@ -178,10 +178,9 @@ namespace daytwo.K8sControllers
                                 + "\""
                                 ;
 
-                        //Globals.log.LogInformation(p.StartInfo.Arguments);
+                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), p.StartInfo.Arguments);
                         p.Start();
                         p.WaitForExit();
-                        */
                     }
                 }
             }
