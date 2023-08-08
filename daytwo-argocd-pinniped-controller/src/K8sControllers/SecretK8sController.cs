@@ -98,10 +98,16 @@ namespace gge.K8sControllers
                         continue;
                     }
 
-                    // only process if required label is present
-                    if (item.GetLabel("addons-pinniped-concierge") == null)
+                    // if requiredLabel is defined, only process if is present
+                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
+                            $"REQUIRED_LABEL: {Environment.GetEnvironmentVariable("REQUIRED_LABEL")}");
+                    if ((Environment.GetEnvironmentVariable("REQUIRED_LABEL") != null)
+                        && (Environment.GetEnvironmentVariable("REQUIRED_LABEL").Length > 0))
                     {
-                        continue;
+                        if (item.GetLabel(Environment.GetEnvironmentVariable("REQUIRED_LABEL")) == null)
+                        {
+                            continue;
+                        }
                     }
 
                     // attempt to add pinniped kubeconfig
