@@ -114,6 +114,8 @@ namespace daytwo.K8sControllers
                 //**
                 // remove: loop through argocd secrets and remove if no cluster exists
 
+                List<string> rmClusters = new List<string>();
+
                 // acquire list of all arogcd secrets
                 V1SecretList secrets = await kubeclient.ListNamespacedSecretAsync(Globals.service.argocdNamespace);
                 foreach (var secret in secrets)
@@ -147,11 +149,18 @@ namespace daytwo.K8sControllers
 
                     if (!found)
                     {
-                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"argocd cluster rm {secret.GetAnnotation("daytwo.aarr.xyz/workload-cluster")}");
+                        rmClusters.Add(secret.GetAnnotation("daytwo.aarr.xyz/workload-cluster"));
+                    }
+                }
 
-                        var p = new Process
-                        {
-                            StartInfo = {
+                // remove the stale clusters identified
+                foreach (string cluster in rmClusters)
+                {
+                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"argocd cluster rm {cluster}");
+
+                    var p = new Process
+                    {
+                        StartInfo = {
                                 // pinniped get kubeconfig --kubeconfig /tmp/kubeconfig
                                 UseShellExecute = false,
                                 CreateNoWindow = true,
@@ -160,28 +169,27 @@ namespace daytwo.K8sControllers
                                 WorkingDirectory = @"/tmp",
                                 Arguments = "-c"
                             }
-                        };
+                    };
 
-                        p.StartInfo.Arguments += " "
-                                + "\""
-                                + $"/usr/local/bin/argocd cluster rm {secret.GetAnnotation("daytwo.aarr.xyz/workload-cluster")}"
-                                + $" -y"
-                                + $" --grpc-web"
-                                + $" --server={Environment.GetEnvironmentVariable("ARGOCD_SERVER_URI")}"
-                                //+ $" --server=localhost:8080"
-                                //+ $" --plaintext"
-                                + ((Environment.GetEnvironmentVariable("ARGOCD_INSECURE_SKIP_TLS_VERIFY") != null) ?
-                                    ((Environment.GetEnvironmentVariable("ARGOCD_INSECURE_SKIP_TLS_VERIFY").Equals("true", StringComparison.CurrentCultureIgnoreCase)) ?
-                                        $" --insecure" : "")
-                                    : "")
-                                + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")}"
-                                + "\""
-                                ;
+                    p.StartInfo.Arguments += " "
+                            + "\""
+                            + $"/usr/local/bin/argocd cluster rm {cluster}"
+                            + $" -y"
+                            + $" --grpc-web"
+                            + $" --server={Environment.GetEnvironmentVariable("ARGOCD_SERVER_URI")}"
+                            //+ $" --server=localhost:8080"
+                            //+ $" --plaintext"
+                            + ((Environment.GetEnvironmentVariable("ARGOCD_INSECURE_SKIP_TLS_VERIFY") != null) ?
+                                ((Environment.GetEnvironmentVariable("ARGOCD_INSECURE_SKIP_TLS_VERIFY").Equals("true", StringComparison.CurrentCultureIgnoreCase)) ?
+                                    $" --insecure" : "")
+                                : "")
+                            + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")}"
+                            + "\""
+                            ;
 
-                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), p.StartInfo.Arguments);
-                        p.Start();
-                        p.WaitForExit();
-                    }
+                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), p.StartInfo.Arguments);
+                    p.Start();
+                    p.WaitForExit();
                 }
             }
             catch (Exception ex)
