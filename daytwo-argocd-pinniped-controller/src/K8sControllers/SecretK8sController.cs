@@ -106,8 +106,8 @@ namespace gge.K8sControllers
                     {
                         if (item.GetLabel(Environment.GetEnvironmentVariable("REQUIRED_LABEL")) == null)
                         {
-                            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
-                                    $"missing required label: {Environment.GetEnvironmentVariable("REQUIRED_LABEL")}");
+                            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
+                            //        $"missing required label: {Environment.GetEnvironmentVariable("REQUIRED_LABEL")}");
                         
                             continue;
                         }
@@ -150,8 +150,8 @@ namespace gge.K8sControllers
                             {
                                 if (secret.GetLabel(Environment.GetEnvironmentVariable("REQUIRED_LABEL")) == null)
                                 {
-                                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
-                                            $"missing required label: {Environment.GetEnvironmentVariable("REQUIRED_LABEL")}");
+                                    //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
+                                    //        $"missing required label: {Environment.GetEnvironmentVariable("REQUIRED_LABEL")}");
 
                                     continue;
                                 }
