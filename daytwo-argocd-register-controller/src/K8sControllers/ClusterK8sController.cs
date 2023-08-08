@@ -124,6 +124,14 @@ namespace daytwo.K8sControllers
                         continue;
                     }
 
+                    // only remove from argocd if we added this cluster to argocd
+                    string annotation = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
+                    if (annotation == null)
+                    {
+                        continue;
+                    }
+
+
                     // loop through clusters to see if we have one matching this secret
                     bool found = false;
                     clusters = await generic.ListNamespacedAsync<CustomResourceList<CrdCluster>>("");
@@ -139,7 +147,7 @@ namespace daytwo.K8sControllers
 
                     if (!found)
                     {
-                        Globals.log.LogInformation($"[intermittent] argocd cluster rm {secret.GetLabel("daytwo.aarr.xyz/workload-cluster")}");
+                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), $"[intermittent] argocd cluster rm {secret.GetLabel("daytwo.aarr.xyz/workload-cluster")}");
                         /*
                         var p = new Process
                         {
