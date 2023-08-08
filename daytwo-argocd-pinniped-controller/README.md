@@ -4,6 +4,9 @@
 - watches for updates to argocd cluster secrets and updates a configmap with pinniped kubeconfig files
 - hosts a website which serves the pinniped kubeconfig files
   - a website may then be added to each clusters in order to obtain the related pinniped kubeconfig file
+ 
+## important ##
+- currently, only argocd cluster secrets with a label 'addons-pinniped-concierge' will be processed
 
 ## rbac ##
 - role get/list/watch to 'secrets' in argocd namespace
@@ -11,7 +14,7 @@
 ## installation ##
 - helm repo add lknite https://lknite.github.io/charts
 - helm repo update lknite
-- helm install pinniped-controller
+- helm install argocd-pinniped-controller
 
 ## configuration environment variables ##
 - PINNIPED_OIDC_ISSUER: https://keycloak.vc-prod.k.home.net/realms/home.net
