@@ -322,7 +322,7 @@ namespace daytwo.K8sControllers
             Dictionary<string, string> data = new Dictionary<string, string>();
             string patchStr = string.Empty;
 
-            Globals.log.LogInformation(
+            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
                         "  - namespace: " + cluster.Namespace()
                         + ", cluster: " + cluster.Name()
                         + ((cluster.Status != null) ? $", status: {cluster.Status.phase}" : ""));
