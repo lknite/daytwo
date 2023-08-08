@@ -106,6 +106,9 @@ namespace gge.K8sControllers
                     {
                         if (item.GetLabel(Environment.GetEnvironmentVariable("REQUIRED_LABEL")) == null)
                         {
+                            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
+                                    $"missing required label: {Environment.GetEnvironmentVariable("REQUIRED_LABEL")}");
+                        
                             continue;
                         }
                     }
@@ -139,10 +142,19 @@ namespace gge.K8sControllers
                                 continue;
                             }
 
-                            // only process if required label is present
-                            if (secret.GetLabel("addons-pinniped-concierge") == null)
+                            // if requiredLabel is defined, only process if is present
+                            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
+                            //        $"REQUIRED_LABEL: {Environment.GetEnvironmentVariable("REQUIRED_LABEL")}");
+                            if ((Environment.GetEnvironmentVariable("REQUIRED_LABEL") != null)
+                                && (Environment.GetEnvironmentVariable("REQUIRED_LABEL").Length > 0))
                             {
-                                continue;
+                                if (secret.GetLabel(Environment.GetEnvironmentVariable("REQUIRED_LABEL")) == null)
+                                {
+                                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
+                                            $"missing required label: {Environment.GetEnvironmentVariable("REQUIRED_LABEL")}");
+
+                                    continue;
+                                }
                             }
 
                             string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
