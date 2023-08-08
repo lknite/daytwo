@@ -207,7 +207,6 @@ namespace daytwo.K8sControllers
             {
                 // release will fail if exception was before semaphore was acquired, ignore
             }
-            //}
         }
         public async Task Listen(/*string managementCluster*/)
         {
@@ -361,11 +360,14 @@ namespace daytwo.K8sControllers
             }
             */
 
-            // check to see that this argocd cluster secret is managed by daytwo
-            string annotation = tmp.GetAnnotation("daytwo.aarr.xyz/resourceVersion");
-            if (annotation == null)
+            if (tmp != null)
             {
-                return;
+                // check to see that this argocd cluster secret is managed by daytwo
+                string annotation = tmp.GetAnnotation("daytwo.aarr.xyz/resourceVersion");
+                if (annotation == null)
+                {
+                    return;
+                }
             }
 
             // if cluster yaml is newer then secret, then we re-add to argocd
