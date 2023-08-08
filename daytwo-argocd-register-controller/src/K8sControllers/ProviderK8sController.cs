@@ -96,7 +96,7 @@ namespace daytwo.K8sControllers
         public async Task Start()
         {
             // Start the k8s event listener
-            Listen();
+            //Listen();
             // Start the intermittent timer
             (new Thread(new ThreadStart(Timer))).Start();
         }

@@ -76,7 +76,7 @@ namespace daytwo.K8sControllers
         public async Task Start()
         {
             // Start the k8s event listener
-            Listen();
+            //Listen();
             // Start the intermittent timer
             (new Thread(new ThreadStart(Timer))).Start();
         }
@@ -93,6 +93,8 @@ namespace daytwo.K8sControllers
         }
         public async Task Intermittent()//(int seconds)
         {
+            CustomResourceList<CrdCluster> clusters = await generic.ListNamespacedAsync<CustomResourceList<CrdCluster>>("");
+
             // Acquire Semaphore
             semaphore.Wait(Globals.cancellationToken);
 
@@ -101,15 +103,13 @@ namespace daytwo.K8sControllers
                 //**
                 // add: loop through clusters and add to argocd if missing or out of sync
 
-                /*
                 // acquire list of all provider resources
-                CustomResourceList<CrdProviderCluster> list = await generic.ListNamespacedAsync<CustomResourceList<CrdProviderCluster>>("");
-                foreach (var item in list.Items)
+                clusters = await generic.ListNamespacedAsync<CustomResourceList<CrdCluster>>("");
+                foreach (var cluster in clusters.Items)
                 {
-                    // sync labels
-                    await ProcessAdded(item);
+                    // always attempt to add cluster, method provides safety checks to only add when needed
+                    await ProcessAdded(cluster);
                 }
-                */
 
                 //**
                 // remove: loop through argocd secrets and remove if no cluster exists
@@ -126,7 +126,7 @@ namespace daytwo.K8sControllers
 
                     // loop through clusters to see if we have one matching this secret
                     bool found = false;
-                    CustomResourceList<CrdCluster> clusters = await generic.ListNamespacedAsync<CustomResourceList<CrdCluster>>("");
+                    clusters = await generic.ListNamespacedAsync<CustomResourceList<CrdCluster>>("");
                     foreach (var cluster in clusters.Items)
                     {
                         if ((managementCluster == secret.GetAnnotation("daytwo.aarr.xyz/management-cluster"))
