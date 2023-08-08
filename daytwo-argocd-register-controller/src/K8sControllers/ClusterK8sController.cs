@@ -55,13 +55,13 @@ namespace daytwo.K8sControllers
             this.managementCluster = managementCluster;
 
             // locate the provisioning cluster argocd secret
-            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "GetClusterArgocdSecret");
+            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "GetClusterArgocdSecret");
             V1Secret? secret = daytwo.Helpers.Main.GetClusterArgocdSecret(managementCluster);
             // use secret to create kubeconfig
-            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "BuildConfigFromArgocdSecret");
+            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "BuildConfigFromArgocdSecret");
             kubeconfig = daytwo.Helpers.Main.BuildConfigFromArgocdSecret(secret);
             // use kubeconfig to create client
-            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "Create kubeclient");
+            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "Create kubeclient");
             kubeclient = new Kubernetes(kubeconfig);
 
             //
@@ -84,10 +84,10 @@ namespace daytwo.K8sControllers
         {
             while (!Globals.cancellationToken.IsCancellationRequested)
             {
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "sleeping");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "sleeping");
                 Thread.Sleep(60 * 1000);
 
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "Intermittent");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "Intermittent");
                 Intermittent();
             }
         }
@@ -147,7 +147,7 @@ namespace daytwo.K8sControllers
 
                     if (!found)
                     {
-                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), $"[intermittent] argocd cluster rm {secret.GetAnnotation("daytwo.aarr.xyz/workload-cluster")}");
+                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"[intermittent] argocd cluster rm {secret.GetAnnotation("daytwo.aarr.xyz/workload-cluster")}");
                         /*
                         var p = new Process
                         {
@@ -208,13 +208,13 @@ namespace daytwo.K8sControllers
             this.managementCluster = managementCluster;
 
             // locate the provisioning cluster argocd secret
-            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "GetClusterArgocdSecret");
+            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "GetClusterArgocdSecret");
             V1Secret? secret = daytwo.Helpers.Main.GetClusterArgocdSecret(managementCluster);
             // use secret to create kubeconfig
-            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "BuildConfigFromArgocdSecret");
+            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "BuildConfigFromArgocdSecret");
             kubeconfig = daytwo.Helpers.Main.BuildConfigFromArgocdSecret(secret);
             // use kubeconfig to create client
-            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "Create kubeclient");
+            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "Create kubeclient");
             kubeclient = new Kubernetes(kubeconfig);
 
             //
@@ -222,7 +222,7 @@ namespace daytwo.K8sControllers
             */
 
             // Start up all provider listeners
-            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "Starting up provider listeners ...");
+            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "Starting up provider listeners ...");
             await AddProviders();
 
 
@@ -232,17 +232,17 @@ namespace daytwo.K8sControllers
                 // Prep semaphore (reset in case of exception)
                 semaphore = new SemaphoreSlim(1);
 
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "("+ api +") Listen begins ...");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "("+ api +") Listen begins ...");
                 try
                 {
                     await foreach (var (type, item) in generic.WatchNamespacedAsync<CrdCluster>(""))
                     {
-                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "");
-                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "(event) [" + type + "] " + plural + "." + group + "/" + version + ": " + item.Metadata.Name);
+                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "");
+                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "(event) [" + type + "] " + plural + "." + group + "/" + version + ": " + item.Metadata.Name);
 
                         // Acquire Semaphore
                         semaphore.Wait(Globals.cancellationToken);
-                        //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "[" + item.Metadata.Name + "]");
+                        //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "[" + item.Metadata.Name + "]");
 
                         // Handle event type
                         switch (type)
@@ -263,7 +263,7 @@ namespace daytwo.K8sControllers
                         }
 
                         // Release semaphore
-                        //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "done.");
+                        //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "done.");
                         semaphore.Release();
                     }
                 }
@@ -291,7 +291,7 @@ namespace daytwo.K8sControllers
                 }
                 catch (Exception ex)
                 {
-                    //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "Exception occured while performing 'watch': " + ex);
+                    //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "Exception occured while performing 'watch': " + ex);
 
                     try
                     {
@@ -329,7 +329,7 @@ namespace daytwo.K8sControllers
                 ))
             {
                 // cluster not yet ready
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "    - cluster not ready yet");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "    - cluster not ready yet");
 
                 return;
             }
@@ -357,7 +357,7 @@ namespace daytwo.K8sControllers
             // if cluster yaml is newer then secret, then we re-add to argocd
             if (tmp == null)
             {
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "      - add cluster to argocd");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "      - add cluster to argocd");
 
                 // add new cluster to argocd
                 //KubernetesClientConfiguration tmpkubeconfig = await GetClusterKubeConfig(cluster.Name(), cluster.Namespace());
@@ -366,14 +366,14 @@ namespace daytwo.K8sControllers
             else if (cluster.Metadata.ResourceVersion != tmp.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/resourceVersion"])
             //else if (DateTime.Compare((DateTime)cluster.Metadata.CreationTimestamp, (DateTime)tmp.Metadata.CreationTimestamp) > 0)
             {
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "      - update argocd cluster secret");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "      - update argocd cluster secret");
 
                 // add new cluster to argocd
                 //KubernetesClientConfiguration tmpkubeconfig = await GetClusterKubeConfig(cluster.Name(), cluster.Namespace());
             }
             else
             {
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "      - cluster already added to argocd");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "      - cluster already added to argocd");
 
                 //
                 //await AddProvider(cluster);
@@ -388,7 +388,7 @@ namespace daytwo.K8sControllers
             tmp = daytwo.Helpers.Main.GetClusterArgocdSecret(cluster.Name(), managementCluster);
             if (tmp == null)
             {
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "unable to add argocd secret, or cluster not managed by daytwo");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "unable to add argocd secret, or cluster not managed by daytwo");
                 return;
             }
 
@@ -410,7 +410,7 @@ namespace daytwo.K8sControllers
             V1Secret tmp = daytwo.Helpers.Main.GetClusterArgocdSecret(cluster.Name(), managementCluster);
             if (tmp == null)
             {
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "argocd is not managing this cluster, no need to remove it");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "argocd is not managing this cluster, no need to remove it");
                 return;
             }
 
@@ -418,18 +418,18 @@ namespace daytwo.K8sControllers
             string annotation = tmp.GetAnnotation("daytwo.aarr.xyz/management-cluster");
             if (annotation == null)
             {
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "** annotation is null **");
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "** (don't delete cluster) **");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "** annotation is null **");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "** (don't delete cluster) **");
                 return;
             }
             /*
             else
             {
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "** annotation is: "+ annotation);
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "** annotation is: "+ annotation);
             }
             */
 
-            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "** argocd remove cluster ...");
+            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "** argocd remove cluster ...");
 
             /*
             // locate server pod
@@ -448,7 +448,7 @@ namespace daytwo.K8sControllers
             // this shouldn't happen, but could if server is not running
             if (pod == null)
             {
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "server pod not found, unable to remove cluster from argocd");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "server pod not found, unable to remove cluster from argocd");
                 return;
             }
 
@@ -465,15 +465,15 @@ namespace daytwo.K8sControllers
                     );
             try
             {
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "[cluster] before exec");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "[cluster] before exec");
                 int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
                     pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, One, Globals.cancellationToken);
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "[cluster] after exec");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "[cluster] after exec");
             }
             catch
             {
             }
-            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "[cluster] after exec (2)");
+            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "[cluster] after exec (2)");
             */
 
             var p = new Process
@@ -531,12 +531,12 @@ namespace daytwo.K8sControllers
             }
             catch (Exception ex)
             {
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "[cluster] locating cluster secret failed: "+ ex.Message);
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "[cluster] locating cluster secret failed: "+ ex.Message);
                 return null;
             }
             secret.Data.TryGetValue("value", out byte[] bytes);
             string kubeconfig = System.Text.Encoding.UTF8.GetString(bytes);
-            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "[cluster] kubeconfig:\n" + kubeconfig);
+            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "[cluster] kubeconfig:\n" + kubeconfig);
             //Convert.ToBase64String(bytes);
 
             // locate context within kubeconfig
@@ -554,7 +554,7 @@ namespace daytwo.K8sControllers
             // save kubeconfig to a temporary file
             //string path = Path.GetTempFileName();
             //string path = "/tmp/asdf.txt";
-            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "tmp path: " + path);
+            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "tmp path: " + path);
 
             // exec into server pod, see if we can use 'argocd' there
             var cmds = new List<string>();
@@ -580,7 +580,7 @@ namespace daytwo.K8sControllers
             // this shouldn't happen, but could if server is not running
             if (pod == null)
             {
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "server pod not found");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "server pod not found");
                 return null;
             }
             */
@@ -592,16 +592,16 @@ namespace daytwo.K8sControllers
                 cmds.Add("pwd");
                 //cmds = new List<string>();
                 //cmds.Add("pwd");
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "[cluster] (test) before exec");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "[cluster] (test) before exec");
                 await Globals.service.kubeclient.NamespacedPodExecAsync(
                     pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, One, Globals.cancellationToken).ConfigureAwait(false);
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "[cluster] (test) after exec");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "[cluster] (test) after exec");
 
                 //await ExecInPod(Globals.service.kubeclient, pod, "pwd");
             }
             catch (Exception ex)
             {
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "exception caught when performing 'exec', cmd ran though, ignoring exception for now");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "exception caught when performing 'exec', cmd ran though, ignoring exception for now");
                 //Globals.log.LogInformation(ex.ToString());
             }
             */
@@ -627,17 +627,17 @@ namespace daytwo.K8sControllers
                         + $" --auth-token={Environment.GetEnvironmentVariable("ARGOCD_AUTH_TOKEN")};"
                         );
                 //Globals.log.LogInformation(cmds[2]);
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "[cluster] before exec");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "[cluster] before exec");
                 int asdf = await Globals.service.kubeclient.NamespacedPodExecAsync(
                     pod.Name(), pod.Namespace(), pod.Spec.Containers[0].Name, cmds, false, One, Globals.cancellationToken).ConfigureAwait(false);
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "[cluster] after exec");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "[cluster] after exec");
             }
             catch (Exception ex)
             {
-                //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "exception caught when performing 'exec', cmd ran though, ignoring exception for now");
+                //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "exception caught when performing 'exec', cmd ran though, ignoring exception for now");
                 //Globals.log.LogInformation(ex.ToString());
             }
-            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "[cluster] after exec (2)");
+            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "[cluster] after exec (2)");
             */
 
             var p = new Process
@@ -692,7 +692,7 @@ namespace daytwo.K8sControllers
         /*
         public static void PrintEvenNumbers()
         {
-            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "all is done");
+            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "all is done");
         }
         */
         /*
@@ -817,10 +817,10 @@ namespace daytwo.K8sControllers
             string _group = cluster.Spec.controlPlaneRef.apiVersion.Substring(0, cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/"));
             string _version = cluster.Spec.controlPlaneRef.apiVersion.Substring(cluster.Spec.controlPlaneRef.apiVersion.IndexOf("/") + 1);
             string _plural = _api + "s";
-            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "api: " + _api);
-            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "group: " + _group);
-            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "version: " + _version);
-            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "plural: " + _plural);
+            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "api: " + _api);
+            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "group: " + _group);
+            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "version: " + _version);
+            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "plural: " + _plural);
 
             // check if provider is already present
             ProviderK8sController? item = providers.Find(item => (item.api == _api) && (item.group == _group) && (item.version == _version) && (item.plural == _plural));
