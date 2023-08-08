@@ -147,7 +147,7 @@ namespace daytwo.K8sControllers
 
                     if (!found)
                     {
-                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), $"[intermittent] argocd cluster rm {secret.GetLabel("daytwo.aarr.xyz/workload-cluster")}");
+                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), $"[intermittent] argocd cluster rm {secret.GetAnnotation("daytwo.aarr.xyz/workload-cluster")}");
                         /*
                         var p = new Process
                         {
