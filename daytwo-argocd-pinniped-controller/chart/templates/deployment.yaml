@@ -25,6 +25,8 @@ spec:
         env:
         - name: INSTALL_VERSION
           value: "{{ .Values.pinniped.pinnipedVersion }}"
+        - name: REQUIRED_LABEL
+          value: "{{ .Values.pinniped.requiredLabel }}"
         {{- if .Values.env }}
         {{- include "common.tplvalues.render" (dict "value" .Values.env "context" $) | nindent 8 }}
         {{- end }}
