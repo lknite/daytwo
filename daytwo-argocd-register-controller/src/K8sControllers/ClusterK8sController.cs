@@ -82,7 +82,7 @@ namespace daytwo.K8sControllers
             (new Thread(new ThreadStart(Timer))).Start();
 
             // Start up provider listeners
-            await AddProviders();
+            //await AddProviders();
         }
         public void Timer()
         {
