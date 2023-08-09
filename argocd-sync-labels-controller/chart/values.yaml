@@ -1,0 +1,36 @@
+## @param global.imageRegistry Global Docker image registry
+## @param global.imagePullSecrets Global Docker registry secret names as an array
+## @param global.storageClass Global StorageClass for Persistent Volume(s)
+##
+global:
+  imageRegistry: ""
+  ## E.g.
+  ## imagePullSecrets:
+  ##   - myRegistryKeySecretName
+  ##
+  imagePullSecrets: []
+  storageClass: ""
+
+## daytwo argocd-sync-labels-controller image
+## ref: https://github.com/lknite/daytwo/tree/main/daytwo-argocd-sync-labels-controller
+image:
+  repository: docker.io/lknite/argocd-sync-labels-controller
+  tag: latest
+  pullPolicy: Always
+
+sync-labels:
+  ## @param argocdNamespace Used if targeting an argocd installation in an alternative namespace
+  ##
+  argocdNamespace: "argocd"
+
+## @param env Use to define environment variables passed to sync-labels when generating kubeconfig
+## E.g. to define the "--oidc-issuer" use: PINNIPED_OIDC_ISSUER
+##
+env: []
+
+## @param extraVolumes Optionally specify extra list of additional volumes
+##
+extraVolumes: []
+## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts
+##
+extraVolumeMounts: []
