@@ -40,7 +40,7 @@ pipeline {
     stage('Run dotnet') {
       steps {
         container('dotnet') {
-          dir('daytwo-argocd-pinniped-controller/src') {
+          dir('argocd-sync-labels-controller/src') {
             sh 'dotnet --info'
             sh 'dotnet publish --configuration Debug --runtime linux-x64 --self-contained true'
             sh 'find'
@@ -51,17 +51,17 @@ pipeline {
     stage('Build container') {
       steps {
         container('docker') {
-          dir('daytwo-argocd-pinniped-controller') {
+          dir('argocd-sync-labels-controller') {
             withCredentials([file(credentialsId: 'ca-bundle-pem-format', variable: 'CABUNDLE')]) {
               sh "cp \"\$CABUNDLE\" /etc/ssl/certs/ca-bundle.crt"
             }
             sh '#docker logout harbor.vc-prod.k.home.net'
             sh '''echo $HARBOR_CREDENTIAL_PSW | docker login $REGISTRY -u $HARBOR_CREDENTIAL_USR --password-stdin'''
             sh "#cat \$HOME/.docker/config.json"
-            sh "docker build --progress=plain -t 'harbor.vc-prod.k.home.net/daytwo/pinniped-controller:0.0.${BUILD_NUMBER}' ."
-            sh "docker image push 'harbor.vc-prod.k.home.net/daytwo/pinniped-controller:0.0.${BUILD_NUMBER}'"
-            sh 'docker build -t "harbor.vc-prod.k.home.net/daytwo/pinniped-controller:latest" .'
-            sh 'docker image push "harbor.vc-prod.k.home.net/daytwo/pinniped-controller:latest"'
+            sh "docker build --progress=plain -t 'harbor.vc-prod.k.home.net/daytwo/sync-labels-controller:0.0.${BUILD_NUMBER}' ."
+            sh "docker image push 'harbor.vc-prod.k.home.net/daytwo/sync-labels-controller:0.0.${BUILD_NUMBER}'"
+            sh 'docker build -t "harbor.vc-prod.k.home.net/daytwo/sync-labels-controller:latest" .'
+            sh 'docker image push "harbor.vc-prod.k.home.net/daytwo/sync-labels-controller:latest"'
           }
         }
       }
@@ -85,7 +85,7 @@ pipeline {
           sh 'chmod 755 ~/bin/kubectl'
 
           // delete existing pod which will be recreated with the new image
-          sh 'kubectl -n daytwo-argocd-pinniped-controller delete pod -l app=daytwo-argocd-pinniped-controller'
+          sh 'kubectl -n argocd-sync-labels-controller delete pod -l app=argocd-sync-labels-controller'
         }
       }
     }
