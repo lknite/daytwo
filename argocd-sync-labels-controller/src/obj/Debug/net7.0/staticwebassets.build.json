@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "1/iz73bCETa5PKJm06lDYL/lnO7IwsV1skM3wG8BKLA=",
+  "Source": "argocd-sync-labels-controller",
+  "BasePath": "_content/argocd-sync-labels-controller",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

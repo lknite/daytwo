@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>argocd-sync-labels-controller</name>
+    </assembly>
+    <members>
+        <member name="M:daytwo.K8sControllers.ClusterK8sController.GetClusterKubeConfig(System.String,System.String,System.String)">
+            <summary>
+            With knowledge of the innerworkings of the cluster provisioning process,
+            obtain the default admin kubeconfig '/etc/kubernetes/admin.conf'.
+            </summary>
+            <param name="clusterName"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
