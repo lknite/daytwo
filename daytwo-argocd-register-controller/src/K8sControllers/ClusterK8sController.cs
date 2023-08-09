@@ -80,6 +80,9 @@ namespace daytwo.K8sControllers
             //Listen();
             // Start the intermittent timer
             (new Thread(new ThreadStart(Timer))).Start();
+
+            // Start up provider listeners
+            await AddProviders();
         }
         public void Timer()
         {
@@ -230,7 +233,6 @@ namespace daytwo.K8sControllers
 
             // Start up all provider listeners
             Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "Starting up provider listeners ...");
-            await AddProviders();
 
 
             // Watch is a tcp connection therefore it can drop, use a while loop to restart as needed.
