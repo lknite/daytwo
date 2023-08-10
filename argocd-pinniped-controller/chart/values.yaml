@@ -32,6 +32,10 @@ pinniped:
   ##
   requiredLabel: ""
 
+  ## @param enableIndex Whether / will provide a json listing of all generated kubeconfig files
+  ##
+  enableIndex: true
+
 ## @param env Use to define environment variables passed to pinniped when generating kubeconfig
 ## E.g. to define the "--oidc-issuer" use: PINNIPED_OIDC_ISSUER
 ##

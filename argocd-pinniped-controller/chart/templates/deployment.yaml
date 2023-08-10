@@ -27,6 +27,8 @@ spec:
           value: "{{ .Values.pinniped.pinnipedVersion }}"
         - name: REQUIRED_LABEL
           value: "{{ .Values.pinniped.requiredLabel }}"
+        - name: ENABLE_INDEX
+          value: "{{ .Values.pinniped.enableIndex }}"
         {{- if .Values.env }}
         {{- include "common.tplvalues.render" (dict "value" .Values.env "context" $) | nindent 8 }}
         {{- end }}
