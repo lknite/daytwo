@@ -50,6 +50,13 @@ namespace daytwo.Controllers
         {
             Globals.log.LogInformation($"GET /");
 
+            // if option is set to disable index, then return immediately
+            if ((Environment.GetEnvironmentVariable("ENABLE_INDEX") != null)
+                && (Environment.GetEnvironmentVariable("ENABLE_INDEX") == "false"))
+            {
+                Ok();
+            }
+
             // check if existing pinniped secrets have a matching secret
             List<string> index = new List<string>();
             if (Directory.Exists("/opt/www"))
