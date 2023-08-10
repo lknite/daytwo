@@ -8,8 +8,8 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT 1
 ENV DOTNET_hostBuilder:reloadConfigOnChange false
 
 #
-ENV TARGET_PATH /opt/daytwo-argocd-pinniped-controller
-ENV TARGET_BIN daytwo-argocd-pinniped-controller
+ENV TARGET_PATH /opt/argocd-pinniped-controller
+ENV TARGET_BIN argocd-pinniped-controller
 
 # copy over the deployment
 COPY src/bin $TARGET_PATH/bin
