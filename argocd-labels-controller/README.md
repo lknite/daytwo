@@ -2,7 +2,12 @@
 
 ## features ##
 - watches for updates to provider yaml (clusterapi supports several providers)
-- synchronizes labels from provider yaml to argocd cluster secrets
+- synchronizes labels from provider resources to argocd cluster secret resources
+
+## compatible ##
+- vcluster
+- tanzukubernetescluster
+- ... will add additional upon request
 
 ## rbac ##
 - role get/list/update 'secrets' in argocd namespace
@@ -14,6 +19,10 @@
 
 ## configuration environment variables ##
 
+### required ###
+- Comma separated list of management clusters to sync w/ argocd
+  - MANAGEMENT_CLUSTERS: clusters
+
 ### optional ###
 - To specify an alternative location for argocd ('argocd' by default):
   - ARGOCD_NAMESPACE: argocd
@@ -21,7 +30,7 @@
 ## status ##
 - working
 - todo:
-  - improve logging
+  - code clean up
 
 ## reference ##
 - [kubernetes daytwo controllers](https://www.travisloyd.xyz/2023/07/08/kubernetes-daytwo-controllers/)
