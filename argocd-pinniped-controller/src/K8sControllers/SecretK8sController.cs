@@ -188,25 +188,6 @@ namespace gge.K8sControllers
                         }
                     }
                 }
-
-                //**
-                // update pinniped kubeconfig index
-
-                // check if existing pinniped secrets have a matching secret
-                List<string> index = new List<string>();
-                if (Directory.Exists("/opt/www"))
-                {
-                    var files = from file in Directory.EnumerateFiles("/opt/www", "*", SearchOption.AllDirectories) select file;
-                    foreach (var file in files)
-                    {
-                        if (file.IndexOf("kubeconfig") != -1) {
-                            index.Add(file.Substring(8));
-                        }
-                    }
-                }
-
-                // write out index
-                File.WriteAllText("/opt/www/index.html", JsonSerializer.Serialize(index));
             }
             catch (Exception ex)
             {

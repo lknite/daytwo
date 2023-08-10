@@ -38,5 +38,29 @@ namespace daytwo.Controllers
 
             return Content(tmp);
         }
+
+        [HttpGet("")]
+        [HttpGet("/index.html")]
+        [Produces("application/json")]
+        public async Task<IActionResult> GetIndex(string managementCluster, string workloadCluster)
+        {
+            Globals.log.LogInformation($"GET /");
+
+            // check if existing pinniped secrets have a matching secret
+            List<string> index = new List<string>();
+            if (Directory.Exists("/opt/www"))
+            {
+                var files = from file in Directory.EnumerateFiles("/opt/www", "*", SearchOption.AllDirectories) select file;
+                foreach (var file in files)
+                {
+                    if (file.IndexOf("kubeconfig") != -1)
+                    {
+                        index.Add(file.Substring(8));
+                    }
+                }
+            }
+
+            return Ok(index);
+        }
     }
 }
