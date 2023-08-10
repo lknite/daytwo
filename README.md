@@ -50,8 +50,8 @@ In one step, copying a clusterapi resource file to git, cause a cluster to be de
 | alpha   | [argocd-labels-controller](https://github.com/lknite/daytwo/tree/main/argocd-labels-controller)     | todo: code cleanup |
 | alpha   | [argocd-pinniped-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-pinniped-controller)     | todo: code cleanup, rename folder to without 'daytwo-' |
 | alpha   | [helm charts](https://lknite.github.io/charts) | images pushed to docker.io, will be used when installing via helm chart |
-| todo    | move builds to use github actions     |                                         |
-| todo    | rewrite all controllers using go      |                                         |
+| todo    | move to github actions     |                                         |
+| todo    | rewrite using go      |                                         |
 
 ## getting started
 - helm repo add lknite https://lknite.github.io/charts
