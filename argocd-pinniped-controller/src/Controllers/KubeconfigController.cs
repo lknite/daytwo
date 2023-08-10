@@ -54,7 +54,7 @@ namespace daytwo.Controllers
             if ((Environment.GetEnvironmentVariable("ENABLE_INDEX") != null)
                 && (Environment.GetEnvironmentVariable("ENABLE_INDEX") == "false"))
             {
-                Ok();
+                return Ok();
             }
 
             // check if existing pinniped secrets have a matching secret
