@@ -56,8 +56,9 @@ In one step, copying a clusterapi resource file to git, cause a cluster to be de
 ## getting started
 - helm repo add lknite https://lknite.github.io/charts
 - helm repo update lknite
-- helm install register-controller
-- helm install pinniped-controller
+- helm install argocd-register-controller
+- helm install argocd-labels-controller
+- helm install argocd-pinniped-controller
 
 ## reference ##
 [kubernetes daytwo controllers](https://www.travisloyd.xyz/2023/07/08/kubernetes-daytwo-controllers/)
