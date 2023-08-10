@@ -1,0 +1,93 @@
+pipeline {
+  agent {
+    kubernetes {
+      yaml '''
+        apiVersion: v1
+        kind: Pod
+        spec:
+          containers:
+          - name: dotnet
+            image: mcr.microsoft.com/dotnet/sdk:7.0
+            command:
+            - cat
+            tty: true
+          - name: busybox
+            image: busybox:latest
+            command:
+            - cat
+            tty: true
+          - name: docker
+            image: docker:dind
+            tty: true
+            securityContext:
+              privileged: true
+        '''
+    }
+  }
+  environment {
+    REGISTRY = "harbor.vc-prod.k.home.net"
+    HARBOR_CREDENTIAL = credentials('vc-prod-harbor-daytwo')
+    PATH = "${env.PATH}:/root/bin"
+    KUBECONFIG = "/root/.kube/config"
+  }
+  stages {
+    stage('Git clone') {
+      steps {
+        git branch: 'main', credentialsId: 'github-lknite',
+          url: 'https://github.com/lknite/daytwo.git'
+      }
+    }
+    stage('Run dotnet') {
+      steps {
+        container('dotnet') {
+          dir('argocd-labels-controller/src') {
+            sh 'dotnet --info'
+            sh 'dotnet publish --configuration Debug --runtime linux-x64 --self-contained true'
+            sh 'find'
+          }
+        }
+      }
+    }
+    stage('Build container') {
+      steps {
+        container('docker') {
+          dir('argocd-labels-controller') {
+            withCredentials([file(credentialsId: 'ca-bundle-pem-format', variable: 'CABUNDLE')]) {
+              sh "cp \"\$CABUNDLE\" /etc/ssl/certs/ca-bundle.crt"
+            }
+            sh '#docker logout harbor.vc-prod.k.home.net'
+            sh '''echo $HARBOR_CREDENTIAL_PSW | docker login $REGISTRY -u $HARBOR_CREDENTIAL_USR --password-stdin'''
+            sh "#cat \$HOME/.docker/config.json"
+            sh "docker build --progress=plain -t 'harbor.vc-prod.k.home.net/daytwo/labels-controller:0.0.${BUILD_NUMBER}' ."
+            sh "docker image push 'harbor.vc-prod.k.home.net/daytwo/labels-controller:0.0.${BUILD_NUMBER}'"
+            sh 'docker build -t "harbor.vc-prod.k.home.net/daytwo/labels-controller:latest" .'
+            sh 'docker image push "harbor.vc-prod.k.home.net/daytwo/labels-controller:latest"'
+          }
+        }
+      }
+    }
+    stage('Deploy new image') {
+      steps {
+        container('busybox') {
+          // environment:
+          // - see above where ~/bin is added to path
+          // - see above where KUBECONFIG was set
+
+          // save kubeconfig file
+          withCredentials([file(credentialsId: 'vc-non-kubeconfig-admin', variable: 'TMPKUBECONFIG')]) {
+            sh 'mkdir ~/.kube'
+            sh "cp \"\$TMPKUBECONFIG\" ~/.kube/config"
+          }
+
+          // install kubectl
+          sh 'mkdir ~/bin'
+          sh 'wget -q -O ~/bin/kubectl --no-check-certificate "https://dl.k8s.io/release/$(wget -q -O - https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"'
+          sh 'chmod 755 ~/bin/kubectl'
+
+          // delete existing pod which will be recreated with the new image
+          sh 'kubectl -n argocd-labels-controller delete pod -l app=argocd-labels-controller'
+        }
+      }
+    }
+  }
+}
