@@ -27,11 +27,11 @@ contexts:
 - context:
     cluster: {name}
     namespace: default
-    user: user
+    user: {name}-admin
   name: context
 current-context: context
 users:
-- name: user
+- name: {name}-admin
   user:
     client-certificate-data: {kubeconfig.ClientCertificateData}
     client-key-data: {kubeconfig.ClientCertificateKeyData}
