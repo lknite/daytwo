@@ -79,10 +79,10 @@ namespace daytwo.K8sControllers
             // Start the k8s event listener
             //Listen();
             // Start the intermittent timer
-            (new Thread(new ThreadStart(Timer))).Start();
+            //(new Thread(new ThreadStart(Timer))).Start();
 
             // Start up provider listeners
-            //await AddProviders();
+            await AddProviders();
         }
         public void Timer()
         {
