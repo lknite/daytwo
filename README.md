@@ -18,13 +18,13 @@ environment always matches what is in git.
 - tanzu (which uses capi)
 
 ## controllers
-- [argocd-register-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-register-controller)
+- [argocd-register-controller](https://github.com/lknite/daytwo/tree/main/argocd-register-controller)
   - watches for new clusters stood up via clusterapi and automatically syncs them with argocd (adds & removes)
 - [argocd-labels-controller](https://github.com/lknite/daytwo/tree/main/argocd-labels-controller)
   - syncs labels between clusterapi provider resources and argocd cluster secrets
     - argocd applicationsets can then target labels, allowing addons to be managed via provider resources
     - adds an annotation 'daytwo.aarr.xyz/workload-cluster' which can be used to target an application to a cluster name
-- [argocd-pinniped-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-pinniped-controller)
+- [argocd-pinniped-controller](https://github.com/lknite/daytwo/tree/main/argocd-pinniped-controller)
   - watches for registered argocd clusters and updates pinniped kubeconfig files (adds & removes)
   - hosts a website which can be used to access the pinniped kubeconfig files
 
