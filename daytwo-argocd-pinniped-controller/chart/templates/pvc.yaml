@@ -7,7 +7,7 @@ SPDX-License-Identifier: APACHE-2.0
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ include "common.names.fullname" . }}
+  name: {{.Release.Name}}-pinniped
   namespace: {{ .Release.Namespace | quote }}
   labels: {{- include "common.labels.standard" . | nindent 4 }}
     {{- if .Values.commonLabels }}

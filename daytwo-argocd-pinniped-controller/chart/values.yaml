@@ -38,9 +38,11 @@ pinniped:
 env: []
 
 ## @param extraVolumes Optionally specify extra list of additional volumes
+## (only enabled if persistence.enabled below)
 ##
 extraVolumes: []
 ## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts
+## (only enabled if persistence.enabled below)
 ##
 extraVolumeMounts: []
 
