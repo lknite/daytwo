@@ -137,6 +137,9 @@ namespace daytwo.K8sControllers
                         continue;
                     }
 
+                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
+                            $"checking argocd secret: {secret.GetAnnotation("daytwo.aarr.xyz/workload-cluster")}");
+
                     // loop through clusters to see if we have one matching this secret
                     bool found = false;
                     clusters = await generic.ListNamespacedAsync<CustomResourceList<CrdCluster>>("");
@@ -145,6 +148,8 @@ namespace daytwo.K8sControllers
                         if ((managementCluster == secret.GetAnnotation("daytwo.aarr.xyz/management-cluster"))
                             && (cluster.Name() == secret.GetAnnotation("daytwo.aarr.xyz/workload-cluster")))
                         {
+                            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
+                                    $"- '{secret.GetAnnotation("daytwo.aarr.xyz/workload-cluster")}' matched with cluster '{cluster.Name()}'");
                             found = true;
                             break;
                         }
@@ -152,6 +157,8 @@ namespace daytwo.K8sControllers
 
                     if (!found)
                     {
+                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
+                                $"- '{secret.GetAnnotation("daytwo.aarr.xyz/workload-cluster")}' not found");
                         rmClusters.Add(secret.GetAnnotation("daytwo.aarr.xyz/workload-cluster"));
                     }
                 }
