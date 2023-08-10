@@ -118,35 +118,24 @@ namespace daytwo.K8sControllers
                 //**
                 // remove: loop through argocd secrets and remove if no cluster exists
 
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "001");
                 List<string> rmClusters = new List<string>();
 
                 // acquire list of all arogcd secrets
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "002");
                 V1SecretList secrets = await Globals.service.kubeclient.ListNamespacedSecretAsync(Globals.service.argocdNamespace);
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "003");
                 foreach (var secret in secrets)
                 {
-                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "004");
                     // skip if not an argocd cluster secret
                     if (!Helpers.Main.IsArgocdClusterSecret(secret))
                     {
-                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "004b");
                         continue;
                     }
 
                     // only remove from argocd if we added this cluster to argocd
-                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "005");
                     string annotation = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
                     if (annotation == null)
                     {
-                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "005b");
                         continue;
                     }
-
-                    // check for rm
-                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
-                            $"checking argocd secret: {secret.GetAnnotation("daytwo.aarr.xyz/workload-cluster")}");
 
                     // loop through clusters to see if we have one matching this secret
                     bool found = false;
@@ -156,8 +145,6 @@ namespace daytwo.K8sControllers
                         if ((managementCluster == secret.GetAnnotation("daytwo.aarr.xyz/management-cluster"))
                             && (cluster.Name() == secret.GetAnnotation("daytwo.aarr.xyz/workload-cluster")))
                         {
-                            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
-                                    $"- '{secret.GetAnnotation("daytwo.aarr.xyz/workload-cluster")}' matched with cluster '{cluster.Name()}'");
                             found = true;
                             break;
                         }
@@ -165,8 +152,6 @@ namespace daytwo.K8sControllers
 
                     if (!found)
                     {
-                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
-                                $"- '{secret.GetAnnotation("daytwo.aarr.xyz/workload-cluster")}' not found");
                         rmClusters.Add(secret.GetAnnotation("daytwo.aarr.xyz/workload-cluster"));
                     }
                 }
