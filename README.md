@@ -19,7 +19,7 @@ environment always matches what is in git.
 
 ## controllers
 - [daytwo-argocd-register-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-register-controller)
-  - watches for new clusters to reach a ready state and automatically adds them to argocd
+  - watches for new clusters stood up via clusterapi and automatically syncs them with argocd (adds & removes)
 - [argocd-labels-controller](https://github.com/lknite/daytwo/tree/main/argocd-labels-controller)
   - syncs labels between capi provider resources and argocd cluster secrets
     - argocd applicationsets can then target labels, allowing addons to be managed via provider resources
