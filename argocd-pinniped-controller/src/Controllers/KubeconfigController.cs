@@ -15,7 +15,7 @@ namespace daytwo.Controllers
     public class KubeconfigController : ControllerBase
     {
         /// <summary>
-        /// asdf
+        /// Get specified kubeconfig file
         /// </summary>
         /// <param name="managementCluster"></param>
         /// <param name="workloadCluster"></param>
@@ -39,10 +39,14 @@ namespace daytwo.Controllers
             return Content(tmp);
         }
 
+        /// <summary>
+        /// Get listing of available kubeconfig files
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("")]
         [HttpGet("/index.html")]
         [Produces("application/json")]
-        public async Task<IActionResult> GetIndex(string managementCluster, string workloadCluster)
+        public async Task<IActionResult> GetIndex()
         {
             Globals.log.LogInformation($"GET /");
 
