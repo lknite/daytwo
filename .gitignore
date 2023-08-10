@@ -1,9 +1,9 @@
 /argocd-labels-controller/src/.vs/**
 /argocd-labels-controller/src/bin/**
 /argocd-labels-controller/src/obj/**
-/daytwo-argocd-pinniped-controller/src/.vs/**
-/daytwo-argocd-pinniped-controller/src/bin/**
-/daytwo-argocd-pinniped-controller/src/obj/**
-/daytwo-argocd-register-controller/src/.vs/**
-/daytwo-argocd-register-controller/src/bin/**
-/daytwo-argocd-register-controller/src/obj/**
+/argocd-pinniped-controller/src/.vs/**
+/argocd-pinniped-controller/src/bin/**
+/argocd-pinniped-controller/src/obj/**
+/argocd-register-controller/src/.vs/**
+/argocd-register-controller/src/bin/**
+/argocd-register-controller/src/obj/**
