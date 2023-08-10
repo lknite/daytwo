@@ -54,6 +54,7 @@ namespace daytwo.Controllers
             if ((Environment.GetEnvironmentVariable("ENABLE_INDEX") != null)
                 && (Environment.GetEnvironmentVariable("ENABLE_INDEX") == "false"))
             {
+                Globals.log.LogInformation($"- index has been disabled via env var ENABLE_INDEX");
                 return Ok();
             }
 
