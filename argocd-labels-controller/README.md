@@ -30,7 +30,7 @@
 ## status ##
 - working
 - todo:
-  - code clean up
+  - code cleanup
 
 ## reference ##
 - [kubernetes daytwo controllers](https://www.travisloyd.xyz/2023/07/08/kubernetes-daytwo-controllers/)
