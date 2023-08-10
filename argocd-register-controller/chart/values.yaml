@@ -12,7 +12,7 @@ global:
   storageClass: ""
 
 ## daytwo argocd-register-controller image
-## ref: https://github.com/lknite/daytwo/tree/main/daytwo-argocd-register-controller
+## ref: https://github.com/lknite/daytwo/tree/main/argocd-register-controller
 image:
   repository: docker.io/lknite/argocd-register-controller
   tag: latest
