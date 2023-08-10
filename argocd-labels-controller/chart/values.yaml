@@ -19,6 +19,10 @@ image:
   pullPolicy: Always
 
 labels:
+  ## @param managementCluster Comma separated list of names of clusterapi servers
+  ##
+  managementClusters: ""
+
   ## @param argocdNamespace Used if targeting an argocd installation in an alternative namespace
   ##
   argocdNamespace: "argocd"
