@@ -2,7 +2,7 @@
 
 ## features ##
 - watches for updates to provider yaml (clusterapi supports several providers)
-- synchronizes labels on provider yaml with argocd cluster secrets
+- synchronizes labels from provider yaml to argocd cluster secrets
 
 ## rbac ##
 - role get/list/update 'secrets' in argocd namespace
