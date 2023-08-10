@@ -1,8 +1,8 @@
 {
   "Version": 1,
-  "Hash": "HQ6V4tmpasM4ruCNG18cApV1meqO4sI7gCoPFz5Fdec=",
-  "Source": "daytwo-argocd-register-controller",
-  "BasePath": "_content/daytwo-argocd-register-controller",
+  "Hash": "pPkCfQeQYxL3H8gWMxedaibXRIYfgWhN1Yy3DCwNkTs=",
+  "Source": "argocd-register-controller",
+  "BasePath": "_content/argocd-register-controller",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],

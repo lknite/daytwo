@@ -2128,9 +2128,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\daytwo-argocd-register-controller\\src\\daytwo-argocd-register-controller.csproj",
-      "projectName": "daytwo-argocd-register-controller",
-      "projectPath": "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\daytwo-argocd-register-controller\\src\\daytwo-argocd-register-controller.csproj",
+      "projectUniqueName": "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\daytwo-argocd-register-controller\\src\\argocd-register-controller.csproj",
+      "projectName": "argocd-register-controller",
+      "projectPath": "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\daytwo-argocd-register-controller\\src\\argocd-register-controller.csproj",
       "packagesPath": "C:\\Users\\travis.HOME\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\daytwo-argocd-register-controller\\src\\obj\\",
       "projectStyle": "PackageReference",

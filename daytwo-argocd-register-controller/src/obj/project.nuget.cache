@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "/eLhjwxJWQJqnPEfSzFdDwfW/Jz/Rvf3xxKYmYAIzLeVKsEWVMKvELhKGElslPTo+P8StSvO/mQR2CV81rYjHA==",
+  "dgSpecHash": "yXCwO8ePkeMlSc09+0pGVMpet43iIhvEljnde6vwVs9yG+wJuRM5uyPx1RIns4wIh121yobbYfvWwWKk68vpCA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\daytwo-argocd-register-controller\\src\\daytwo-argocd-register-controller.csproj",
+  "projectFilePath": "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\daytwo-argocd-register-controller\\src\\argocd-register-controller.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\travis.HOME\\.nuget\\packages\\fractions\\7.2.1\\fractions.7.2.1.nupkg.sha512",
     "C:\\Users\\travis.HOME\\.nuget\\packages\\identitymodel\\5.2.0\\identitymodel.5.2.0.nupkg.sha512",
