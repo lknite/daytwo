@@ -22,7 +22,7 @@
 ## installation ##
 - helm repo add lknite https://lknite.github.io/charts
 - helm repo update lknite
-- helm install argocd-register-controller
+- helm install register-controller
 
 ## configuration environment variables ##
 ### required ###
@@ -47,8 +47,8 @@ Basic steps to generate token (your implementation may vary):
 ## status ##
 - main functionality implemented
 - todo:
-  - add periodic check for orphaned argocd secrets and delete
-  - cleanup/improve logging
+  - rename project folder from daytwo-argocd-register-controller to argocd-register-controller
+  - code cleanup
 
 ## reference ##
 - [kubernetes daytwo controllers](https://www.travisloyd.xyz/2023/07/08/kubernetes-daytwo-controllers/)
