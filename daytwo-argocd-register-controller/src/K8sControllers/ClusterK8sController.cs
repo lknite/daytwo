@@ -118,22 +118,29 @@ namespace daytwo.K8sControllers
                 //**
                 // remove: loop through argocd secrets and remove if no cluster exists
 
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "001");
                 List<string> rmClusters = new List<string>();
 
                 // acquire list of all arogcd secrets
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "002");
                 V1SecretList secrets = await kubeclient.ListNamespacedSecretAsync(Globals.service.argocdNamespace);
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "003");
                 foreach (var secret in secrets)
                 {
+                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "004");
                     // skip if not an argocd cluster secret
                     if (!Helpers.Main.IsArgocdClusterSecret(secret))
                     {
+                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "004b");
                         continue;
                     }
 
                     // only remove from argocd if we added this cluster to argocd
+                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "005");
                     string annotation = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
                     if (annotation == null)
                     {
+                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "005b");
                         continue;
                     }
 
