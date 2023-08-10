@@ -1,0 +1,31 @@
+## @param global.imageRegistry Global Docker image registry
+## @param global.imagePullSecrets Global Docker registry secret names as an array
+## @param global.storageClass Global StorageClass for Persistent Volume(s)
+##
+global:
+  imageRegistry: ""
+  ## E.g.
+  ## imagePullSecrets:
+  ##   - myRegistryKeySecretName
+  ##
+  imagePullSecrets: []
+  storageClass: ""
+
+## daytwo argocd-labels-controller image
+## ref: https://github.com/lknite/daytwo/tree/main/argocd-labels-controller
+image:
+  repository: docker.io/lknite/argocd-labels-controller
+  tag: latest
+  pullPolicy: Always
+
+labels:
+  ## @param argocdNamespace Used if targeting an argocd installation in an alternative namespace
+  ##
+  argocdNamespace: "argocd"
+
+## @param extraVolumes Optionally specify extra list of additional volumes
+##
+extraVolumes: []
+## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts
+##
+extraVolumeMounts: []

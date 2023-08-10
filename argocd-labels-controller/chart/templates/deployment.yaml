@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: {{.Release.Name}}-labels-controller
+  name: {{.Release.Name}}-labels-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{.Release.Name}}-labels-controller
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: {{.Release.Name}}-labels-controller
+    spec:
+      containers:
+      - name: {{.Release.Name}}-labels-controller
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        resources: {}
+        {{- if .Values.env }}
+        env:
+        {{- include "common.tplvalues.render" (dict "value" .Values.env "context" $) | nindent 8 }}
+        {{- end }}
+        {{- if .Values.extraVolumeMounts }}
+        volumeMounts:
+          {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
+        {{- end }}
+      {{- if .Values.extraVolumes }}
+      volumes:
+        {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumes "context" $) | nindent 8 }}
+      {{- end }}
+status: {}
