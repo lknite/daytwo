@@ -41,7 +41,7 @@ In one step, copying a clusterapi resource file to git, cause a cluster to be de
 - pinniped-controller will watch argocd secrets and generate a pinniped kubeconfig automatically
 - pinniped-controller also hosts a website to access the pinniped kubeconfig files it generates
 - pinniped-www can be used by consumers to access the cluster-specific pinniped kubeconfig file e.g.
-  - pinniped.\<clustername\>.\<domain\>
+  - pinniped.\<clustername\>.\<domain\>/\<mangementCluster\>/\<workloadCluster\>/kubeconfig
 
 ## development
 | status  | controller                            | detail                                  |
