@@ -50,7 +50,7 @@ In one step, copying a clusterapi resource file to git, cause a cluster to be de
 | alpha   | [argocd-labels-controller](https://github.com/lknite/daytwo/tree/main/argocd-labels-controller)     | todo: code cleanup, testing, add additional providers |
 | alpha   | [argocd-pinniped-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-pinniped-controller)     | todo: code cleanup, testing |
 | alpha   | [helm charts](https://lknite.github.io/charts) | images pushed to [docker.io](https://hub.docker.com/repositories/lknite), will be used when installing via helm chart |
-| todo    | pinniped-www | a cluster-specific deployment which links back to the pinniped controller kubeconfig file, allow for a custom single page website |
+| todo    | pinniped-www | |
 | todo    | move to github actions     |                                         |
 | todo    | rewrite using go      |                                         |
 
