@@ -1,4 +1,4 @@
-# daytwo-argocd-pinniped-controller
+# argocd-pinniped-controller
 
 ## features ##
 - watches for updates to argocd cluster secrets and updates a configmap with pinniped kubeconfig files
@@ -35,7 +35,6 @@
 ## status ##
 - working
 - todo:
-  - rename project folder from daytwo-argocd-pinniped-controller to argocd-pinniped-controller
   - code cleanup
 
 ## reference ##

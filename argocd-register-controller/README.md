@@ -1,4 +1,4 @@
-# daytwo-argocd-register-controller
+# argocd-register-controller
 
 ## features ##
 - adds/updates argocd secrets automatically in response to new clusters provisioned via clusterapi
@@ -47,7 +47,6 @@ Basic steps to generate token (your implementation may vary):
 ## status ##
 - main functionality implemented
 - todo:
-  - rename project folder from daytwo-argocd-register-controller to argocd-register-controller
   - code cleanup
 
 ## reference ##
