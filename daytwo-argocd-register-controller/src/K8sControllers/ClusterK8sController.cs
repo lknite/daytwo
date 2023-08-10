@@ -123,7 +123,7 @@ namespace daytwo.K8sControllers
 
                 // acquire list of all arogcd secrets
                 Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "002");
-                V1SecretList secrets = await kubeclient.ListNamespacedSecretAsync(Globals.service.argocdNamespace);
+                V1SecretList secrets = await Globals.service.kubeclient.ListNamespacedSecretAsync(Globals.service.argocdNamespace);
                 Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "003");
                 foreach (var secret in secrets)
                 {
