@@ -137,6 +137,9 @@ namespace daytwo.K8sControllers
                         continue;
                     }
 
+                    // check for rm
+                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
+                            $"checking argocd secret: {secret.GetAnnotation("daytwo.aarr.xyz/workload-cluster")}");
 
                     // loop through clusters to see if we have one matching this secret
                     bool found = false;
