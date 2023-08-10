@@ -28,8 +28,8 @@ contexts:
     cluster: {name}
     namespace: default
     user: {name}-admin
-  name: context
-current-context: context
+  name: {name}
+current-context: {name}
 users:
 - name: {name}-admin
   user:
