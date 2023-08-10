@@ -151,7 +151,12 @@ namespace daytwo.K8sControllers
                         }
                     }
 
-                    if (!found)
+                    if (found)
+                    {
+                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
+                                $"argocd '{secret.GetAnnotation("daytwo.aarr.xyz/workload-cluster")}' matched with cluster '{cluster.Name()}'");
+                    }
+                    else
                     {
                         rmClusters.Add(secret.GetAnnotation("daytwo.aarr.xyz/workload-cluster"));
                     }
