@@ -147,7 +147,7 @@
           }
         }
       },
-      "Microsoft.AspNetCore.Authentication.OpenIdConnect/7.0.9": {
+      "Microsoft.AspNetCore.Authentication.OpenIdConnect/7.0.10": {
         "type": "package",
         "dependencies": {
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "6.15.1"
@@ -166,7 +166,7 @@
           "Microsoft.AspNetCore.App"
         ]
       },
-      "Microsoft.AspNetCore.OpenApi/7.0.9": {
+      "Microsoft.AspNetCore.OpenApi/7.0.10": {
         "type": "package",
         "dependencies": {
           "Microsoft.OpenApi": "1.4.3"
@@ -869,10 +869,10 @@
         "logo.png"
       ]
     },
-    "Microsoft.AspNetCore.Authentication.OpenIdConnect/7.0.9": {
-      "sha512": "zAIEtP/bBKjp3BoetKADrejXta5EuhIcF91b+4jz7KKR7arRzUshgx/PquIVJt3K5s/wp1VHZvuaONhLPCG2EA==",
+    "Microsoft.AspNetCore.Authentication.OpenIdConnect/7.0.10": {
+      "sha512": "qg5aZJ3dXN9Fyw+jRC4Hpnn/RGZlOA948LyLEPfY4/3CaSj+cqi2xdElqIABA3MpwU2vkRjBc/nXy07az6meqA==",
       "type": "package",
-      "path": "microsoft.aspnetcore.authentication.openidconnect/7.0.9",
+      "path": "microsoft.aspnetcore.authentication.openidconnect/7.0.10",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -880,14 +880,14 @@
         "THIRD-PARTY-NOTICES.TXT",
         "lib/net7.0/Microsoft.AspNetCore.Authentication.OpenIdConnect.dll",
         "lib/net7.0/Microsoft.AspNetCore.Authentication.OpenIdConnect.xml",
-        "microsoft.aspnetcore.authentication.openidconnect.7.0.9.nupkg.sha512",
+        "microsoft.aspnetcore.authentication.openidconnect.7.0.10.nupkg.sha512",
         "microsoft.aspnetcore.authentication.openidconnect.nuspec"
       ]
     },
-    "Microsoft.AspNetCore.OpenApi/7.0.9": {
-      "sha512": "5kBnHntQTJqmYV66Khdl9OJ/j2Pw8cOKj8kNQuLCpfCsPbSijp334Vaad3vaGnG9Wpgq/VbSUSRxZOoroOe8zQ==",
+    "Microsoft.AspNetCore.OpenApi/7.0.10": {
+      "sha512": "p5LiYt1mFJdS70zyHoydahohko2pLIoXiXwANRZGYYyTXcYNQpNUOt+At+lUgGgRwta28sUKVhy2W/93j0qwhA==",
       "type": "package",
-      "path": "microsoft.aspnetcore.openapi/7.0.9",
+      "path": "microsoft.aspnetcore.openapi/7.0.10",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -895,7 +895,7 @@
         "THIRD-PARTY-NOTICES.TXT",
         "lib/net7.0/Microsoft.AspNetCore.OpenApi.dll",
         "lib/net7.0/Microsoft.AspNetCore.OpenApi.xml",
-        "microsoft.aspnetcore.openapi.7.0.9.nupkg.sha512",
+        "microsoft.aspnetcore.openapi.7.0.10.nupkg.sha512",
         "microsoft.aspnetcore.openapi.nuspec"
       ]
     },
@@ -2117,8 +2117,8 @@
     "net7.0": [
       "JsonPatch.Net >= 2.1.0",
       "KubernetesClient >= 11.0.44",
-      "Microsoft.AspNetCore.Authentication.OpenIdConnect >= 7.0.9",
-      "Microsoft.AspNetCore.OpenApi >= 7.0.9",
+      "Microsoft.AspNetCore.Authentication.OpenIdConnect >= 7.0.10",
+      "Microsoft.AspNetCore.OpenApi >= 7.0.10",
       "Swashbuckle.AspNetCore >= 6.5.0"
     ]
   },
@@ -2172,11 +2172,11 @@
           },
           "Microsoft.AspNetCore.Authentication.OpenIdConnect": {
             "target": "Package",
-            "version": "[7.0.9, )"
+            "version": "[7.0.10, )"
           },
           "Microsoft.AspNetCore.OpenApi": {
             "target": "Package",
-            "version": "[7.0.9, )"
+            "version": "[7.0.10, )"
           },
           "Swashbuckle.AspNetCore": {
             "target": "Package",
