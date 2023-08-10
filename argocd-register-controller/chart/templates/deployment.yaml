@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: {{.Release.Name}}-register-controller
+  name: {{.Release.Name}}-register-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{.Release.Name}}-register-controller
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: {{.Release.Name}}-register-controller
+    spec:
+      containers:
+      - name: {{.Release.Name}}-register-controller
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        resources: {}
+        env:
+        - name: MANAGEMENT_CLUSTERS
+          value: {{ .Values.register.managementClusters }}
+        - name: ARGOCD_AUTH_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.register.argocdAuthTokenSecret }}
+              key: token
+        - name: ARGOCD_SERVER_URI
+          value: {{ .Values.register.argocdServerUri }}
+        - name: ARGOCD_INSECURE_SKIP_TLS_VERIFY
+          value: "{{ .Values.register.argocdInsecureSkipTlsVerify }}"
+        - name: ARGOCD_NAMESPACE
+          value: {{ .Values.register.argocdNamespace }}
+        - name: INSTALL_VERSION
+          value: "{{ .Values.register.argocdVersion }}"
+        volumeMounts:
+        {{- if .Values.extraVolumeMounts }}
+          {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
+        {{- end }}
+      volumes:
+      {{- if .Values.extraVolumes }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumes "context" $) | nindent 8 }}
+      {{- end }}
+status: {}

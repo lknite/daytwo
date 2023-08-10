@@ -1,0 +1,52 @@
+## @param global.imageRegistry Global Docker image registry
+## @param global.imagePullSecrets Global Docker registry secret names as an array
+## @param global.storageClass Global StorageClass for Persistent Volume(s)
+##
+global:
+  imageRegistry: ""
+  ## E.g.
+  ## imagePullSecrets:
+  ##   - myRegistryKeySecretName
+  ##
+  imagePullSecrets: []
+  storageClass: ""
+
+## daytwo argocd-register-controller image
+## ref: https://github.com/lknite/daytwo/tree/main/daytwo-argocd-register-controller
+image:
+  repository: docker.io/lknite/argocd-register-controller
+  tag: latest
+  pullPolicy: Always
+
+register:
+  ## @param managementCluster Comma separated list of names of clusterapi servers
+  ##
+  managementClusters: ""
+
+  ## @param argocdAuthToken Secret containing 'token' key, used when registering cluster with argocd
+  ##
+  argocdAuthTokenSecret: "auth-token"
+
+  ## @param argocdServerUri Used when adding a cluster, will use the auth-token provided above
+  ##
+  argocdServerUri: "https://argocd"
+
+  ## @param argocdInsecureSkipTlsVerify When connecting with argocd server ignore tls certificate failure
+  ##
+  argocdInsecureSkipTlsVerify: "false"
+
+  ## @param argocdNamespace Used if targeting an argocd installation in an alternative namespace
+  ##
+  argocdNamespace: "argocd"
+
+  ## @param argocdVersion What version of pinniped to download and use inside container
+  ## e.g. https://github.com/argoproj/argo-cd/releases/download/$VERSION/argocd-linux-amd64
+  ##
+  argocdVersion: "v2.7.10"
+
+## @param extraVolumes Optionally specify extra list of additional volumes
+##
+extraVolumes: []
+## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts
+##
+extraVolumeMounts: []

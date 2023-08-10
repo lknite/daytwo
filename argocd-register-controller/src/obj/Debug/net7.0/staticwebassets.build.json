@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "pPkCfQeQYxL3H8gWMxedaibXRIYfgWhN1Yy3DCwNkTs=",
+  "Source": "argocd-register-controller",
+  "BasePath": "_content/argocd-register-controller",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
