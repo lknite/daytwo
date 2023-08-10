@@ -25,7 +25,7 @@ environment always matches what is in git.
     - argocd applicationsets can then target labels, allowing addons to be managed via provider resources
     - adds an annotation 'daytwo.aarr.xyz/workload-cluster' which can be used to target an application to a cluster name
 - [daytwo-argocd-pinniped-controller](https://github.com/lknite/daytwo/tree/main/daytwo-argocd-pinniped-controller)
-  - watches for registered argocd clusters and updates pinniped kubeconfig files
+  - watches for registered argocd clusters and updates pinniped kubeconfig files (adds & removes)
   - hosts a website which can be used to access the pinniped kubeconfig files
 
 ## intended use
