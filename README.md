@@ -28,7 +28,7 @@ environment always matches what is in git.
   - watches for registered argocd clusters and updates pinniped kubeconfig files (adds & removes)
   - hosts a website which can be used to access the pinniped kubeconfig files
 
-## intended use
+## usage
 In one step, copying a clusterapi resource file to git, cause a cluster to be deployed, addons installed, enable authentication via pinniped, and authorization via rbac.
 
 - place clusterapi cluster.yaml into a git repo
