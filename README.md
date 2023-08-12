@@ -29,20 +29,19 @@ environment always matches what is in git.
   - hosts a website which can be used to access the pinniped kubeconfig files
 
 ## usage
-In one step, copying a clusterapi resource file to git, cause a cluster to be deployed, addons installed, enable authentication via pinniped, and authorization via rbac.
+In one step, copy a clusterapi resource file to git, watch as a cluster is deployed, addons are installed, and pinniped kubeconfig files are generated automatically.  Authentication via pinniped and authorization via rbac means the cluster is ready to be used without any additional interaction other than dropping the cluster resource into git.
 
 - place clusterapi cluster.yaml into a git repo
 - use argocd to automatically apply the folder containing all cluster yaml file
 - register-controller will detect cluster and automatically register it with argocd
-- register-controller will also copy all labels from the cluster resource to the argocd cluster secret
+- labels-controller will copy all labels from the cluster resource to the argocd cluster secret
 - use argocd applicationsets to install addons automatically by using matchLabel to match labels copied from the cluster resource
-  - labels such as: addons-cert-manager, addons-fluent-bit, addons-pinniped-concierge, addons-pinniped-www, addons-rbac
-- this will cause "pinniped-concierge" & "pinniped-www" to be installed to each registered cluster
+  - labels such as: addons-cert-manager, addons-fluent-bit, addons-pinniped-concierge, addons-rbac
+- this will cause each addons, e.g. "pinniped-concierge" & "addons-rbac", to be installed to each registered cluster
 - pinniped-controller will watch argocd secrets and generate a pinniped kubeconfig automatically
-- pinniped-controller also hosts a website to access the pinniped kubeconfig files it generates
+- pinniped-controller hosts a website where pinniped kubeconfig files can be accessed, e.g.:
   - pinniped.svc/\<mangementCluster\>/\<workloadCluster\>/kubeconfig
   - pinniped.svc/ returns a JSON formatted list of available kubeconfig files (enabled by default, index can be disabled via environment variable)
-- pinniped-www deployed to each cluster allows a cluster-specific url to access the kubeconfig file hosted on the pinniped controller
 
 ## development
 | status  | controller                            | detail                                  |
