@@ -1,6 +1,6 @@
 apiVersion: v2
 name: daytwo
-description: A Helm chart for Kubernetes
+description: A collection of controllers which perform work in response to a new cluster deployment.
 
 # A chart can be either an 'application' or a 'library' chart.
 #
