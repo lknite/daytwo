@@ -7,9 +7,3 @@
 /argocd-register-controller/src/.vs/**
 /argocd-register-controller/src/bin/**
 /argocd-register-controller/src/obj/**
-/daytwo-argocd-pinniped-controller/src/.vs/**
-/daytwo-argocd-pinniped-controller/src/bin/**
-/daytwo-argocd-pinniped-controller/src/obj/**
-/daytwo-argocd-register-controller/src/.vs/**
-/daytwo-argocd-register-controller/src/bin/**
-/daytwo-argocd-register-controller/src/obj/**
