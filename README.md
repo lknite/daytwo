@@ -66,6 +66,7 @@ In one step, copying a clusterapi resource file to git, cause a cluster to be de
 ## example helm values file
 ```
 daytwo:
+
   argocd-register-controller:
 
     managementClusters: "root"
