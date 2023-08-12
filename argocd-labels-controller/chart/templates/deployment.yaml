@@ -24,7 +24,9 @@ spec:
         resources: {}
         env:
         - name: MANAGEMENT_CLUSTERS
-          value: {{ .Values.labels.managementClusters }}
+          value: {{ .Values.managementClusters }}
+        - name: ARGOCD_NAMESPACE
+          value: {{ .Values.argocdNamespace }}
         {{- if .Values.env }}
         {{- include "common.tplvalues.render" (dict "value" .Values.env "context" $) | nindent 8 }}
         {{- end }}

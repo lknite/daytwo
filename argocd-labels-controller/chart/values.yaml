@@ -18,14 +18,13 @@ image:
   tag: latest
   pullPolicy: Always
 
-labels:
-  ## @param managementCluster Comma separated list of names of clusterapi servers
-  ##
-  managementClusters: ""
+## @param managementCluster Comma separated list of names of clusterapi servers
+##
+managementClusters: ""
 
-  ## @param argocdNamespace Used if targeting an argocd installation in an alternative namespace
-  ##
-  argocdNamespace: "argocd"
+## @param argocdNamespace Used if targeting an argocd installation in an alternative namespace
+##
+argocdNamespace: "argocd"
 
 ## @param extraVolumes Optionally specify extra list of additional volumes
 ##
