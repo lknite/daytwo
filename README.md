@@ -59,9 +59,7 @@ In one step, copying a clusterapi resource file to git, cause a cluster to be de
 ## getting started
 - helm repo add lknite https://lknite.github.io/charts
 - helm repo update lknite
-- helm install argocd-register-controller
-- helm install argocd-labels-controller
-- helm install argocd-pinniped-controller
+- helm install lknite/daytwo
 
 ## example helm values file
 ```
