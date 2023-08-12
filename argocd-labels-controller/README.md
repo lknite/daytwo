@@ -15,7 +15,7 @@
 ## installation ##
 - helm repo add lknite https://lknite.github.io/charts
 - helm repo update lknite
-- helm install argocd-labels-controller
+- helm install lknite/argocd-labels-controller
 
 ## configuration environment variables ##
 
