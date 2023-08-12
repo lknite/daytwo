@@ -32,7 +32,7 @@ environment always matches what is in git.
 In one step, copy a clusterapi resource file to git, watch as a cluster is deployed, addons are installed, and pinniped kubeconfig files are generated automatically.  Authentication via pinniped and authorization via rbac means the cluster is ready to be used without any additional interaction other than dropping the cluster resource into git.
 
 - place clusterapi cluster.yaml into a git repo
-- use argocd to automatically apply the folder containing all cluster yaml file
+- setup argocd to automatically apply the folder containing all cluster yaml file
 - register-controller will detect cluster and automatically register it with argocd
 - labels-controller will copy all labels from the cluster resource to the argocd cluster secret
 - use argocd applicationsets to install addons automatically by using matchLabel to match labels copied from the cluster resource
