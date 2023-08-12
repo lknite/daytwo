@@ -2,7 +2,6 @@
 
 ## features ##
 - adds/updates argocd secrets automatically in response to new clusters provisioned via clusterapi
-- event driven
 - able to watch multiple management clusters
   - mangement clusters must have different names
   - able to handle workload clusters having the same name on different management servers
