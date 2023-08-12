@@ -65,49 +65,50 @@ In one step, copying a clusterapi resource file to git, cause a cluster to be de
 
 ## example helm values file
 ```
-argocd-register-controller:
+daytwo:
+  argocd-register-controller:
 
-  managementClusters: "root"
-  argocdServerUri: "argocd.root.k.home.net"
-  argocdInsecureSkipTlsVerify: "true"
+    managementClusters: "root"
+    argocdServerUri: "argocd.root.k.home.net"
+    argocdInsecureSkipTlsVerify: "true"
 
-argocd-labels-controller:
+  argocd-labels-controller:
 
-  managementClusters: "root"
+    managementClusters: "root"
 
-argocd-pinniped-controller:
+  argocd-pinniped-controller:
 
-  requiredLabel: "addons-pinniped-concierge"
+    requiredLabel: "addons-pinniped-concierge"
 
-  env:
-  - name: PINNIPED_OIDC_ISSUER
-    value: "https://keycloak.vc-prod.k.home.net/realms/home.net"
-  - name: PINNIPED_OIDC_CLIENT_ID
-    value: "kubernetes"
-  - name: PINNIPED_OIDC_SCOPES
-    value: "openid,email,profile,offline_access"
-  - name: PINNIPED_CONCIERGE_AUTHENTICATOR_NAME
-    value: "oidc-config"
-  - name: PINNIPED_CONCIERGE_AUTHENTICATOR_TYPE
-    value: "jwt"
-  - name: PINNIPED_SKIP_VALIDATION
-    value: "true"
+    env:
+    - name: PINNIPED_OIDC_ISSUER
+      value: "https://keycloak.vc-prod.k.home.net/realms/home.net"
+    - name: PINNIPED_OIDC_CLIENT_ID
+      value: "kubernetes"
+    - name: PINNIPED_OIDC_SCOPES
+      value: "openid,email,profile,offline_access"
+    - name: PINNIPED_CONCIERGE_AUTHENTICATOR_NAME
+      value: "oidc-config"
+    - name: PINNIPED_CONCIERGE_AUTHENTICATOR_TYPE
+      value: "jwt"
+    - name: PINNIPED_SKIP_VALIDATION
+      value: "true"
 
-  persistence:
-    enabled: true
-    storageClass: cephfs
-    accessModes:
-    - ReadWriteMany
+    persistence:
+      enabled: true
+      storageClass: cephfs
+      accessModes:
+      - ReadWriteMany
 
-  ingress:
-    enabled: true
-    ingressClassName: nginx
-    hostname: pinniped.root.k.home.net
-    tls: true
-    annotations:
-      cert-manager.io/issuer: "cluster-adcs-issuer" #use specific name of issuer
-      cert-manager.io/issuer-kind: "ClusterAdcsIssuer" #or AdcsClusterIssuer
-      cert-manager.io/issuer-group: "adcs.certmanager.csf.nokia.com"
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      hostname: pinniped.root.k.home.net
+      tls: true
+      annotations:
+        cert-manager.io/issuer: "cluster-adcs-issuer" #use specific name of issuer
+        cert-manager.io/issuer-kind: "ClusterAdcsIssuer" #or AdcsClusterIssuer
+        cert-manager.io/issuer-group: "adcs.certmanager.csf.nokia.com"
 ```
 
 ## reference ##
