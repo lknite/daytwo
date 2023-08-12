@@ -23,12 +23,14 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         resources: {}
         env:
+        - name: ARGOCD_NAMESPACE
+          value: {{ .Values.argocdNamespace }}
         - name: INSTALL_VERSION
-          value: "{{ .Values.pinniped.pinnipedVersion }}"
+          value: "{{ .Values.pinnipedVersion }}"
         - name: REQUIRED_LABEL
-          value: "{{ .Values.pinniped.requiredLabel }}"
+          value: "{{ .Values.requiredLabel }}"
         - name: ENABLE_INDEX
-          value: "{{ .Values.pinniped.enableIndex }}"
+          value: "{{ .Values.enableIndex }}"
         {{- if .Values.env }}
         {{- include "common.tplvalues.render" (dict "value" .Values.env "context" $) | nindent 8 }}
         {{- end }}
