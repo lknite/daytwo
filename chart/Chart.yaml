@@ -24,7 +24,7 @@ appVersion: "0.1.0"
 
 dependencies:
 - name: argocd-register-controller
-  version: 0.0.22
+  version: 0.0.23
   repository: https://lknite.github.io/charts
 - name: argocd-pinniped-controller
   version: 0.0.23
