@@ -67,7 +67,7 @@ namespace daytwo
 
             // sync everything at the specified interval, needed in case:
             // - a delete event was missed
-            // - provider modify event will cause pinniped kubeconfig generation but pinniped may not be ready
+            // - provider modify event will cause kasten kubeconfig generation but kasten may not be ready
             //secretController.Intermittent(1 * 60);
             // instantly perform work in response to events
             //secretController.Listen();

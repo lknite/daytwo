@@ -86,7 +86,7 @@ namespace gge.K8sControllers
             try
             {
                 //**
-                // add pinniped secrets
+                // add kasten secrets
 
                 // acquire list of all arogcd secrets
                 V1SecretList list = await kubeclient.ListNamespacedSecretAsync(Globals.service.argocdNamespace);
@@ -113,14 +113,15 @@ namespace gge.K8sControllers
                         }
                     }
 
-                    // attempt to add pinniped kubeconfig
-                    await ProcessAdded(item);
+                    // attempt to add kasten kubeconfig
+                    //await ProcessAdded(item);
                 }
 
+                /*
                 //**
-                // remove pinniped secrets
+                // remove kasten secrets
 
-                // check if existing pinniped secrets have a matching secret
+                // check if existing kasten secrets have a matching secret
                 bool found = false;
                 if (Directory.Exists("/opt/www"))
                 {
@@ -132,7 +133,7 @@ namespace gge.K8sControllers
                         //Globals.log.LogInformation("{0}", file);
                         string[] parts = file.Split('/');
 
-                        // does this pinniped kubeconfig match up with an existing cluster?
+                        // does this kasten kubeconfig match up with an existing cluster?
                         found = false;
                         foreach (V1Secret secret in list)
                         {
@@ -180,14 +181,15 @@ namespace gge.K8sControllers
                             }
                         }
 
-                        // if not, then remove stale pinniped kubeconfig
+                        // if not, then remove stale kasten kubeconfig
                         if (!found)
                         {
-                            Globals.log.LogInformation($"Removing stale pinniped kubeconfig: {file}");
+                            Globals.log.LogInformation($"Removing stale kasten kubeconfig: {file}");
                             File.Delete(file);
                         }
                     }
                 }
+                */
             }
             catch (Exception ex)
             {
@@ -319,10 +321,10 @@ namespace gge.K8sControllers
                 Globals.log.LogInformation($"syncing argocd cluster secret: {managementCluster}/{workloadCluster}");
             }
 
-            // Check if we already created a pinniped config from this argocd cluster secret
+            // Check if we already created a kasten config from this argocd cluster secret
             if (File.Exists($"/opt/www/{managementCluster}/{workloadCluster}/resourceVersion-{resourceVersion}"))
             {
-                Globals.log.LogInformation("- pinniped kubeconfig is up-to-date");
+                Globals.log.LogInformation("- kasten kubeconfig is up-to-date");
                 return;
             }
 
@@ -335,16 +337,16 @@ namespace gge.K8sControllers
             File.WriteAllText("/tmp/tmpkubeconfig", json);
             //File.WriteAllText($"/tmp/{workloadCluster}.conf", json);
 
-            // generate pinniped kubeconfig
-            Globals.log.LogInformation("- generate pinniped kubeconfig");
+            // generate kasten kubeconfig
+            Globals.log.LogInformation("- generate kasten kubeconfig");
             var p = new Process
             {
                 StartInfo = {
-                // pinniped get kubeconfig --kubeconfig /tmp/kubeconfig
+                // kasten get kubeconfig --kubeconfig /tmp/kubeconfig
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 RedirectStandardOutput = true,
-                FileName = "/usr/local/bin/pinniped",
+                FileName = "/usr/local/bin/kasten",
                 WorkingDirectory = @"/tmp",
                 Arguments = "get kubeconfig"
                     + " --kubeconfig /tmp/tmpkubeconfig"
@@ -354,8 +356,8 @@ namespace gge.K8sControllers
             // append whatever parameters are passed in via environment variables
             foreach (string key in Environment.GetEnvironmentVariables().Keys)
             {
-                // check if this is a pinniped parameter
-                if (key.StartsWith("PINNIPED_"))
+                // check if this is a kasten parameter
+                if (key.StartsWith("kasten_"))
                 {
                     string name = key.Substring(9).ToLower().Replace("_", "-");
                     string value = string.Empty;
@@ -386,7 +388,7 @@ namespace gge.K8sControllers
             // if there was an error, we stop here
             if (p.ExitCode != 0)
             {
-                Globals.log.LogInformation($"- error generating pinniped kubeconfig (is pinniped-concierge installed and running?)");
+                Globals.log.LogInformation($"- error generating kasten kubeconfig (is kasten-concierge installed and running?)");
 
                 return;
             }
@@ -402,7 +404,7 @@ namespace gge.K8sControllers
             //Globals.log.LogInformation("display output");
             //Globals.log.LogInformation(tmp);
 
-            //Globals.log.LogInformation("after generate pinniped kubeconfig");
+            //Globals.log.LogInformation("after generate kasten kubeconfig");
 
             // debug, show stdout from the command
             //Globals.log.LogInformation("create 'www' folder structure");
@@ -414,10 +416,10 @@ namespace gge.K8sControllers
             //Globals.log.LogInformation("copy to www folder");
             try
             {
-                // write out pinniped kubeconfig
+                // write out kasten kubeconfig
                 File.WriteAllText($"/opt/www/{managementCluster}/{workloadCluster}/kubeconfig", tmp);
 
-                // also write out argocd resourceVersion, use to check for up-to-date pinniped config
+                // also write out argocd resourceVersion, use to check for up-to-date kasten config
                 File.WriteAllText($"/opt/www/{managementCluster}/{workloadCluster}/resourceVersion-{resourceVersion}", "");
             }
             catch (Exception ex)
@@ -429,7 +431,7 @@ namespace gge.K8sControllers
         }
         public async Task ProcessDeleted(V1Secret secret)
         {
-            Globals.log.LogInformation("remove pinniped kubeconfig");
+            Globals.log.LogInformation("remove kasten kubeconfig");
 
             string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
             string workloadCluster = Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length);

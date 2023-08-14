@@ -58,7 +58,7 @@ namespace daytwo.Controllers
                 return Ok();
             }
 
-            // check if existing pinniped secrets have a matching secret
+            // check if existing kasten secrets have a matching secret
             List<string> index = new List<string>();
             if (Directory.Exists("/opt/www"))
             {
