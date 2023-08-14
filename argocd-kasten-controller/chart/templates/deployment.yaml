@@ -29,6 +29,8 @@ spec:
           value: "{{ .Values.k10multiclusterVersion }}"
         - name: REQUIRED_LABEL
           value: "{{ .Values.requiredLabel }}"
+        - name: PRIMARY_CLUSTER
+          value: "{{ .Values.primaryCluster }}"
         {{- if .Values.env }}
         {{- include "common.tplvalues.render" (dict "value" .Values.env "context" $) | nindent 8 }}
         {{- end }}
