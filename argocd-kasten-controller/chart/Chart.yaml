@@ -1,6 +1,6 @@
 apiVersion: v2
 name: argocd-kasten-controller
-description: Automatic pinniped kubeconfig generation via argocd
+description: Automatic kasten multicluster management via argocd
 
 # A chart can be either an 'application' or a 'library' chart.
 #
