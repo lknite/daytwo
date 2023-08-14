@@ -160,6 +160,9 @@ namespace gge.K8sControllers
                             {
                                 continue;
                             }
+
+                            // finished processing secondary
+                            continue;
                         }
                         else
                         {
@@ -171,78 +174,120 @@ namespace gge.K8sControllers
                         Console.WriteLine($"  - k10 cluster not found, todo: register secondary");
                     }
 
-                    // attempt to add kasten kubeconfig
-                    //await ProcessAdded(item);
-                }
 
-                /*
-                //**
-                // remove kasten secrets
+                    /*
+                    PRIMARY_CLUSTER_CONTEXT_NAME=itsku-common-admin
+                    PRIMARY_CLUSTER_NAME=itsku-common
+                    SECONDARY_CLUSTER_CONTEXT_NAME=its-host-non-pinniped
+                    SECONDARY_CLUSTER_NAME=its-host-non
+                    */
+                    //
+                    KubernetesClientConfiguration secondaryk10kubeconfig = Main.BuildConfigFromArgocdSecret(item);
 
-                // check if existing kasten secrets have a matching secret
-                bool found = false;
-                if (Directory.Exists("/opt/www"))
-                {
-                    var files = from file in Directory.EnumerateFiles("/opt/www", "*", SearchOption.AllDirectories) select file;
-                    //Globals.log.LogInformation("Files: {0}", files.Count<string>().ToString());
-                    //Globals.log.LogInformation("List of Files");
-                    foreach (var file in files)
+                    // add secondary cluster
+                    string primaryClusterContextName = k10kubeconfig.CurrentContext;
+                    string primaryClusterName = k10kubeconfig.Host;
+                    string secondaryClusterContextName = secondaryk10kubeconfig.CurrentContext;
+                    string secondaryClusterName = secondaryk10kubeconfig.Host;
+                    var p = new Process
                     {
-                        //Globals.log.LogInformation("{0}", file);
-                        string[] parts = file.Split('/');
+                        StartInfo = {
+                            UseShellExecute = false,
+                            CreateNoWindow = true,
+                            RedirectStandardOutput = true,
+                            FileName = "/usr/local/bin/k10multicluster",
+                            WorkingDirectory = @"/tmp",
+                            Arguments = "bootstrap"
+                                + $" --primary-context={primaryClusterContextName}"
+                                + $" --primary-name={primaryClusterName}"
+                                + $" --secondary-context={secondaryClusterContextName}"
+                                + $" --secondary-name={secondaryClusterName}"
+                                + $" --secondary-cluster-ingress='https://kasten.{clusterName}.k.idaho.gov/k10'"
+                        }
+                    };
 
-                        // does this kasten kubeconfig match up with an existing cluster?
-                        found = false;
-                        foreach (V1Secret secret in list)
+                    Globals.log.LogInformation(p.StartInfo.Arguments);
+                    /*
+                    //
+                    p.Start();
+                    p.WaitForExit();
+
+                    // if there was an error, we stop here
+                    if (p.ExitCode != 0)
+                    {
+                        // add kasten secondary
+                        //await ProcessAdded(item);
+                    }
+                    */
+
+                    /*
+                    //**
+                    // remove kasten secrets
+
+                    // check if existing kasten secrets have a matching secret
+                    bool found = false;
+                    if (Directory.Exists("/opt/www"))
+                    {
+                        var files = from file in Directory.EnumerateFiles("/opt/www", "*", SearchOption.AllDirectories) select file;
+                        //Globals.log.LogInformation("Files: {0}", files.Count<string>().ToString());
+                        //Globals.log.LogInformation("List of Files");
+                        foreach (var file in files)
                         {
-                            //
-                            if (!Main.IsArgocdClusterSecret(secret))
-                            {
-                                continue;
-                            }
+                            //Globals.log.LogInformation("{0}", file);
+                            string[] parts = file.Split('/');
 
-                            // if requiredLabel is defined, only process if is present
-                            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
-                            //        $"REQUIRED_LABEL: {Environment.GetEnvironmentVariable("REQUIRED_LABEL")}");
-                            if ((Environment.GetEnvironmentVariable("REQUIRED_LABEL") != null)
-                                && (Environment.GetEnvironmentVariable("REQUIRED_LABEL").Length > 0))
+                            // does this kasten kubeconfig match up with an existing cluster?
+                            found = false;
+                            foreach (V1Secret secret in list)
                             {
-                                if (secret.GetLabel(Environment.GetEnvironmentVariable("REQUIRED_LABEL")) == null)
+                                //
+                                if (!Main.IsArgocdClusterSecret(secret))
                                 {
-                                    //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
-                                    //        $"missing required label: {Environment.GetEnvironmentVariable("REQUIRED_LABEL")}");
-
                                     continue;
+                                }
+
+                                // if requiredLabel is defined, only process if is present
+                                //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
+                                //        $"REQUIRED_LABEL: {Environment.GetEnvironmentVariable("REQUIRED_LABEL")}");
+                                if ((Environment.GetEnvironmentVariable("REQUIRED_LABEL") != null)
+                                    && (Environment.GetEnvironmentVariable("REQUIRED_LABEL").Length > 0))
+                                {
+                                    if (secret.GetLabel(Environment.GetEnvironmentVariable("REQUIRED_LABEL")) == null)
+                                    {
+                                        //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
+                                        //        $"missing required label: {Environment.GetEnvironmentVariable("REQUIRED_LABEL")}");
+
+                                        continue;
+                                    }
+                                }
+
+                                string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
+                                string workloadCluster = Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length);
+
+                                if (managementCluster == null)
+                                {
+                                    managementCluster = "tmp";
+                                }
+
+                                //Globals.log.LogInformation($"parts[3]: {parts[3]}");
+                                //Globals.log.LogInformation($"parts[4]: {parts[4]}");
+                                if ((managementCluster == parts[3]) && (workloadCluster == parts[4]))
+                                {
+                                    found = true;
+                                    break;
                                 }
                             }
 
-                            string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
-                            string workloadCluster = Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length);
-
-                            if (managementCluster == null)
+                            // if not, then remove stale kasten kubeconfig
+                            if (!found)
                             {
-                                managementCluster = "tmp";
+                                Globals.log.LogInformation($"Removing stale kasten kubeconfig: {file}");
+                                File.Delete(file);
                             }
-
-                            //Globals.log.LogInformation($"parts[3]: {parts[3]}");
-                            //Globals.log.LogInformation($"parts[4]: {parts[4]}");
-                            if ((managementCluster == parts[3]) && (workloadCluster == parts[4]))
-                            {
-                                found = true;
-                                break;
-                            }
-                        }
-
-                        // if not, then remove stale kasten kubeconfig
-                        if (!found)
-                        {
-                            Globals.log.LogInformation($"Removing stale kasten kubeconfig: {file}");
-                            File.Delete(file);
                         }
                     }
+                    */
                 }
-                */
-            }
             catch (Exception ex)
             {
                 Globals.log.LogInformation($"{ex.Message}", ex);
