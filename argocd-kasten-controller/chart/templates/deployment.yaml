@@ -3,22 +3,22 @@ kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    app: {{.Release.Name}}-pinniped-controller
-  name: {{.Release.Name}}-pinniped-controller
+    app: {{.Release.Name}}-kasten-controller
+  name: {{.Release.Name}}-kasten-controller
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{.Release.Name}}-pinniped-controller
+      app: {{.Release.Name}}-kasten-controller
   strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
-        app: {{.Release.Name}}-pinniped-controller
+        app: {{.Release.Name}}-kasten-controller
     spec:
       containers:
-      - name: {{.Release.Name}}-pinniped-controller
+      - name: {{.Release.Name}}-kasten-controller
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         resources: {}
@@ -26,27 +26,18 @@ spec:
         - name: ARGOCD_NAMESPACE
           value: {{ .Values.argocdNamespace }}
         - name: INSTALL_VERSION
-          value: "{{ .Values.pinnipedVersion }}"
+          value: "{{ .Values.k10multiclusterVersion }}"
         - name: REQUIRED_LABEL
           value: "{{ .Values.requiredLabel }}"
-        - name: ENABLE_INDEX
-          value: "{{ .Values.enableIndex }}"
         {{- if .Values.env }}
         {{- include "common.tplvalues.render" (dict "value" .Values.env "context" $) | nindent 8 }}
         {{- end }}
-        {{- if .Values.persistence.enabled }}
+        {{- if .Values.extraVolumeMounts }}
         volumeMounts:
-          - name: {{.Release.Name}}-pinniped
-            mountPath: /opt/www
-          {{- if .Values.extraVolumeMounts }}
           {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
-          {{- end }}
         {{- end }}
+      {{- if .Values.extraVolumes }}
       volumes:
-        - name: {{.Release.Name}}-pinniped
-          persistentVolumeClaim:
-            claimName: {{.Release.Name}}-pinniped
-        {{- if .Values.extraVolumes }}
         {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumes "context" $) | nindent 8 }}
-        {{- end }}
+      {{- end }}
 status: {}
