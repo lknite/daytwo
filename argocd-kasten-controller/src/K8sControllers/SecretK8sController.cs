@@ -154,15 +154,11 @@ namespace gge.K8sControllers
                         string? label = cluster.GetLabel("dist.kio.kasten.io/cluster-type");
                         if (label != null)
                         {
-                            Console.WriteLine($"  - k10 cluster found: {item.Name} ({label})");
+                            Console.WriteLine($"  - k10 cluster found: {clusterName} ({label})");
 
                             if (label == "primary")
                             {
-                                Console.WriteLine($"    - is primary");
-                            }
-                            else
-                            {
-                                Console.WriteLine($"    - is secondary");
+                                continue;
                             }
                         }
                         else
