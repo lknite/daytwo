@@ -220,16 +220,34 @@ namespace gge.K8sControllers
                         }
                     };
 
-                    Globals.log.LogInformation(p.StartInfo.Arguments);
-                    //
-                    p.Start();
-                    p.WaitForExit();
-
-                    // if there was an error, we stop here
-                    if (p.ExitCode != 0)
+                    try
                     {
-                        // add kasten secondary
-                        //await ProcessAdded(item);
+                        Globals.log.LogInformation(p.StartInfo.Arguments);
+                        //
+                        p.Start();
+                        p.WaitForExit();
+
+                        // if there was an error, we stop here
+                        if (p.ExitCode != 0)
+                        {
+                            // add kasten secondary
+                            //await ProcessAdded(item);
+                        }
+
+                        // capture output
+                        string tmp = "";
+                        //Globals.log.LogInformation("parse output");
+                        while (!p.StandardOutput.EndOfStream)
+                        {
+                            tmp += p.StandardOutput.ReadLine();
+                            tmp += "\n";
+                        }
+                        Globals.log.LogInformation("output:");
+                        Globals.log.LogInformation(tmp);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("ex: " + ex.Message);
                     }
 
                     /*
