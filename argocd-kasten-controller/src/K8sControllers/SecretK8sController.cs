@@ -115,7 +115,7 @@ namespace gge.K8sControllers
             try
             {
                 //**
-                // add kasten secrets
+                // add kasten secondaries
 
                 // acquire list of all arogcd secrets
                 V1SecretList list = await kubeclient.ListNamespacedSecretAsync(Globals.service.argocdNamespace);
@@ -140,6 +140,39 @@ namespace gge.K8sControllers
 
                             continue;
                         }
+                    }
+
+                    // is there a k10 cluster resouce for this cluster?
+                    string clusterName = Encoding.UTF8.GetString(item.Data["name"]);
+                    try
+                    {
+                        CrdK10Cluster cluster = await gk10.ReadNamespacedAsync<CrdK10Cluster>(
+                                "kasten-io-mc", clusterName);
+
+                        // skip if this is the primary
+                        string? label = item.GetLabel("dist.kio.kasten.io/cluster-type");
+                        if (label != null)
+                        {
+                            Console.WriteLine($"registered found: {item.Name} ({label})");
+
+                            if (label == "primary")
+                            {
+                                Console.WriteLine($"- is primary");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"- is secondary");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"unregistered secondary: {item.Name}");
+                        }
+                    }
+                    catch
+                    {
+                        Console.WriteLine("ex, secondary cluster not found");
+                        Console.WriteLine($"register secondary cluster: {clusterName}");
                     }
 
                     // attempt to add kasten kubeconfig
