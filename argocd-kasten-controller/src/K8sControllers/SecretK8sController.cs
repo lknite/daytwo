@@ -154,7 +154,7 @@ namespace gge.K8sControllers
                         string? label = cluster.GetLabel("dist.kio.kasten.io/cluster-type");
                         if (label != null)
                         {
-                            Console.WriteLine($"  - k10 cluster found: {clusterName} ({label})");
+                            Console.WriteLine($"  - k10 cluster found ({label})");
 
                             if (label == "primary")
                             {
@@ -168,7 +168,7 @@ namespace gge.K8sControllers
                     }
                     catch
                     {
-                        Console.WriteLine($"  - k10 cluster not found: {clusterName}, todo: register secondary");
+                        Console.WriteLine($"  - k10 cluster not found, todo: register secondary");
                     }
 
                     // attempt to add kasten kubeconfig
