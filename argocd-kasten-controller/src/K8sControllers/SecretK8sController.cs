@@ -19,6 +19,7 @@ using System.Net.Sockets;
 using System.Diagnostics;
 using daytwo.Helpers;
 using Microsoft.Win32;
+using daytwo.crd.K10Cluster;
 
 namespace gge.K8sControllers
 {
@@ -84,7 +85,24 @@ namespace gge.K8sControllers
             semaphore.Wait(Globals.cancellationToken);
 
             // Check if primary cluster is configured
+            GenericClient gk10 = new GenericClient(
+                    kubeclient,
+                    "dist.kio.kasten.io",
+                    "v1alpha1",
+                    "clusters");
             Console.WriteLine($"Primary Cluster: {Environment.GetEnvironmentVariable("PRIMARY_CLUSTER")}");
+            try
+            {
+                CrdK10Cluster primary = await gk10.ReadNamespacedAsync<CrdK10Cluster>("kasten-io-mc", Environment.GetEnvironmentVariable("PRIMARY_CLUSTER"));
+                if (primary == null)
+                {
+                    Console.WriteLine("null, primary not found");
+                }
+            }
+            catch
+            {
+                Console.WriteLine("ex, primary not found");
+            }
 
             try
             {
