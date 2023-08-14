@@ -172,7 +172,7 @@ namespace gge.K8sControllers
                     }
                     catch
                     {
-                        Console.WriteLine($"  - k10 cluster not found: {clusterName}");
+                        Console.WriteLine($"  - k10 cluster not found: {clusterName}, todo: register secondary");
                     }
 
                     // attempt to add kasten kubeconfig
