@@ -151,7 +151,7 @@ namespace gge.K8sControllers
                                 "kasten-io-mc", clusterName);
 
                         // skip if this is the primary
-                        string? label = item.GetLabel("dist.kio.kasten.io/cluster-type");
+                        string? label = cluster.GetLabel("dist.kio.kasten.io/cluster-type");
                         if (label != null)
                         {
                             Console.WriteLine($"  - k10 cluster found: {item.Name} ({label})");
