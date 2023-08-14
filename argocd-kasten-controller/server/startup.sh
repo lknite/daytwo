@@ -6,7 +6,7 @@ if [ ! -f /usr/local/bin/k10multicluster ]; then
 
   pushd /tmp > /dev/null
   curl -LOs https://github.com/kastenhq/external-tools/releases/download/${INSTALL_VERSION}/k10multicluster_${INSTALL_VERSION}_linux_amd64.tar.gz --insecure && \
-	  tar zxvf k10multicluster_${INSTALL_VERSION}_linux_amd64.tar.gz && \
+	  tar zxvf k10multicluster_${INSTALL_VERSION}_linux_amd64.tar.gz > /dev/null && \
     chmod +x k10multicluster && \
     mv k10multicluster /usr/local/bin/k10multicluster
   popd > /dev/null
