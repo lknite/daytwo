@@ -220,7 +220,6 @@ namespace gge.K8sControllers
                     };
 
                     Globals.log.LogInformation(p.StartInfo.Arguments);
-                    /*
                     //
                     p.Start();
                     p.WaitForExit();
@@ -231,7 +230,6 @@ namespace gge.K8sControllers
                         // add kasten secondary
                         //await ProcessAdded(item);
                     }
-                    */
 
                     /*
                     //**
