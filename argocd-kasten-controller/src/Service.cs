@@ -23,6 +23,7 @@ namespace daytwo
             // Check for required environment variable(s)
             List<string> required = new List<string>();
             required.Add("INSTALL_VERSION");
+            required.Add("PRIMARY_CLUSTER");
             foreach (string req in required)
             {
                 if (Environment.GetEnvironmentVariable(req) == null)
