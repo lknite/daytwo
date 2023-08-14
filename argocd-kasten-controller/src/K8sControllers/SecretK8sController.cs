@@ -83,6 +83,9 @@ namespace gge.K8sControllers
             // Acquire Semaphore
             semaphore.Wait(Globals.cancellationToken);
 
+            // Check if primary cluster is configured
+            Console.WriteLine($"Primary Cluster: {Environment.GetEnvironmentVariable("PRIMARY_CLUSTER")}");
+
             try
             {
                 //**
