@@ -330,6 +330,7 @@ namespace gge.K8sControllers
         }
         public async Task ProcessModified(V1Secret secret)
         {
+            /*
             string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
             string workloadCluster = Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length);
             string resourceVersion = secret.Metadata.ResourceVersion;
@@ -449,6 +450,7 @@ namespace gge.K8sControllers
             {
                 Globals.log.LogInformation(ex.ToString());
             }
+            */
 
             return;
         }
