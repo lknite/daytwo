@@ -456,6 +456,7 @@ namespace gge.K8sControllers
         }
         public async Task ProcessDeleted(V1Secret secret)
         {
+            /*
             Globals.log.LogInformation("remove kasten kubeconfig");
 
             string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
@@ -467,6 +468,7 @@ namespace gge.K8sControllers
             }
 
             File.Delete($"/opt/www/{managementCluster}/{workloadCluster}/kubeconfig");
+            */
 
             return;
         }
