@@ -1,3 +1,6 @@
+/argocd-kasten-controller/src/.vs/**
+/argocd-kasten-controller/src/bin/**
+/argocd-kasten-controller/src/obj/**
 /argocd-labels-controller/src/.vs/**
 /argocd-labels-controller/src/bin/**
 /argocd-labels-controller/src/obj/**
