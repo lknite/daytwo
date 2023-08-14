@@ -192,9 +192,9 @@ namespace gge.K8sControllers
                     File.WriteAllText("/tmp/secondary.conf", output);
 
                     // add secondary cluster
-                    string primaryClusterContextName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER") + "-admin";
+                    string primaryClusterContextName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER");
                     string primaryClusterName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER");
-                    string secondaryClusterContextName = clusterName + "-admin";
+                    string secondaryClusterContextName = clusterName;
                     string secondaryClusterName = clusterName;
                     var p = new Process
                     {
