@@ -20,11 +20,9 @@ namespace daytwo
 
         public Service()
         {
-            /*
             // Check for required environment variable(s)
             List<string> required = new List<string>();
-            required.Add("MANAGEMENT_CLUSTERS");
-            required.Add("ARGOCD_AUTH_TOKEN");
+            required.Add("INSTALL_VERSION");
             foreach (string req in required)
             {
                 if (Environment.GetEnvironmentVariable(req) == null)
@@ -32,7 +30,6 @@ namespace daytwo
                     throw new Exception("Missing required environment variable: '" + req + "'");
                 }
             }
-            */
 
             // If argocd namespace is specified via environment variable then set here
             if (Environment.GetEnvironmentVariable("ARGOCD_NAMESPACE") != null)
