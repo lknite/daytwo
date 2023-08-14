@@ -101,15 +101,15 @@ namespace gge.K8sControllers
                     "dist.kio.kasten.io",
                     "v1alpha1",
                     "clusters");
-            Console.WriteLine($"Primary Cluster: {Environment.GetEnvironmentVariable("PRIMARY_CLUSTER")}");
+            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), $"Primary Cluster: {Environment.GetEnvironmentVariable("PRIMARY_CLUSTER")}");
             try
             {
                 CrdK10Cluster primary = await gk10.ReadNamespacedAsync<CrdK10Cluster>("kasten-io-mc", Environment.GetEnvironmentVariable("PRIMARY_CLUSTER"));
             }
             catch
             {
-                Console.WriteLine("ex, primary not found");
-                Console.WriteLine("register primary");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "ex, primary not found");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "register primary");
             }
 
             try
@@ -144,7 +144,7 @@ namespace gge.K8sControllers
 
                     // is there a k10 cluster resouce for this cluster?
                     string clusterName = Encoding.UTF8.GetString(item.Data["name"]);
-                    Console.WriteLine($"- {clusterName}");
+                    //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), $"- {clusterName}");
                     try
                     {
                         CrdK10Cluster cluster = await gk10.ReadNamespacedAsync<CrdK10Cluster>(
@@ -154,7 +154,8 @@ namespace gge.K8sControllers
                         string? label = cluster.GetLabel("dist.kio.kasten.io/cluster-type");
                         if (label != null)
                         {
-                            Console.WriteLine($"  - k10 cluster found ({label})");
+                            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), $"  - k10 cluster found ({label})");
+                            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), $"- {clusterName}: k10 cluster found ({label})");
 
                             if (label == "primary")
                             {
@@ -166,21 +167,16 @@ namespace gge.K8sControllers
                         }
                         else
                         {
-                            Console.WriteLine($"  - cluster-type label not found");
+                            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), $"  - cluster-type label not found");
                         }
                     }
                     catch
                     {
-                        Console.WriteLine($"  - k10 cluster not found, todo: register secondary");
+                        //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), $"  - k10 cluster not found, todo: register secondary");
+                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), $"- {clusterName}: k10 cluster not found");
                     }
 
 
-                    /*
-                    PRIMARY_CLUSTER_CONTEXT_NAME=itsku-common-admin
-                    PRIMARY_CLUSTER_NAME=itsku-common
-                    SECONDARY_CLUSTER_CONTEXT_NAME=its-host-non-pinniped
-                    SECONDARY_CLUSTER_NAME=its-host-non
-                    */
                     //
                     KubernetesClientConfiguration secondaryk10kubeconfig = Main.BuildConfigFromArgocdSecret(item);
 
@@ -247,7 +243,7 @@ namespace gge.K8sControllers
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("ex: " + ex.Message);
+                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "ex: " + ex.Message);
                     }
 
                     /*
