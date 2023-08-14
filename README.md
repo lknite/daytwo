@@ -28,21 +28,20 @@ environment always matches what is in git.
   - watches for registered argocd clusters and updates pinniped kubeconfig files (adds & removes)
   - hosts a website which can be used to access the pinniped kubeconfig files
 
-## intended use
-In one step, copying a clusterapi resource file to git, cause a cluster to be deployed, addons installed, enable authentication via pinniped, and authorization via rbac.
+## usage
+In one step, copy a clusterapi resource file to git, watch as a cluster is deployed, addons are installed, and pinniped kubeconfig files are generated automatically.  Authentication via pinniped and authorization via rbac means the cluster is ready to be used without any additional interaction other than dropping the cluster resource into git.
 
 - place clusterapi cluster.yaml into a git repo
-- use argocd to automatically apply the folder containing all cluster yaml file
+- setup argocd to automatically apply the folder containing all cluster yaml file
 - register-controller will detect cluster and automatically register it with argocd
-- register-controller will also copy all labels from the cluster resource to the argocd cluster secret
+- labels-controller will copy all labels from the cluster resource to the argocd cluster secret
 - use argocd applicationsets to install addons automatically by using matchLabel to match labels copied from the cluster resource
-  - labels such as: addons-cert-manager, addons-fluent-bit, addons-pinniped-concierge, addons-pinniped-www, addons-rbac
-- this will cause "pinniped-concierge" & "pinniped-www" to be installed to each registered cluster
+  - labels such as: addons-cert-manager, addons-fluent-bit, addons-pinniped-concierge, addons-rbac
+- this will cause each addons, e.g. "pinniped-concierge" & "addons-rbac", to be installed to each registered cluster
 - pinniped-controller will watch argocd secrets and generate a pinniped kubeconfig automatically
-- pinniped-controller also hosts a website to access the pinniped kubeconfig files it generates
+- pinniped-controller hosts a website where pinniped kubeconfig files can be accessed, e.g.:
   - pinniped.svc/\<mangementCluster\>/\<workloadCluster\>/kubeconfig
   - pinniped.svc/ returns a JSON formatted list of available kubeconfig files (enabled by default, index can be disabled via environment variable)
-- pinniped-www deployed to each cluster allows a cluster-specific url to access the kubeconfig file hosted on the pinniped controller
 
 ## development
 | status  | controller                            | detail                                  |
@@ -51,7 +50,6 @@ In one step, copying a clusterapi resource file to git, cause a cluster to be de
 | alpha   | [argocd-labels-controller](https://github.com/lknite/daytwo/tree/main/argocd-labels-controller)     | todo: code cleanup, testing, add additional providers |
 | alpha   | [argocd-pinniped-controller](https://github.com/lknite/daytwo/tree/main/argocd-pinniped-controller)     | todo: code cleanup, testing |
 | alpha   | [helm charts](https://lknite.github.io/charts) | images pushed to [docker.io](https://hub.docker.com/repositories/lknite) |
-| dev     | one install all helm chart | create single helm chart to install all |
 | todo    | pinniped-www | |
 | todo    | move to github actions     |                                         |
 | todo    | rewrite using go      |                                         |
@@ -59,9 +57,56 @@ In one step, copying a clusterapi resource file to git, cause a cluster to be de
 ## getting started
 - helm repo add lknite https://lknite.github.io/charts
 - helm repo update lknite
-- helm install argocd-register-controller
-- helm install argocd-labels-controller
-- helm install argocd-pinniped-controller
+- helm install lknite/daytwo
+
+## example helm values file
+```
+daytwo:
+
+  argocd-register-controller:
+
+    managementClusters: "root"
+    argocdServerUri: "argocd.root.k.home.net"
+    argocdInsecureSkipTlsVerify: "true"
+
+  argocd-labels-controller:
+
+    managementClusters: "root"
+
+  argocd-pinniped-controller:
+
+    requiredLabel: "addons-pinniped-concierge"
+
+    env:
+    - name: PINNIPED_OIDC_ISSUER
+      value: "https://keycloak.vc-prod.k.home.net/realms/home.net"
+    - name: PINNIPED_OIDC_CLIENT_ID
+      value: "kubernetes"
+    - name: PINNIPED_OIDC_SCOPES
+      value: "openid,email,profile,offline_access"
+    - name: PINNIPED_CONCIERGE_AUTHENTICATOR_NAME
+      value: "oidc-config"
+    - name: PINNIPED_CONCIERGE_AUTHENTICATOR_TYPE
+      value: "jwt"
+    - name: PINNIPED_SKIP_VALIDATION
+      value: "true"
+
+    persistence:
+      enabled: true
+      storageClass: cephfs
+      accessModes:
+      - ReadWriteMany
+
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      hostname: pinniped.root.k.home.net
+      tls: true
+      annotations:
+        cert-manager.io/issuer: "cluster-adcs-issuer" #use specific name of issuer
+        cert-manager.io/issuer-kind: "ClusterAdcsIssuer" #or AdcsClusterIssuer
+        cert-manager.io/issuer-group: "adcs.certmanager.csf.nokia.com"
+```
 
 ## reference ##
 [kubernetes daytwo controllers](https://www.travisloyd.xyz/2023/07/08/kubernetes-daytwo-controllers/)
