@@ -188,7 +188,7 @@ namespace gge.K8sControllers
                     // (todo)
                     string output = Main.SerializeKubernetesClientConfig(k10kubeconfig, Environment.GetEnvironmentVariable("PRIMARY_CLUSTER"));
                     File.WriteAllText("/tmp/primary.conf", output);
-                    output = Main.SerializeKubernetesClientConfig(secondaryk10kubeconfig, Environment.GetEnvironmentVariable("PRIMARY_CLUSTER"));
+                    output = Main.SerializeKubernetesClientConfig(secondaryk10kubeconfig, clusterName);
                     File.WriteAllText("/tmp/secondary.conf", output);
 
                     // get ingress
