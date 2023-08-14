@@ -184,11 +184,14 @@ namespace gge.K8sControllers
                     //
                     KubernetesClientConfiguration secondaryk10kubeconfig = Main.BuildConfigFromArgocdSecret(item);
 
+                    // build up kubeconfig to pass to k10multicluster
+                    // (todo)
+
                     // add secondary cluster
-                    string primaryClusterContextName = k10kubeconfig.CurrentContext;
-                    string primaryClusterName = k10kubeconfig.Host;
-                    string secondaryClusterContextName = secondaryk10kubeconfig.CurrentContext;
-                    string secondaryClusterName = secondaryk10kubeconfig.Host;
+                    string primaryClusterContextName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER") + "-admin";
+                    string primaryClusterName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER");
+                    string secondaryClusterContextName = secondaryk10kubeconfig.CurrentContext + "-admin";
+                    string secondaryClusterName = clusterName;
                     var p = new Process
                     {
                         StartInfo = {
