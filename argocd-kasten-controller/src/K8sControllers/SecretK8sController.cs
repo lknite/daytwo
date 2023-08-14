@@ -84,9 +84,20 @@ namespace gge.K8sControllers
             // Acquire Semaphore
             semaphore.Wait(Globals.cancellationToken);
 
+            // Get kubeconfig of primary cluster
+            V1Secret? k10primary = Main.GetClusterArgocdSecret(Environment.GetEnvironmentVariable("PRIMARY_CLUSTER"));
+            if (k10primary == null)
+            {
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api),
+                        "Unable to load up primary_cluster argocd cluster secret, this needs to already exist, abort");
+                return;
+            }
+            KubernetesClientConfiguration k10kubeconfig = Main.BuildConfigFromArgocdSecret(k10primary);
+            Kubernetes k10kubeclient = new Kubernetes(k10kubeconfig);
+
             // Check if primary cluster is configured
             GenericClient gk10 = new GenericClient(
-                    kubeclient,
+                    k10kubeclient,
                     "dist.kio.kasten.io",
                     "v1alpha1",
                     "clusters");
@@ -94,14 +105,11 @@ namespace gge.K8sControllers
             try
             {
                 CrdK10Cluster primary = await gk10.ReadNamespacedAsync<CrdK10Cluster>("kasten-io-mc", Environment.GetEnvironmentVariable("PRIMARY_CLUSTER"));
-                if (primary == null)
-                {
-                    Console.WriteLine("null, primary not found");
-                }
             }
             catch
             {
                 Console.WriteLine("ex, primary not found");
+                Console.WriteLine("register primary");
             }
 
             try
