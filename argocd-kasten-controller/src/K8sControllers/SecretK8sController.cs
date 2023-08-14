@@ -190,7 +190,7 @@ namespace gge.K8sControllers
                     // add secondary cluster
                     string primaryClusterContextName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER") + "-admin";
                     string primaryClusterName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER");
-                    string secondaryClusterContextName = secondaryk10kubeconfig.CurrentContext + "-admin";
+                    string secondaryClusterContextName = clusterName + "-admin";
                     string secondaryClusterName = clusterName;
                     var p = new Process
                     {
