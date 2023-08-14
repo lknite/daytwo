@@ -288,6 +288,7 @@ namespace gge.K8sControllers
                     }
                     */
                 }
+            }
             catch (Exception ex)
             {
                 Globals.log.LogInformation($"{ex.Message}", ex);
