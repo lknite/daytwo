@@ -216,6 +216,7 @@ namespace gge.K8sControllers
                                 + $" --secondary-context={secondaryClusterContextName}"
                                 + $" --secondary-kubeconfig=/tmp/secondary.conf"
                                 + $" --secondary-cluster-ingress='https://{ingress.Spec.Rules[0].Host}/k10'"
+                                + $" --secondary-cluster-ingress-tls-insecure"
                         }
                     };
 
