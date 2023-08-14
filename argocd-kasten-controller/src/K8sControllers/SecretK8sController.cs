@@ -144,7 +144,7 @@ namespace gge.K8sControllers
 
                     // is there a k10 cluster resouce for this cluster?
                     string clusterName = Encoding.UTF8.GetString(item.Data["name"]);
-                    Console.WriteLine($"Processing cluster: {clusterName}");
+                    Console.WriteLine($"- {clusterName}");
                     try
                     {
                         CrdK10Cluster cluster = await gk10.ReadNamespacedAsync<CrdK10Cluster>(
@@ -154,25 +154,25 @@ namespace gge.K8sControllers
                         string? label = item.GetLabel("dist.kio.kasten.io/cluster-type");
                         if (label != null)
                         {
-                            Console.WriteLine($"- k10 cluster found: {item.Name} ({label})");
+                            Console.WriteLine($"  - k10 cluster found: {item.Name} ({label})");
 
                             if (label == "primary")
                             {
-                                Console.WriteLine($"  - is primary");
+                                Console.WriteLine($"    - is primary");
                             }
                             else
                             {
-                                Console.WriteLine($"  - is secondary");
+                                Console.WriteLine($"    - is secondary");
                             }
                         }
                         else
                         {
-                            Console.WriteLine($"- cluster-type label not found");
+                            Console.WriteLine($"  - cluster-type label not found");
                         }
                     }
                     catch
                     {
-                        Console.WriteLine($"- k10 cluster not found: {clusterName}");
+                        Console.WriteLine($"  - k10 cluster not found: {clusterName}");
                     }
 
                     // attempt to add kasten kubeconfig
