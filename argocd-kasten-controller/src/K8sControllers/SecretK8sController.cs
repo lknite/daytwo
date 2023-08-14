@@ -191,6 +191,10 @@ namespace gge.K8sControllers
                     output = Main.SerializeKubernetesClientConfig(secondaryk10kubeconfig, Environment.GetEnvironmentVariable("PRIMARY_CLUSTER"));
                     File.WriteAllText("/tmp/secondary.conf", output);
 
+                    // get ingress
+                    Kubernetes secondaryk10kubeclient = new Kubernetes(secondaryk10kubeconfig);
+                    V1Ingress ingress = await secondaryk10kubeclient.ReadNamespacedIngressAsync("k10-ingress", "kasten-io");
+
                     // add secondary cluster
                     string primaryClusterContextName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER");
                     string primaryClusterName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER");
@@ -205,13 +209,13 @@ namespace gge.K8sControllers
                             FileName = "/usr/local/bin/k10multicluster",
                             WorkingDirectory = @"/tmp",
                             Arguments = "bootstrap"
-                                + $" --primary-kubeconfig=/tmp/primary.conf"
                                 + $" --primary-name={primaryClusterContextName}"
                                 + $" --primary-context={primaryClusterContextName}"
-                                + $" --secondary-kubeconfig=/tmp/secondary.conf"
+                                + $" --primary-kubeconfig=/tmp/primary.conf"
                                 + $" --secondary-name={secondaryClusterName}"
                                 + $" --secondary-context={secondaryClusterContextName}"
-                                + $" --secondary-cluster-ingress='https://kasten.{clusterName}.k.idaho.gov/k10'"
+                                + $" --secondary-kubeconfig=/tmp/secondary.conf"
+                                + $" --secondary-cluster-ingress='https://{ingress.Spec.Rules[0].Host}/k10'"
                         }
                     };
 
