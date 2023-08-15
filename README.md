@@ -28,6 +28,7 @@ environment always matches what is in git.
   - watches for registered argocd clusters and updates pinniped kubeconfig files (adds & removes)
   - hosts a website which can be used to access the pinniped kubeconfig files
 - [argocd-kasten-controller](https://github.com/lknite/daytwo/tree/main/argocd-kasten-controller)
+  - kasten-controller registers new cluster as part of multicluster backup
 
 ## usage
 In one step, copy a clusterapi resource file to git, watch as a cluster is deployed, addons are installed, and pinniped kubeconfig files are generated automatically.  Authentication via pinniped and authorization via rbac means the cluster is ready to be used without any additional interaction other than dropping the cluster resource into git.
