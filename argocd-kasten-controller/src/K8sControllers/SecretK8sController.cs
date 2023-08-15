@@ -184,75 +184,28 @@ namespace gge.K8sControllers
 
                     // add secondary
                     await AddSecondary(k10kubeconfig, secondaryk10kubeconfig, clusterName);
+                }
 
 
-                    /*
-                    //**
-                    // remove kasten secrets
+                //**
+                // remove kasten secondaries
 
-                    // check if existing kasten secrets have a matching secret
-                    bool found = false;
-                    if (Directory.Exists("/opt/www"))
+                CustomResourceList<CrdK10Cluster> items = await gk10.ListNamespacedAsync<CustomResourceList<CrdK10Cluster>>("kasten-io-mc");
+                foreach (var cluster in items.Items)
+                {
+                    // we have a registered k10 cluster, check if it matches up with an argocd cluster secret
+
+                    // does this registered k10 cluster have an associated argocd cluster secret?
+                    if (Main.GetClusterArgocdSecret(cluster.Name()) != null)
                     {
-                        var files = from file in Directory.EnumerateFiles("/opt/www", "*", SearchOption.AllDirectories) select file;
-                        //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "Files: {0}", files.Count<string>().ToString());
-                        //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "List of Files");
-                        foreach (var file in files)
-                        {
-                            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "{0}", file);
-                            string[] parts = file.Split('/');
-
-                            // does this kasten kubeconfig match up with an existing cluster?
-                            found = false;
-                            foreach (V1Secret secret in list)
-                            {
-                                //
-                                if (!Main.IsArgocdClusterSecret(secret))
-                                {
-                                    continue;
-                                }
-
-                                // if requiredLabel is defined, only process if is present
-                                //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
-                                //        $"REQUIRED_LABEL: {Environment.GetEnvironmentVariable("REQUIRED_LABEL")}");
-                                if ((Environment.GetEnvironmentVariable("REQUIRED_LABEL") != null)
-                                    && (Environment.GetEnvironmentVariable("REQUIRED_LABEL").Length > 0))
-                                {
-                                    if (secret.GetLabel(Environment.GetEnvironmentVariable("REQUIRED_LABEL")) == null)
-                                    {
-                                        //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId),
-                                        //        $"missing required label: {Environment.GetEnvironmentVariable("REQUIRED_LABEL")}");
-
-                                        continue;
-                                    }
-                                }
-
-                                string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
-                                string workloadCluster = Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length);
-
-                                if (managementCluster == null)
-                                {
-                                    managementCluster = "tmp";
-                                }
-
-                                //Globals.log.LogInformation($"parts[3]: {parts[3]}");
-                                //Globals.log.LogInformation($"parts[4]: {parts[4]}");
-                                if ((managementCluster == parts[3]) && (workloadCluster == parts[4]))
-                                {
-                                    found = true;
-                                    break;
-                                }
-                            }
-
-                            // if not, then remove stale kasten kubeconfig
-                            if (!found)
-                            {
-                                Globals.log.LogInformation($"Removing stale kasten kubeconfig: {file}");
-                                File.Delete(file);
-                            }
-                        }
+                        // yes, matching argocd cluster secret found
+                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api),
+                                $"- matching argocd cluster secret found");
+                        continue;
                     }
-                    */
+
+                    // unregister this cluster
+                    RemoveSecondary(k10kubeconfig, cluster.Name());
                 }
             }
             catch (Exception ex)
@@ -289,7 +242,7 @@ namespace gge.K8sControllers
                             FileName = "/usr/local/bin/k10multicluster",
                             WorkingDirectory = @"/tmp",
                             Arguments = "setup-primary"
-                                + $" --name={primaryClusterContextName}"
+                                + $" --name={primaryClusterName}"
                                 + $" --context={primaryClusterContextName}"
                                 + $" --kubeconfig=/tmp/primary.conf"
                         }
@@ -367,7 +320,7 @@ namespace gge.K8sControllers
                             FileName = "/usr/local/bin/k10multicluster",
                             WorkingDirectory = @"/tmp",
                             Arguments = "bootstrap"
-                                + $" --primary-name={primaryClusterContextName}"
+                                + $" --primary-name={primaryClusterName}"
                                 + $" --primary-context={primaryClusterContextName}"
                                 + $" --primary-kubeconfig=/tmp/primary.conf"
                                 + $" --secondary-name={secondaryClusterName}"
@@ -375,6 +328,66 @@ namespace gge.K8sControllers
                                 + $" --secondary-kubeconfig=/tmp/secondary.conf"
                                 + $" --secondary-cluster-ingress=\"https://{ingress.Spec.Rules[0].Host}/k10\""
                                 + $" --secondary-cluster-ingress-tls-insecure"
+                        }
+            };
+
+            try
+            {
+                Globals.log.LogInformation(p.StartInfo.Arguments);
+                //
+                p.Start();
+                p.WaitForExit();
+
+                // if there was an error, we stop here
+                if (p.ExitCode != 0)
+                {
+                    // add kasten secondary
+                    //await ProcessAdded(item);
+                }
+
+                // capture output
+                string tmp = "";
+                //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "parse output");
+                while (!p.StandardOutput.EndOfStream)
+                {
+                    tmp += p.StandardOutput.ReadLine();
+                    tmp += "\n";
+                }
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "output:");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), tmp);
+            }
+            catch (Exception ex)
+            {
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "ex: " + ex.Message);
+            }
+        }
+        public async Task RemoveSecondary(
+                KubernetesClientConfiguration primaryk10kubeconfig,
+                string clusterName
+                )
+        {
+            string output = string.Empty;
+
+            output = Main.SerializeKubernetesClientConfig(primaryk10kubeconfig, Environment.GetEnvironmentVariable("PRIMARY_CLUSTER"));
+            File.WriteAllText("/tmp/primary.conf", output);
+
+            // remove secondary cluster
+            string primaryClusterContextName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER");
+            string primaryClusterName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER");
+            string secondaryClusterName = clusterName;
+            var p = new Process
+            {
+                StartInfo = {
+                            UseShellExecute = false,
+                            CreateNoWindow = true,
+                            RedirectStandardOutput = true,
+                            FileName = "/usr/local/bin/k10multicluster",
+                            WorkingDirectory = @"/tmp",
+                            Arguments = "disconnect"
+                                + $" --primary-name={primaryClusterName}"
+                                + $" --primary-context={primaryClusterContextName}"
+                                + $" --primary-kubeconfig=/tmp/primary.conf"
+                                + $" --secondary-name={secondaryClusterName}"
                         }
             };
 
