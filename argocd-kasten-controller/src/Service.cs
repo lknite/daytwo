@@ -86,8 +86,8 @@ namespace daytwo
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "***");
-            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "* TODO: Clean shutdown");
+            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "***");
+            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "* TODO: Clean shutdown");
 
             return Task.CompletedTask;
         }

@@ -197,7 +197,7 @@ namespace gge.K8sControllers
                     catch
                     {
                         // ingress is required, abandon now if not present
-                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "- ingress not found, skipping");
+                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "- ingress not found, skipping");
                         continue;
                     }
 
