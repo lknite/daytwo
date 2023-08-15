@@ -191,9 +191,10 @@ namespace gge.K8sControllers
                     Globals.log.LogInformation("001");
                     Kubernetes secondaryk10kubeclient = new Kubernetes(secondaryk10kubeconfig);
                     Globals.log.LogInformation("002");
+                    V1Ingress ingress = null;
                     try
                     {
-                        V1Ingress ingress = await secondaryk10kubeclient.ReadNamespacedIngressAsync("k10-ingress", "kasten-io");
+                        ingress = await secondaryk10kubeclient.ReadNamespacedIngressAsync("k10-ingress", "kasten-io");
                     }
                     catch
                     {
