@@ -21,6 +21,7 @@ using daytwo.Helpers;
 using Microsoft.Win32;
 using daytwo.crd.K10Cluster;
 using Json.More;
+using Json.Patch;
 
 namespace gge.K8sControllers
 {
@@ -379,29 +380,24 @@ namespace gge.K8sControllers
                     "clusters");
             try
             {
-                /*
-                // testing access
-                Console.WriteLine("check access ...");
-                CustomResourceList<CrdK10Cluster> items = await gk10.ListNamespacedAsync<CustomResourceList<CrdK10Cluster>>("kasten-io-mc");
-                foreach (var cluster in items.Items)
-                {
-                    Console.WriteLine("- "+ cluster.Name());
-                }
-                */
-
-                // get resource
-                CrdK10Cluster cluster = await gk10.ReadNamespacedAsync<CrdK10Cluster>("kasten-io-mc", clusterName);
-
                 // delete resource
                 await gk10.DeleteNamespacedAsync<CrdK10Cluster>("kasten-io-mc", clusterName);
+
+                // get resource, it will be around because finalizers need to be removed
+                CrdK10Cluster cluster = await gk10.ReadNamespacedAsync<CrdK10Cluster>("kasten-io-mc", clusterName);
+
+                // save state before making changes to resource
+                var before = JsonSerializer.SerializeToDocument(cluster);
 
                 // delete resource finalizers
                 cluster.Finalizers().Clear();
 
+                // generate json patch
+                var patch = before.CreatePatch(cluster);
+
                 // update resource, now without finalizers
                 await gk10.PatchNamespacedAsync<CrdK10Cluster>(
-                    new V1Patch(cluster.Metadata, V1Patch.PatchType.MergePatch), "kasten-io-mc", clusterName);
-
+                    new V1Patch(patch, V1Patch.PatchType.JsonPatch), "kasten-io-mc", clusterName);
             }
             catch (Exception ex)
             {
