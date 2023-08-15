@@ -318,7 +318,7 @@ namespace gge.K8sControllers
                     tmp += "\n";
                 }
                 Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "output:");
-                Globals.log.LogInformation(tmp);
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), tmp);
             }
             catch (Exception ex)
             {
@@ -401,7 +401,7 @@ namespace gge.K8sControllers
                     tmp += "\n";
                 }
                 Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "output:");
-                Globals.log.LogInformation(tmp);
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), tmp);
             }
             catch (Exception ex)
             {
