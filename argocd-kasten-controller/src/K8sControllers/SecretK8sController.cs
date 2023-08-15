@@ -77,7 +77,7 @@ namespace gge.K8sControllers
             while (true)
             {
                 // intermittent delay in between checks
-                Globals.log.LogInformation("sleeping");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "sleeping");
                 Thread.Sleep(seconds * 1000);
             */
 
@@ -197,7 +197,7 @@ namespace gge.K8sControllers
                     catch
                     {
                         // ingress is required, abandon now if not present
-                        Globals.log.LogInformation("- ingress not found, skipping");
+                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "- ingress not found, skipping");
                         continue;
                     }
 
@@ -242,13 +242,13 @@ namespace gge.K8sControllers
 
                         // capture output
                         string tmp = "";
-                        //Globals.log.LogInformation("parse output");
+                        //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "parse output");
                         while (!p.StandardOutput.EndOfStream)
                         {
                             tmp += p.StandardOutput.ReadLine();
                             tmp += "\n";
                         }
-                        Globals.log.LogInformation("output:");
+                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "output:");
                         Globals.log.LogInformation(tmp);
                     }
                     catch (Exception ex)
@@ -265,11 +265,11 @@ namespace gge.K8sControllers
                     if (Directory.Exists("/opt/www"))
                     {
                         var files = from file in Directory.EnumerateFiles("/opt/www", "*", SearchOption.AllDirectories) select file;
-                        //Globals.log.LogInformation("Files: {0}", files.Count<string>().ToString());
-                        //Globals.log.LogInformation("List of Files");
+                        //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "Files: {0}", files.Count<string>().ToString());
+                        //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "List of Files");
                         foreach (var file in files)
                         {
-                            //Globals.log.LogInformation("{0}", file);
+                            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "{0}", file);
                             string[] parts = file.Split('/');
 
                             // does this kasten kubeconfig match up with an existing cluster?
@@ -355,8 +355,8 @@ namespace gge.K8sControllers
                             continue;
                         }
 
-                        Globals.log.LogInformation("");
-                        Globals.log.LogInformation("(event) [" + type + "] " + plural + "." + group + "/" + version + ": " + item.Metadata.Name);
+                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "");
+                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "(event) [" + type + "] " + plural + "." + group + "/" + version + ": " + item.Metadata.Name);
 
                         // Acquire Semaphore
                         semaphore.Wait(Globals.cancellationToken);
@@ -382,7 +382,7 @@ namespace gge.K8sControllers
                                 if (reCheck)
                                 {
                                     Thread.Sleep(reCheckSeconds * 1000);
-                                    Globals.log.LogInformation("begin recheck");
+                                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "begin recheck");
                                     reCheck = false;
                                     throw new Exception();
                                 }
@@ -397,12 +397,12 @@ namespace gge.K8sControllers
                 }
                 catch (k8s.Autorest.HttpOperationException ex)
                 {
-                    Globals.log.LogInformation("Exception? " + ex);
+                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "Exception? " + ex);
                     switch (ex.Response.StatusCode)
                     {
                         // crd is missing, sleep to avoid an error loop
                         case System.Net.HttpStatusCode.NotFound:
-                            Globals.log.LogInformation("crd is missing, pausing for a second before retrying");
+                            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "crd is missing, pausing for a second before retrying");
                             Thread.Sleep(1000);
                             break;
                     }
@@ -419,7 +419,7 @@ namespace gge.K8sControllers
                 }
                 catch (Exception ex)
                 {
-                    //Globals.log.LogInformation("Exception occured while performing 'watch': " + ex);
+                    //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "Exception occured while performing 'watch': " + ex);
                     //Globals.log.LogInformation(new EventId(100, "asdf"), "exception caught");
 
                     try
@@ -459,7 +459,7 @@ namespace gge.K8sControllers
             // Check if we already created a kasten config from this argocd cluster secret
             if (File.Exists($"/opt/www/{managementCluster}/{workloadCluster}/resourceVersion-{resourceVersion}"))
             {
-                Globals.log.LogInformation("- kasten kubeconfig is up-to-date");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "- kasten kubeconfig is up-to-date");
                 return;
             }
 
@@ -473,7 +473,7 @@ namespace gge.K8sControllers
             //File.WriteAllText($"/tmp/{workloadCluster}.conf", json);
 
             // generate kasten kubeconfig
-            Globals.log.LogInformation("- generate kasten kubeconfig");
+            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "- generate kasten kubeconfig");
             var p = new Process
             {
                 StartInfo = {
@@ -530,25 +530,25 @@ namespace gge.K8sControllers
 
             // capture output
             string tmp = "";
-            //Globals.log.LogInformation("parse output");
+            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "parse output");
             while (!p.StandardOutput.EndOfStream)
             {
                 tmp += p.StandardOutput.ReadLine();
                 tmp += "\n";
             }
-            //Globals.log.LogInformation("display output");
+            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "display output");
             //Globals.log.LogInformation(tmp);
 
-            //Globals.log.LogInformation("after generate kasten kubeconfig");
+            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "after generate kasten kubeconfig");
 
             // debug, show stdout from the command
-            //Globals.log.LogInformation("create 'www' folder structure");
+            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "create 'www' folder structure");
             Directory.CreateDirectory($"/opt/www");
             Directory.CreateDirectory($"/opt/www/{managementCluster}");
             Directory.CreateDirectory($"/opt/www/{managementCluster}/{workloadCluster}");
 
             // save to file (accessible via GET)
-            //Globals.log.LogInformation("copy to www folder");
+            //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "copy to www folder");
             try
             {
                 // write out kasten kubeconfig
@@ -568,7 +568,7 @@ namespace gge.K8sControllers
         public async Task ProcessDeleted(V1Secret secret)
         {
             /*
-            Globals.log.LogInformation("remove kasten kubeconfig");
+            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "remove kasten kubeconfig");
 
             string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
             string workloadCluster = Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length);
