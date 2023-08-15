@@ -371,6 +371,7 @@ namespace gge.K8sControllers
             output = Main.SerializeKubernetesClientConfig(primaryk10kubeconfig, Environment.GetEnvironmentVariable("PRIMARY_CLUSTER"));
             File.WriteAllText("/tmp/primary.conf", output);
 
+            // k10multicluster has a bug with disconnect, just delete the crd resource instead as a work-around
             Kubernetes primaryk10kubeclient = new Kubernetes(primaryk10kubeconfig);
             await primaryk10kubeclient.DeleteClusterCustomObjectAsync(
                     "dist.kio.kasten.io",
