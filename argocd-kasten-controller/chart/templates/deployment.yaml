@@ -25,6 +25,8 @@ spec:
         env:
         - name: ARGOCD_NAMESPACE
           value: {{ .Values.argocdNamespace }}
+        - name: LOOP_INTERVAL
+          value: {{ .Values.loopInterval }}
         - name: INSTALL_VERSION
           value: "{{ .Values.k10multiclusterVersion }}"
         - name: REQUIRED_LABEL

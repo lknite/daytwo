@@ -27,6 +27,8 @@ spec:
           value: {{ .Values.managementClusters }}
         - name: ARGOCD_NAMESPACE
           value: {{ .Values.argocdNamespace }}
+        - name: LOOP_INTERVAL
+          value: {{ .Values.loopInterval }}
         {{- if .Values.env }}
         {{- include "common.tplvalues.render" (dict "value" .Values.env "context" $) | nindent 8 }}
         {{- end }}
