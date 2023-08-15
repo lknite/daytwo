@@ -110,6 +110,8 @@ namespace gge.K8sControllers
             {
                 Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "ex, primary not found");
                 Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "register primary");
+
+                await AddPrimary(k10kubeconfig);
             }
 
             try
@@ -268,13 +270,16 @@ namespace gge.K8sControllers
                 // release will fail if exception was before semaphore was acquired, ignore
             }
         }
-        public async Task AddPrimary()
+        public async Task AddPrimary(KubernetesClientConfiguration primaryk10kubeconfig)
         {
+            string output = string.Empty;
+
+            output = Main.SerializeKubernetesClientConfig(primaryk10kubeconfig, Environment.GetEnvironmentVariable("PRIMARY_CLUSTER"));
+            File.WriteAllText("/tmp/primary.conf", output);
+
             // add secondary cluster
             string primaryClusterContextName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER");
             string primaryClusterName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER");
-            string secondaryClusterContextName = clusterName;
-            string secondaryClusterName = clusterName;
             var p = new Process
             {
                 StartInfo = {
@@ -283,15 +288,10 @@ namespace gge.K8sControllers
                             RedirectStandardOutput = true,
                             FileName = "/usr/local/bin/k10multicluster",
                             WorkingDirectory = @"/tmp",
-                            Arguments = "bootstrap"
-                                + $" --primary-name={primaryClusterContextName}"
-                                + $" --primary-context={primaryClusterContextName}"
+                            Arguments = "setup-primary"
+                                + $" --name={primaryClusterContextName}"
+                                + $" --context={primaryClusterContextName}"
                                 + $" --primary-kubeconfig=/tmp/primary.conf"
-                                + $" --secondary-name={secondaryClusterName}"
-                                + $" --secondary-context={secondaryClusterContextName}"
-                                + $" --secondary-kubeconfig=/tmp/secondary.conf"
-                                + $" --secondary-cluster-ingress=\"https://{ingress.Spec.Rules[0].Host}/k10\""
-                                + $" --secondary-cluster-ingress-tls-insecure"
                         }
             };
 
