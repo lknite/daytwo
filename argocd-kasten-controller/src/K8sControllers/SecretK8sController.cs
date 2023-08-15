@@ -188,14 +188,19 @@ namespace gge.K8sControllers
                     File.WriteAllText("/tmp/secondary.conf", output);
 
                     // get ingress
+                    Globals.log.LogInformation("001");
                     Kubernetes secondaryk10kubeclient = new Kubernetes(secondaryk10kubeconfig);
+                    Globals.log.LogInformation("002");
                     V1Ingress ingress = await secondaryk10kubeclient.ReadNamespacedIngressAsync("k10-ingress", "kasten-io");
+                    Globals.log.LogInformation("003");
 
                     // add secondary cluster
+                    Globals.log.LogInformation("004");
                     string primaryClusterContextName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER");
                     string primaryClusterName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER");
                     string secondaryClusterContextName = clusterName;
                     string secondaryClusterName = clusterName;
+                    Globals.log.LogInformation("005");
                     var p = new Process
                     {
                         StartInfo = {
@@ -215,6 +220,7 @@ namespace gge.K8sControllers
                                 + $" --secondary-cluster-ingress-tls-insecure"
                         }
                     };
+                    Globals.log.LogInformation("006");
 
                     try
                     {
