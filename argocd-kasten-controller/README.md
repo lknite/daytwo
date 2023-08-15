@@ -13,7 +13,6 @@
 - helm install argocd-kasten-controller
 
 ## configuration environment variables ##
-- (see values.yaml)
 
 ### required ###
 - Select which cluster k10multicluster will use as the primary:
