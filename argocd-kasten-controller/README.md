@@ -32,7 +32,6 @@
   
 ## status ##
 - working
-- bug: k10multicluster may have a bug when trying to remove a cluster which no longer exists, troubleshooting with kasten ...
 - todo:
   - code cleanup
 

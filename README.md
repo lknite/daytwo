@@ -49,10 +49,10 @@ In one step, copy a clusterapi resource file to git, watch as a cluster is deplo
 ## development
 | status  | controller                    | detail                                  |
 |---------|-------------------------------|-----------------------------------------|
-| alpha   | <span style="white-space:nowrap;">[argocd-register-controller](https://github.com/lknite/daytwo/tree/main/argocd-register-controller)</span> | todo: code cleanup, testing |
-| alpha   | <span style="white-space:nowrap;">[argocd-labels-controller](https://github.com/lknite/daytwo/tree/main/argocd-labels-controller)</span>     | todo: code cleanup, testing, add additional providers |
-| alpha   | <span style="white-space:nowrap;">[argocd-pinniped-controller](https://github.com/lknite/daytwo/tree/main/argocd-pinniped-controller)</span> | todo: code cleanup, testing |
-| alpha   | <span style="white-space:nowrap;">[argocd-kasten-controller](https://github.com/lknite/daytwo/tree/main/argocd-kasten-controller)</span>     | todo: code cleanup, testing, working on a bug with kasten around removing clusters that no longer exist          |
+| alpha   | [argocd-register-controller](https://github.com/lknite/daytwo/tree/main/argocd-register-controller) | todo: code cleanup, testing |
+| alpha   | [argocd-labels-controller](https://github.com/lknite/daytwo/tree/main/argocd-labels-controller)     | todo: code cleanup, testing, add additional providers |
+| alpha   | [argocd-pinniped-controller](https://github.com/lknite/daytwo/tree/main/argocd-pinniped-controller) | todo: code cleanup, testing |
+| alpha   | [argocd-kasten-controller](https://github.com/lknite/daytwo/tree/main/argocd-kasten-controller)     | todo: code cleanup, testing |
 | alpha   | [helm charts](https://lknite.github.io/charts) | images pushed to [docker.io](https://hub.docker.com/repositories/lknite) |
 | todo    | pinniped-www                  |                                         |
 | todo    | move to github actions        |                                         |
