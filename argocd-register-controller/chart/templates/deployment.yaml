@@ -38,6 +38,8 @@ spec:
           value: {{ .Values.argocdNamespace }}
         - name: INSTALL_VERSION
           value: "{{ .Values.argocdVersion }}"
+        - name: LOOP_INTERVAL
+          value: {{ .Values.loopInterval }}
         volumeMounts:
         {{- if .Values.extraVolumeMounts }}
           {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
