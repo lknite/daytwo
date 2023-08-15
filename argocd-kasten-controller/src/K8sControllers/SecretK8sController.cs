@@ -291,7 +291,7 @@ namespace gge.K8sControllers
                             Arguments = "setup-primary"
                                 + $" --name={primaryClusterContextName}"
                                 + $" --context={primaryClusterContextName}"
-                                + $" --primary-kubeconfig=/tmp/primary.conf"
+                                + $" --kubeconfig=/tmp/primary.conf"
                         }
             };
 
