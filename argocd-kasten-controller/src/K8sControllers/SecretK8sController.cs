@@ -205,6 +205,8 @@ namespace gge.K8sControllers
                     }
 
                     // unregister this cluster
+                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api),
+                            $"- missing matching argocd cluster secret, removing: {cluster.Name()}");
                     RemoveSecondary(k10kubeconfig, cluster.Name());
                 }
             }
