@@ -199,8 +199,8 @@ namespace gge.K8sControllers
                     if (Main.GetClusterArgocdSecret(cluster.Name()) != null)
                     {
                         // yes, matching argocd cluster secret found
-                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api),
-                                $"- matching argocd cluster secret found");
+                        //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api),
+                        //        $"- matching argocd cluster secret found");
                         continue;
                     }
 
