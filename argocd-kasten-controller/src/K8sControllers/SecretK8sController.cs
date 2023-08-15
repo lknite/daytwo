@@ -378,15 +378,24 @@ namespace gge.K8sControllers
                     "clusters");
             try
             {
+                /*
                 // testing access
                 Console.WriteLine("check access ...");
                 CustomResourceList<CrdK10Cluster> items = await gk10.ListNamespacedAsync<CustomResourceList<CrdK10Cluster>>("kasten-io-mc");
                 foreach (var cluster in items.Items)
                 {
-                    Console.WriteLine("-"+ cluster.Name());
+                    Console.WriteLine("- "+ cluster.Name());
                 }
+                */
 
+                // get resource
+                CrdK10Cluster cluster = await gk10.ReadNamespacedAsync<CrdK10Cluster>("kasten-io-mc", clusterName);
+
+                // delete resource
                 await gk10.DeleteNamespacedAsync<CrdK10Cluster>("kasten-io-mc", clusterName);
+
+                // delete finalizer
+                cluster.Finalizers().Clear();
             }
             catch (Exception ex)
             {
