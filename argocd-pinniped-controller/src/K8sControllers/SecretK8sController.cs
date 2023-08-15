@@ -63,7 +63,7 @@ namespace gge.K8sControllers
             while (!Globals.cancellationToken.IsCancellationRequested)
             {
                 Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "sleeping");
-                Thread.Sleep(60 * 1000);
+                Thread.Sleep(Globals.service.loopInterval * 1000);
 
                 Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "Intermittent");
                 Intermittent();

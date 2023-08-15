@@ -12,8 +12,10 @@ namespace daytwo
         public KubernetesClientConfiguration kubeconfig;
         public Kubernetes kubeclient;
 
-        // save argocd namespace
+        // argocd namespace
         public string argocdNamespace = "argocd";
+        // reconciliation loop interval
+        public int loopInterval = 60;
 
         //
         public SecretK8sController secretController = new SecretK8sController();
@@ -35,6 +37,12 @@ namespace daytwo
             if (Environment.GetEnvironmentVariable("ARGOCD_NAMESPACE") != null)
             {
                 argocdNamespace = Environment.GetEnvironmentVariable("ARGOCD_NAMESPACE");
+            }
+
+            //
+            if (Environment.GetEnvironmentVariable("LOOP_INTERVAL") != null)
+            {
+                loopInterval = int.Parse(Environment.GetEnvironmentVariable("LOOP_INTERVAL"));
             }
 
             main = new Main.Main();

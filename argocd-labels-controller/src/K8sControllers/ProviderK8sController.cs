@@ -105,7 +105,7 @@ namespace daytwo.K8sControllers
             while (!Globals.cancellationToken.IsCancellationRequested)
             {
                 Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "sleeping");
-                Thread.Sleep(60 * 1000);
+                Thread.Sleep(Globals.service.loopInterval * 1000);
 
                 Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "Intermittent");
                 Intermittent();
