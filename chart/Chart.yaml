@@ -32,3 +32,6 @@ dependencies:
 - name: argocd-labels-controller
   version: 0.0.7
   repository: https://lknite.github.io/charts
+- name: argocd-kasten-controller
+  version: 0.0.3
+  repository: https://lknite.github.io/charts
