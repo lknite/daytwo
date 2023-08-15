@@ -24,11 +24,11 @@ spec:
         resources: {}
         env:
         - name: MANAGEMENT_CLUSTERS
-          value: {{ .Values.managementClusters }}
+          value: "{{ .Values.managementClusters }}"
         - name: ARGOCD_NAMESPACE
-          value: {{ .Values.argocdNamespace }}
+          value: "{{ .Values.argocdNamespace }}"
         - name: LOOP_INTERVAL
-          value: {{ .Values.loopInterval }}
+          value: "{{ .Values.loopInterval }}"
         {{- if .Values.env }}
         {{- include "common.tplvalues.render" (dict "value" .Values.env "context" $) | nindent 8 }}
         {{- end }}

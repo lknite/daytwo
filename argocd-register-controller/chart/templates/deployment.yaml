@@ -24,22 +24,22 @@ spec:
         resources: {}
         env:
         - name: MANAGEMENT_CLUSTERS
-          value: {{ .Values.managementClusters }}
+          value: "{{ .Values.managementClusters }}"
         - name: ARGOCD_AUTH_TOKEN
           valueFrom:
             secretKeyRef:
               name: {{ .Values.argocdAuthTokenSecret }}
               key: token
         - name: ARGOCD_SERVER_URI
-          value: {{ .Values.argocdServerUri }}
+          value: "{{ .Values.argocdServerUri }}"
         - name: ARGOCD_INSECURE_SKIP_TLS_VERIFY
           value: "{{ .Values.argocdInsecureSkipTlsVerify }}"
         - name: ARGOCD_NAMESPACE
-          value: {{ .Values.argocdNamespace }}
+          value: "{{ .Values.argocdNamespace }}"
         - name: INSTALL_VERSION
           value: "{{ .Values.argocdVersion }}"
         - name: LOOP_INTERVAL
-          value: {{ .Values.loopInterval }}
+          value: "{{ .Values.loopInterval }}"
         volumeMounts:
         {{- if .Values.extraVolumeMounts }}
           {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
