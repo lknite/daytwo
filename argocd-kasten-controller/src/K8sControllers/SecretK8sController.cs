@@ -408,6 +408,7 @@ namespace gge.K8sControllers
                 Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "ex: " + ex.Message);
             }
         }
+        /*
         public async Task Listen()
         {
             // Watch is a tcp connection therefore it can drop, use a while loop to restart as needed.
@@ -444,18 +445,6 @@ namespace gge.K8sControllers
                             //    break;
                             case WatchEventType.Modified:
                                 await ProcessModified(item);
-
-                                /*
-                                // if reCheck is true, restart listen, this will readd all secrets
-                                if (reCheck)
-                                {
-                                    Thread.Sleep(reCheckSeconds * 1000);
-                                    Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "begin recheck");
-                                    reCheck = false;
-                                    throw new Exception();
-                                }
-                                */
-
                                 break;
                         }
 
@@ -509,7 +498,6 @@ namespace gge.K8sControllers
         }
         public async Task ProcessModified(V1Secret secret)
         {
-            /*
             string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
             string workloadCluster = Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length);
             string resourceVersion = secret.Metadata.ResourceVersion;
@@ -629,13 +617,11 @@ namespace gge.K8sControllers
             {
                 Globals.log.LogInformation(ex.ToString());
             }
-            */
 
             return;
         }
         public async Task ProcessDeleted(V1Secret secret)
         {
-            /*
             Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "remove kasten kubeconfig");
 
             string managementCluster = secret.GetAnnotation("daytwo.aarr.xyz/management-cluster");
@@ -647,9 +633,9 @@ namespace gge.K8sControllers
             }
 
             File.Delete($"/opt/www/{managementCluster}/{workloadCluster}/kubeconfig");
-            */
 
             return;
         }
+        */
     }
 }
