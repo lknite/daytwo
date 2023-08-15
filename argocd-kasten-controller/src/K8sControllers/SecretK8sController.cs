@@ -368,21 +368,29 @@ namespace gge.K8sControllers
                 string clusterName
                 )
         {
+            // k10multicluster has a bug with disconnect, just delete the crd resource instead as a work-around
+            Kubernetes primaryk10kubeclient = new Kubernetes(primaryk10kubeconfig);
+
+            try
+            {
+                await primaryk10kubeclient.DeleteNamespacedCustomObjectAsync(
+                        "dist.kio.kasten.io",
+                        "v1alpha1",
+                        "kasten-io-mc",
+                        "clusters",
+                        clusterName);
+            }
+            catch (Exception ex)
+            {
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "ex: " + ex.Message);
+            }
+
+            /*
             string output = string.Empty;
 
             output = Main.SerializeKubernetesClientConfig(primaryk10kubeconfig, Environment.GetEnvironmentVariable("PRIMARY_CLUSTER"));
             File.WriteAllText("/tmp/primary.conf", output);
 
-            // k10multicluster has a bug with disconnect, just delete the crd resource instead as a work-around
-            Kubernetes primaryk10kubeclient = new Kubernetes(primaryk10kubeconfig);
-            await primaryk10kubeclient.DeleteNamespacedCustomObjectAsync(
-                    "dist.kio.kasten.io",
-                    "v1alpha1",
-                    "kasten-io-mc",
-                    "clusters",
-                    clusterName);
-
-            /*
             // remove secondary cluster
             string primaryClusterContextName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER");
             string primaryClusterName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER");
