@@ -180,81 +180,9 @@ namespace gge.K8sControllers
                     //
                     KubernetesClientConfiguration secondaryk10kubeconfig = Main.BuildConfigFromArgocdSecret(item);
 
-                    // build up kubeconfig to pass to k10multicluster
-                    // (todo)
-                    string output = Main.SerializeKubernetesClientConfig(k10kubeconfig, Environment.GetEnvironmentVariable("PRIMARY_CLUSTER"));
-                    File.WriteAllText("/tmp/primary.conf", output);
-                    output = Main.SerializeKubernetesClientConfig(secondaryk10kubeconfig, clusterName);
-                    File.WriteAllText("/tmp/secondary.conf", output);
+                    // add secondary
+                    await AddSecondary(k10kubeconfig, secondaryk10kubeconfig, clusterName);
 
-                    // get ingress
-                    Kubernetes secondaryk10kubeclient = new Kubernetes(secondaryk10kubeconfig);
-                    V1Ingress ingress = null;
-                    try
-                    {
-                        ingress = await secondaryk10kubeclient.ReadNamespacedIngressAsync("k10-ingress", "kasten-io");
-                    }
-                    catch
-                    {
-                        // ingress is required, abandon now if not present
-                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "- ingress not found, skipping");
-                        continue;
-                    }
-
-                    // add secondary cluster
-                    string primaryClusterContextName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER");
-                    string primaryClusterName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER");
-                    string secondaryClusterContextName = clusterName;
-                    string secondaryClusterName = clusterName;
-                    var p = new Process
-                    {
-                        StartInfo = {
-                            UseShellExecute = false,
-                            CreateNoWindow = true,
-                            RedirectStandardOutput = true,
-                            FileName = "/usr/local/bin/k10multicluster",
-                            WorkingDirectory = @"/tmp",
-                            Arguments = "bootstrap"
-                                + $" --primary-name={primaryClusterContextName}"
-                                + $" --primary-context={primaryClusterContextName}"
-                                + $" --primary-kubeconfig=/tmp/primary.conf"
-                                + $" --secondary-name={secondaryClusterName}"
-                                + $" --secondary-context={secondaryClusterContextName}"
-                                + $" --secondary-kubeconfig=/tmp/secondary.conf"
-                                + $" --secondary-cluster-ingress=\"https://{ingress.Spec.Rules[0].Host}/k10\""
-                                + $" --secondary-cluster-ingress-tls-insecure"
-                        }
-                    };
-
-                    try
-                    {
-                        Globals.log.LogInformation(p.StartInfo.Arguments);
-                        //
-                        p.Start();
-                        p.WaitForExit();
-
-                        // if there was an error, we stop here
-                        if (p.ExitCode != 0)
-                        {
-                            // add kasten secondary
-                            //await ProcessAdded(item);
-                        }
-
-                        // capture output
-                        string tmp = "";
-                        //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "parse output");
-                        while (!p.StandardOutput.EndOfStream)
-                        {
-                            tmp += p.StandardOutput.ReadLine();
-                            tmp += "\n";
-                        }
-                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "output:");
-                        Globals.log.LogInformation(tmp);
-                    }
-                    catch (Exception ex)
-                    {
-                        Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "ex: " + ex.Message);
-                    }
 
                     /*
                     //**
@@ -338,6 +266,146 @@ namespace gge.K8sControllers
             catch
             {
                 // release will fail if exception was before semaphore was acquired, ignore
+            }
+        }
+        public async Task AddPrimary()
+        {
+            // add secondary cluster
+            string primaryClusterContextName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER");
+            string primaryClusterName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER");
+            string secondaryClusterContextName = clusterName;
+            string secondaryClusterName = clusterName;
+            var p = new Process
+            {
+                StartInfo = {
+                            UseShellExecute = false,
+                            CreateNoWindow = true,
+                            RedirectStandardOutput = true,
+                            FileName = "/usr/local/bin/k10multicluster",
+                            WorkingDirectory = @"/tmp",
+                            Arguments = "bootstrap"
+                                + $" --primary-name={primaryClusterContextName}"
+                                + $" --primary-context={primaryClusterContextName}"
+                                + $" --primary-kubeconfig=/tmp/primary.conf"
+                                + $" --secondary-name={secondaryClusterName}"
+                                + $" --secondary-context={secondaryClusterContextName}"
+                                + $" --secondary-kubeconfig=/tmp/secondary.conf"
+                                + $" --secondary-cluster-ingress=\"https://{ingress.Spec.Rules[0].Host}/k10\""
+                                + $" --secondary-cluster-ingress-tls-insecure"
+                        }
+            };
+
+            try
+            {
+                Globals.log.LogInformation(p.StartInfo.Arguments);
+                //
+                p.Start();
+                p.WaitForExit();
+
+                // if there was an error, we stop here
+                if (p.ExitCode != 0)
+                {
+                    // add kasten secondary
+                    //await ProcessAdded(item);
+                }
+
+                // capture output
+                string tmp = "";
+                //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "parse output");
+                while (!p.StandardOutput.EndOfStream)
+                {
+                    tmp += p.StandardOutput.ReadLine();
+                    tmp += "\n";
+                }
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "output:");
+                Globals.log.LogInformation(tmp);
+            }
+            catch (Exception ex)
+            {
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "ex: " + ex.Message);
+            }
+        }
+
+        public async Task AddSecondary(
+                KubernetesClientConfiguration primaryk10kubeconfig,
+                KubernetesClientConfiguration secondaryk10kubeconfig,
+                string clusterName
+                )
+        {
+            string output = string.Empty;
+
+            output = Main.SerializeKubernetesClientConfig(primaryk10kubeconfig, Environment.GetEnvironmentVariable("PRIMARY_CLUSTER"));
+            File.WriteAllText("/tmp/primary.conf", output);
+            output = Main.SerializeKubernetesClientConfig(secondaryk10kubeconfig, clusterName);
+            File.WriteAllText("/tmp/secondary.conf", output);
+
+            // get ingress
+            Kubernetes secondaryk10kubeclient = new Kubernetes(secondaryk10kubeconfig);
+            V1Ingress ingress = null;
+            try
+            {
+                ingress = await secondaryk10kubeclient.ReadNamespacedIngressAsync("k10-ingress", "kasten-io");
+            }
+            catch
+            {
+                // ingress is required, abandon now if not present
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "- ingress not found, skipping");
+                return;
+            }
+
+            // add secondary cluster
+            string primaryClusterContextName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER");
+            string primaryClusterName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER");
+            string secondaryClusterContextName = clusterName;
+            string secondaryClusterName = clusterName;
+            var p = new Process
+            {
+                StartInfo = {
+                            UseShellExecute = false,
+                            CreateNoWindow = true,
+                            RedirectStandardOutput = true,
+                            FileName = "/usr/local/bin/k10multicluster",
+                            WorkingDirectory = @"/tmp",
+                            Arguments = "bootstrap"
+                                + $" --primary-name={primaryClusterContextName}"
+                                + $" --primary-context={primaryClusterContextName}"
+                                + $" --primary-kubeconfig=/tmp/primary.conf"
+                                + $" --secondary-name={secondaryClusterName}"
+                                + $" --secondary-context={secondaryClusterContextName}"
+                                + $" --secondary-kubeconfig=/tmp/secondary.conf"
+                                + $" --secondary-cluster-ingress=\"https://{ingress.Spec.Rules[0].Host}/k10\""
+                                + $" --secondary-cluster-ingress-tls-insecure"
+                        }
+            };
+
+            try
+            {
+                Globals.log.LogInformation(p.StartInfo.Arguments);
+                //
+                p.Start();
+                p.WaitForExit();
+
+                // if there was an error, we stop here
+                if (p.ExitCode != 0)
+                {
+                    // add kasten secondary
+                    //await ProcessAdded(item);
+                }
+
+                // capture output
+                string tmp = "";
+                //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "parse output");
+                while (!p.StandardOutput.EndOfStream)
+                {
+                    tmp += p.StandardOutput.ReadLine();
+                    tmp += "\n";
+                }
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "output:");
+                Globals.log.LogInformation(tmp);
+            }
+            catch (Exception ex)
+            {
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "ex: " + ex.Message);
             }
         }
         public async Task Listen()
