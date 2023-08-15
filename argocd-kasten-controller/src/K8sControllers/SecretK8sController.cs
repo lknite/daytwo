@@ -378,7 +378,6 @@ namespace gge.K8sControllers
                     "clusters");
             try
             {
-                /*
                 // testing access
                 Console.WriteLine("check access ...");
                 CustomResourceList<CrdK10Cluster> items = await gk10.ListNamespacedAsync<CustomResourceList<CrdK10Cluster>>("kasten-io-mc");
@@ -386,7 +385,6 @@ namespace gge.K8sControllers
                 {
                     Console.WriteLine("-"+ cluster.Name());
                 }
-                */
 
                 await gk10.DeleteNamespacedAsync<CrdK10Cluster>("kasten-io-mc", clusterName);
             }
