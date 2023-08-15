@@ -15,7 +15,7 @@ namespace daytwo.Helpers
 
 
             // form a kubeconfig via the argocd secret
-            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "- get kubeconfig from argocd secret:"
+            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "- get kubeconfig from argocd secret:"
                     + $" name: {Encoding.UTF8.GetString(secret.Data["name"], 0, secret.Data["name"].Length)}"
                     + $", server: {Encoding.UTF8.GetString(secret.Data["server"], 0, secret.Data["server"].Length)}"
                     );
