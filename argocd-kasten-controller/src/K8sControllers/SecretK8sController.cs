@@ -20,6 +20,7 @@ using System.Diagnostics;
 using daytwo.Helpers;
 using Microsoft.Win32;
 using daytwo.crd.K10Cluster;
+using Json.More;
 
 namespace gge.K8sControllers
 {
@@ -394,8 +395,13 @@ namespace gge.K8sControllers
                 // delete resource
                 await gk10.DeleteNamespacedAsync<CrdK10Cluster>("kasten-io-mc", clusterName);
 
-                // delete finalizer
+                // delete resource finalizers
                 cluster.Finalizers().Clear();
+
+                // update resource, now without finalizers
+                await gk10.PatchNamespacedAsync<CrdK10Cluster>(
+                    new V1Patch(cluster.Metadata, V1Patch.PatchType.MergePatch), "kasten-io-mc", clusterName);
+
             }
             catch (Exception ex)
             {
