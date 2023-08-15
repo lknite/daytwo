@@ -373,6 +373,18 @@ namespace gge.K8sControllers
 
             try
             {
+                // testing access
+                Console.WriteLine("check access ...");
+                CustomResourceList<CrdK10Cluster> items = (CustomResourceList<CrdK10Cluster>) primaryk10kubeclient.ListNamespacedCustomObject(
+                        "dist.kio.kasten.io",
+                        "v1alpha1",
+                        "kasten-io-mc",
+                        "clusters");
+                foreach (var cluster in items.Items)
+                {
+                    Console.WriteLine("-"+ cluster.Name());
+                }
+
                 await primaryk10kubeclient.DeleteNamespacedCustomObjectAsync(
                         "dist.kio.kasten.io",
                         "v1alpha1",
