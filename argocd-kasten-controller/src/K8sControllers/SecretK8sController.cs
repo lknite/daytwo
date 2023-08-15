@@ -371,6 +371,14 @@ namespace gge.K8sControllers
             output = Main.SerializeKubernetesClientConfig(primaryk10kubeconfig, Environment.GetEnvironmentVariable("PRIMARY_CLUSTER"));
             File.WriteAllText("/tmp/primary.conf", output);
 
+            Kubernetes primaryk10kubeclient = new Kubernetes(primaryk10kubeconfig);
+            await primaryk10kubeclient.DeleteClusterCustomObjectAsync(
+                    "dist.kio.kasten.io",
+                    "v1alpha1",
+                    "clusters",
+                    clusterName);
+
+            /*
             // remove secondary cluster
             string primaryClusterContextName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER");
             string primaryClusterName = Environment.GetEnvironmentVariable("PRIMARY_CLUSTER");
@@ -420,6 +428,7 @@ namespace gge.K8sControllers
             {
                 Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId, api), "ex: " + ex.Message);
             }
+            */
         }
         /*
         public async Task Listen()
