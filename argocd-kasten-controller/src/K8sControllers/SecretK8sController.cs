@@ -375,9 +375,10 @@ namespace gge.K8sControllers
 
             // k10multicluster has a bug with disconnect, just delete the crd resource instead as a work-around
             Kubernetes primaryk10kubeclient = new Kubernetes(primaryk10kubeconfig);
-            await primaryk10kubeclient.DeleteClusterCustomObjectAsync(
+            await primaryk10kubeclient.DeleteNamespacedCustomObjectAsync(
                     "dist.kio.kasten.io",
                     "v1alpha1",
+                    "kasten-io-mc",
                     "clusters",
                     clusterName);
 
