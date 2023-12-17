@@ -292,6 +292,14 @@ namespace daytwo.K8sControllers
                 }
                 */
 
+                // if present, avoid copying an argocd instance key associated
+                // this may be present if the cluster was also deployed by argocd
+                if (!l.Key.Equals("argocd.argoproj.io/instance"))
+                {
+                    // skip
+                    continue;
+                }
+
                 // is this label already on the secret?
                 bool found = false;
 
