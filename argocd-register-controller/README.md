@@ -36,7 +36,7 @@
 
 ## auth token: how to generate? ##
 Basic steps to generate token (your implementation may vary):
-- kubectl -n argocd edit argocd-cm
+- kubectl -n argocd edit cm argocd-cm
 - add 'data.accounts.admin: apiKey, login'
 - argocd account generate-token --account admin
   
