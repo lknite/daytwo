@@ -392,7 +392,7 @@ namespace daytwo.K8sControllers
             else if (cluster.Metadata.ResourceVersion != tmp.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/resourceVersion"])
             //else if (DateTime.Compare((DateTime)cluster.Metadata.CreationTimestamp, (DateTime)tmp.Metadata.CreationTimestamp) > 0)
             {
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "      - update argocd cluster secret, if needed (TODO)");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "      - update argocd cluster secret, if needed (todo)");
 
                 /*
                 // Only update the argocd secret if the kubeconfig has changed
