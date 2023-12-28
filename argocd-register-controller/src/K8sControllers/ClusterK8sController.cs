@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.Threading;
 using k8s.KubeConfigModels;
 using System.Net.Sockets;
+using System.Reflection.Metadata.Ecma335;
 
 namespace daytwo.K8sControllers
 {
@@ -378,6 +379,7 @@ namespace daytwo.K8sControllers
                 }
             }
 
+
             // if cluster yaml is newer then secret, then we re-add to argocd
             if (tmp == null)
             {
@@ -390,7 +392,17 @@ namespace daytwo.K8sControllers
             else if (cluster.Metadata.ResourceVersion != tmp.Metadata.EnsureAnnotations()["daytwo.aarr.xyz/resourceVersion"])
             //else if (DateTime.Compare((DateTime)cluster.Metadata.CreationTimestamp, (DateTime)tmp.Metadata.CreationTimestamp) > 0)
             {
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "      - update argocd cluster secret");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "      - update argocd cluster secret, if needed (TODO)");
+
+                /*
+                // Only update the argocd secret if the kubeconfig has changed
+                V1Secret secret = await kubeclient.ReadNamespacedSecretAsync(cluster.Name() + "-kubeconfig", cluster.Namespace());
+                secret.Data.TryGetValue("value", out byte[] bytes);
+                string kubeconfig = System.Text.Encoding.UTF8.GetString(bytes);
+                */
+
+                return;
+                
 
                 // add new cluster to argocd
                 //KubernetesClientConfiguration tmpkubeconfig = await GetClusterKubeConfig(cluster.Name(), cluster.Namespace());

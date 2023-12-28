@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\argocd-labels-controller\\src\\argocd-labels-controller.csproj": {}
+    "C:\\Users\\travis\\source\\repos\\daytwo\\argocd-labels-controller\\src\\argocd-labels-controller.csproj": {}
   },
   "projects": {
-    "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\argocd-labels-controller\\src\\argocd-labels-controller.csproj": {
+    "C:\\Users\\travis\\source\\repos\\daytwo\\argocd-labels-controller\\src\\argocd-labels-controller.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\argocd-labels-controller\\src\\argocd-labels-controller.csproj",
+        "projectUniqueName": "C:\\Users\\travis\\source\\repos\\daytwo\\argocd-labels-controller\\src\\argocd-labels-controller.csproj",
         "projectName": "argocd-labels-controller",
-        "projectPath": "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\argocd-labels-controller\\src\\argocd-labels-controller.csproj",
-        "packagesPath": "C:\\Users\\travis.HOME\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\argocd-labels-controller\\src\\obj\\",
+        "projectPath": "C:\\Users\\travis\\source\\repos\\daytwo\\argocd-labels-controller\\src\\argocd-labels-controller.csproj",
+        "packagesPath": "C:\\Users\\travis\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\travis\\source\\repos\\daytwo\\argocd-labels-controller\\src\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\travis.HOME\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\travis\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

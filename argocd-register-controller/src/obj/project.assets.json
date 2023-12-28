@@ -2123,19 +2123,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\travis.HOME\\.nuget\\packages\\": {}
+    "C:\\Users\\travis\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\argocd-register-controller\\src\\argocd-register-controller.csproj",
+      "projectUniqueName": "C:\\Users\\travis\\source\\repos\\daytwo\\argocd-register-controller\\src\\argocd-register-controller.csproj",
       "projectName": "argocd-register-controller",
-      "projectPath": "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\argocd-register-controller\\src\\argocd-register-controller.csproj",
-      "packagesPath": "C:\\Users\\travis.HOME\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\travis.HOME\\source\\repos\\daytwo\\argocd-register-controller\\src\\obj\\",
+      "projectPath": "C:\\Users\\travis\\source\\repos\\daytwo\\argocd-register-controller\\src\\argocd-register-controller.csproj",
+      "packagesPath": "C:\\Users\\travis\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\travis\\source\\repos\\daytwo\\argocd-register-controller\\src\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\travis.HOME\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\travis\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

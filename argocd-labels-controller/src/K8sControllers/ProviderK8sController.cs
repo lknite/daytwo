@@ -256,7 +256,7 @@ namespace daytwo.K8sControllers
 
             //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "Addition/Modify detected: " + provider.Metadata.Name);
 
-            // acquire argocd cluster secret to so we can sync labels
+            // acquire argocd cluster secret so we can sync labels
             V1Secret? secret = daytwo.Helpers.Main.GetClusterArgocdSecret(provider.Name(), managementCluster);
             if (secret == null)
             {
@@ -292,14 +292,6 @@ namespace daytwo.K8sControllers
                 }
                 */
 
-                // if present, avoid copying an argocd instance key associated
-                // this may be present if the cluster was also deployed by argocd
-                if (l.Key.Equals("argocd.argoproj.io/instance"))
-                {
-                    // skip
-                    continue;
-                }
-
                 // is this label already on the secret?
                 bool found = false;
 
@@ -314,6 +306,15 @@ namespace daytwo.K8sControllers
                         continue;
                     }
                     */
+
+                    // if present, avoid copying an argocd instance key associated
+                    // this may be present if the cluster was also deployed by argocd
+                    if (l.Key.StartsWith("argocd.argoproj.io/")
+                        || l.Key.StartsWith("run.tanzu.vmware.com/"))
+                    {
+                        // skip
+                        continue;
+                    }
 
                     //
                     if ((l.Key == label.Key) && (l.Value == label.Value))
@@ -340,7 +341,8 @@ namespace daytwo.K8sControllers
             foreach (var label in secret.Labels())
             {
                 // avoid deleting argocd labels
-                if (label.Key.StartsWith("argocd.argoproj.io/"))
+                if (label.Key.StartsWith("argocd.argoproj.io/")
+                    || label.Key.StartsWith("run.tanzu.vmware.com/"))
                 {
                     continue;
                 }
