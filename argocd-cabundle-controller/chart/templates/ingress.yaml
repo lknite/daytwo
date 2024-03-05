@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{.Release.Name}}
+  annotations:
+    cert-manager.io/cluster-issuer: cluster-vault-issuer
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - {{.Release.Name}}.vc-prod.k.home.net
+    secretName: {{.Release.Name}}.vc-prod.k.home.net-tls
+  rules:
+  - host: {{.Release.Name}}.vc-prod.k.home.net
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: ca-bundle
+            port:
+              number: 80

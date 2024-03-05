@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ca-bundle
+  name: ca-bundle
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ca-bundle
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ca-bundle
+    spec:
+      containers:
+      - image: nginx
+        command:
+        - "/bin/sh"
+        - "-c"
+        args:
+        - |
+          ln -s /etc/ssl/certs/ca-certificates.crt /usr/share/nginx/html/ca-certificates.crt
+          nginx -g "daemon off;"
+        name: nginx
+        resources: {}
+        volumeMounts:
+        - name: pvc-ca-bundle
+          mountPath: "/etc/ssl/certs"
+      initContainers:
+      - name: get-ca-bundle
+        image: docker.io/alpine/curl:latest
+        command:
+        - "/bin/sh"
+        - "-c"
+        args:
+        - |
+          for FILE in /tmp/source/*; do awk 'BEGIN {c=0;} /BEGIN CERT/{c++} { print > "/usr/local/share/ca-certificates/cert." c ".crt"}' < $FILE; done
+          /usr/sbin/update-ca-certificates
+          rm -rf /tmp/target/*
+          cp -r /etc/ssl/certs/* /tmp/target/
+        volumeMounts:
+        - name: ca-bundle
+          mountPath: /tmp/source
+        - name: pvc-ca-bundle
+          mountPath: /tmp/target
+      volumes:
+      - name: ca-bundle
+        secret:
+          secretName: ca-bundle
+      - name: pvc-ca-bundle
+        persistentVolumeClaim:
+          claimName: ca-bundle-server
+status: {}

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ca-bundle
+    argocd.argoproj.io/instance: vc-prod-addons-ca-bundle
+  name: ca-bundle
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: ca-bundle
+status:
+  loadBalancer: {}

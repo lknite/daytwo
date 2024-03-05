@@ -1,0 +1,33 @@
+## @param global.imageRegistry Global Docker image registry
+## @param global.imagePullSecrets Global Docker registry secret names as an array
+## @param global.storageClass Global StorageClass for Persistent Volume(s)
+##
+global:
+  imageRegistry: ""
+  ## E.g.
+  ## imagePullSecrets:
+  ##   - myRegistryKeySecretName
+  ##
+  imagePullSecrets: []
+  storageClass: ""
+
+## daytwo argocd-cabundle-controller image
+## ref: https://github.com/lknite/daytwo/tree/main/daytwo-argocd-cabundle-controller
+image:
+  repository: docker.io/lknite/argocd-cabundle-controller
+  tag: latest
+  pullPolicy: Always
+
+## @param env Use to define environment variables
+## E.g. to define the "--oidc-issuer" use: PINNIPED_OIDC_ISSUER
+##
+env: []
+
+## @param extraVolumes Optionally specify extra list of additional volumes
+## (only enabled if persistence.enabled below)
+##
+extraVolumes: []
+## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts
+## (only enabled if persistence.enabled below)
+##
+extraVolumeMounts: []
