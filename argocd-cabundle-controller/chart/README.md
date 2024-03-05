@@ -29,8 +29,13 @@ When it comes to determining where to mount a ca-bundle there is no single use c
 
 However, though we work to make edge cases function, the best solution will be an upstream solution via kubernetes itsself.  In the meantime it might be easier to exec into your pods and determine where the certificates need to be mounted and mount the cabundle pvc yourself, or connect with connect with the application developers and ask them to provide 'global.ca-bundle' or something similar.
 
-- argocd-cabundle-mount-cabundle: true
-- argocd-cabundle-mount-jks: true
-- argocd-cabundle-mount-pkcs12: true
-- argocd-cabundle-mount-protect-existing-certs: false
+- argocd-cabundle-mount-os-redhat-cabundle: true
+- argocd-cabundle-mount-os-redhat-jks: true
+- argocd-cabundle-mount-os-redhat-pkcs12: true
+- argocd-cabundle-mount-os-ubuntu-cabundle: true
+- argocd-cabundle-mount-os-ubuntu-jks: true
+- argocd-cabundle-mount-os-ubuntu-pkcs12: true
+- argocd-cabundle-mount-lang-python-cabundle: true
+- argocd-cabundle-mount-lang-python-jks: true
+- argocd-cabundle-mount-lang-python-pkcs12: true
 - additional ...
