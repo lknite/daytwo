@@ -35,7 +35,6 @@ However, though we work to make edge cases function, the best solution will be a
 - argocd-cabundle-mount-os-ubuntu-cabundle: true
 - argocd-cabundle-mount-os-ubuntu-jks: true
 - argocd-cabundle-mount-os-ubuntu-pkcs12: true
+- argocd-cabundle-mount-lang-java-jks: true
 - argocd-cabundle-mount-lang-python-cabundle: true
-- argocd-cabundle-mount-lang-python-jks: true
-- argocd-cabundle-mount-lang-python-pkcs12: true
 - additional ...
