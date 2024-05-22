@@ -16,6 +16,11 @@ namespace daytwo
         public string argocdNamespace = "argocd";
         // reconciliation loop interval
         public int loopInterval = 60;
+        // optionally disable label copy (use separate microservice)
+        public bool disableLabelCopy = false;
+        // if set, label must exist for cluster to be added
+        public string requiredLabelName = string.Empty;
+        public string requiredLabelValue = string.Empty;
 
         //
         //public List<ClusterK8sController> clusters = new List<ClusterK8sController>();
@@ -64,6 +69,19 @@ namespace daytwo
             if (Environment.GetEnvironmentVariable("LOOP_INTERVAL") != null)
             {
                 loopInterval = int.Parse(Environment.GetEnvironmentVariable("LOOP_INTERVAL"));
+            }
+
+            // optionally disable label copy (use separate microservice)
+            if (Environment.GetEnvironmentVariable("DISABLE_LABEL_COPY") != null)
+            {
+                disableLabelCopy = bool.Parse(Environment.GetEnvironmentVariable("DISABLE_LABEL_COPY"));
+            }
+
+            // if set, label must exist for cluster to be added
+            if (Environment.GetEnvironmentVariable("REQUIRED_LABEL_NAME") != null)
+            {
+                requiredLabelName = Environment.GetEnvironmentVariable("REQUIRED_LABEL_NAME");
+                requiredLabelValue = Environment.GetEnvironmentVariable("REQUIRED_LABEL_VALUE");
             }
 
             main = new Main.Main();

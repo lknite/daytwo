@@ -24,6 +24,7 @@ using System.Threading;
 using k8s.KubeConfigModels;
 using System.Net.Sockets;
 using System.Reflection.Metadata.Ecma335;
+using Microsoft.Extensions.Primitives;
 
 namespace daytwo.K8sControllers
 {
@@ -350,6 +351,27 @@ namespace daytwo.K8sControllers
                 return;
             }
 
+            // if environment variable is set, then specified label must exist for us to add the cluster
+            if (Globals.service.requiredLabelName != string.Empty)
+            {
+                // requiredLabelName exists, does the label name & value match an existing label?
+                string value;
+
+                // does a label with the specified name exist?
+                if (!cluster.Labels().TryGetValue(Globals.service.requiredLabelName, out value))
+                {
+                    // required label is not present, take no further action with this cluster
+                    return;
+                }
+
+                // does the label have the specified value?
+                if (!Globals.service.requiredLabelValue.Equals(value))
+                { 
+                    // required label exists, but its value does not match, take no further action with this cluster
+                    return;
+                }
+            }
+
             // has this cluster been added to argocd?
             V1Secret? tmp = daytwo.Helpers.Main.GetClusterArgocdSecret(cluster.Name(), managementCluster);
             /*
@@ -416,6 +438,8 @@ namespace daytwo.K8sControllers
 
                 return;
             }
+
+
 
             // add new cluster to argocd
             KubernetesClientConfiguration tmpkubeconfig = await GetClusterKubeConfig(cluster.Name(), cluster.Namespace(), managementCluster);

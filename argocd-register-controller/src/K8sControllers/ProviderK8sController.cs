@@ -256,6 +256,12 @@ namespace daytwo.K8sControllers
 
             //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "Addition/Modify detected: " + provider.Metadata.Name);
 
+            // if environment variable is set to true, then skip label copy
+            if (Globals.service.disableLabelCopy)
+            {
+                return;
+            }
+
             // acquire argocd cluster secret so we can sync labels
             V1Secret? secret = daytwo.Helpers.Main.GetClusterArgocdSecret(provider.Name(), managementCluster);
             if (secret == null)
