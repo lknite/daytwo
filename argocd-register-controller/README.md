@@ -32,7 +32,10 @@
 - To specify an alternative location for argocd ('argocd' by default):
   - ARGOCD_NAMESPACE: argocd
 - To disable the label copy feature (enabled by default):
-  - OPTION_DISABLE_LABEL_COPY: true
+  - DISABLE_LABEL_COPY: true
+- A label may be specified, if so, the label must be present with the correct value or the cluster will not be managed
+  - REQUIRED_LABEL_NAME: <env>
+  - REQUIRED_LABEL_VALUE: <dev/prod>
 
 ## auth token: how to generate? ##
 Basic steps to generate token (your implementation may vary):
