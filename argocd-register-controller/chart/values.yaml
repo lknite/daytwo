@@ -15,7 +15,7 @@ global:
 ## ref: https://github.com/lknite/daytwo/tree/main/argocd-register-controller
 image:
   repository: docker.io/lknite/argocd-register-controller
-  tag: latest
+  tag: 0.0.6
   pullPolicy: Always
 
 ## @param
