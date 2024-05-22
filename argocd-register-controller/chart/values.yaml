@@ -18,6 +18,14 @@ image:
   tag: latest
   pullPolicy: Always
 
+## @param
+##
+requiredLabelName: ""
+
+## @param
+##
+requiredLabelValue: ""
+
 ## @param managementCluster Comma separated list of names of clusterapi servers
 ##
 managementClusters: ""
