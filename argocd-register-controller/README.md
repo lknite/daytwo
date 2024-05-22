@@ -33,7 +33,7 @@
   - ARGOCD_NAMESPACE: argocd
 - To disable the label copy feature (enabled by default):
   - DISABLE_LABEL_COPY: true
-- A label may be specified, if so, the label must be present with the correct value or the cluster will not be managed
+- A (single) required label may be specified, if so, the label must be present with the correct value or the cluster will not be managed
   - REQUIRED_LABEL_NAME: \<env\>
   - REQUIRED_LABEL_VALUE: \<dev/prod\>
 
