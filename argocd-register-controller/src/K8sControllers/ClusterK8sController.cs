@@ -351,24 +351,34 @@ namespace daytwo.K8sControllers
                 return;
             }
 
-            // if environment variable is set, then specified label must exist for us to add the cluster
+            // if environment variable is set, then specified label must exist on the TanzuKubernetesCluster for us to add the cluster
             if (Globals.service.requiredLabelName != string.Empty)
             {
-                // requiredLabelName exists, does the label name & value match an existing label?
-                string value;
+                // Acquire TKC resource
+                foreach (ProviderK8sController provider in providers) {
+                    var items = await provider.generic.ListAsync<CustomResourceList<CrdProviderCluster>>().ConfigureAwait(false);
+                    foreach (var item in items.Items)
+                    {
+                        if (item.Name().Equals(cluster.Name()) && item.Namespace().Equals(cluster.Namespace()))
+                        {
+                            // requiredLabelName exists, does the label name & value match an existing label?
+                            string value;
 
-                // does a label with the specified name exist?
-                if (!cluster.Labels().TryGetValue(Globals.service.requiredLabelName, out value))
-                {
-                    // required label is not present, take no further action with this cluster
-                    return;
-                }
+                            // does a label with the specified name exist?
+                            if (!item.Labels().TryGetValue(Globals.service.requiredLabelName, out value))
+                            {
+                                // required label is not present, take no further action with this cluster
+                                return;
+                            }
 
-                // does the label have the specified value?
-                if (!Globals.service.requiredLabelValue.Equals(value))
-                { 
-                    // required label exists, but its value does not match, take no further action with this cluster
-                    return;
+                            // does the label have the specified value?
+                            if (!Globals.service.requiredLabelValue.Equals(value))
+                            { 
+                                // required label exists, but its value does not match, take no further action with this cluster
+                                return;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -792,14 +802,7 @@ namespace daytwo.K8sControllers
 
         public async Task AddProviders() //CrdCluster cluster)
         {
-            // Check for environment variable asking us not to copy labels
-            string? disable = Environment.GetEnvironmentVariable("OPTION_DISABLE_LABEL_COPY");
-            if ((disable != null) && (disable.Equals("true", StringComparison.OrdinalIgnoreCase)))
-            {
-                // do not monitor providers or copy labels
-                return;
-            }
-
+            
 
             List<string> known = new List<string>();
             known.Add("vclusters.infrastructure.cluster.x-k8s.io");

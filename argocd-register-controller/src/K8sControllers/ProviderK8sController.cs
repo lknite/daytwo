@@ -254,6 +254,14 @@ namespace daytwo.K8sControllers
             Dictionary<string, string> data = new Dictionary<string, string>();
             string patchStr = string.Empty;
 
+            // Check for environment variable asking us not to copy labels
+            // TODO: This could be cleaner by simply not monitoring for changes, and no intermittent thread.
+            if (Globals.service.disableLabelCopy)
+            {
+                // do not monitor providers or copy labels
+                return;
+            }
+
             //Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), "Addition/Modify detected: " + provider.Metadata.Name);
 
             // if environment variable is set to true, then skip label copy
