@@ -354,6 +354,7 @@ namespace daytwo.K8sControllers
             // if environment variable is set, then specified label must exist on the TanzuKubernetesCluster for us to add the cluster
             if (Globals.service.requiredLabelName != string.Empty)
             {
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"RequiredLabelName is not empty, looking for labels ...");
                 // Acquire TKC resource
                 foreach (ProviderK8sController provider in providers) {
                     var items = await provider.generic.ListAsync<CustomResourceList<CrdProviderCluster>>().ConfigureAwait(false);
@@ -361,17 +362,23 @@ namespace daytwo.K8sControllers
                     {
                         if (item.Name().Equals(cluster.Name()) && item.Namespace().Equals(cluster.Namespace()))
                         {
+                            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"TKC located: name: {cluster.Name()}, ns: {cluster.Namespace()}");
+
                             // requiredLabelName exists, does the label name & value match an existing label?
                             string value;
 
                             // does a label with the specified name exist?
+                            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"looking for label '{Globals.service.requiredLabelName}'");
                             if (!item.Labels().TryGetValue(Globals.service.requiredLabelName, out value))
                             {
                                 // required label is not present, take no further action with this cluster
+                                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"- label not found");
                                 return;
                             }
 
                             // does the label have the specified value?
+                            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"looking for value '{Globals.service.requiredLabelValue}'");
+                            Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"- comparing '{Globals.service.requiredLabelValue}' && '{value}'");
                             if (!Globals.service.requiredLabelValue.Equals(value))
                             { 
                                 // required label exists, but its value does not match, take no further action with this cluster

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "0YbPnF5rWLJw0HuimAMSSgBkBFosr81/zh3e1py5Tk0uLv/i/YBwzQXhvlMoSh3E8AfXG62aFn4Lc6wh6XHvQQ==",
+  "dgSpecHash": "uv7SHVZxmgm91K+JHhopLis/Ga8wh7G4maDDzzu3JRKFrV7ljVIffO1qJ0hCfnJq6zoQHmDDWHni2ULgC4hSYQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\travis\\source\\repos\\daytwo\\argocd-register-controller\\src\\argocd-register-controller.csproj",
   "expectedPackageFiles": [
@@ -35,19 +35,27 @@
     "C:\\Users\\travis\\.nuget\\packages\\microsoft.netcore.targets\\1.1.0\\microsoft.netcore.targets.1.1.0.nupkg.sha512",
     "C:\\Users\\travis\\.nuget\\packages\\microsoft.openapi\\1.4.3\\microsoft.openapi.1.4.3.nupkg.sha512",
     "C:\\Users\\travis\\.nuget\\packages\\prometheus-net\\8.0.1\\prometheus-net.8.0.1.nupkg.sha512",
+    "C:\\Users\\travis\\.nuget\\packages\\runtime.any.system.runtime\\4.3.0\\runtime.any.system.runtime.4.3.0.nupkg.sha512",
+    "C:\\Users\\travis\\.nuget\\packages\\runtime.any.system.text.encoding\\4.3.0\\runtime.any.system.text.encoding.4.3.0.nupkg.sha512",
+    "C:\\Users\\travis\\.nuget\\packages\\runtime.native.system\\4.3.0\\runtime.native.system.4.3.0.nupkg.sha512",
+    "C:\\Users\\travis\\.nuget\\packages\\runtime.unix.system.private.uri\\4.3.0\\runtime.unix.system.private.uri.4.3.0.nupkg.sha512",
     "C:\\Users\\travis\\.nuget\\packages\\swashbuckle.aspnetcore\\6.5.0\\swashbuckle.aspnetcore.6.5.0.nupkg.sha512",
     "C:\\Users\\travis\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.5.0\\swashbuckle.aspnetcore.swagger.6.5.0.nupkg.sha512",
     "C:\\Users\\travis\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.5.0\\swashbuckle.aspnetcore.swaggergen.6.5.0.nupkg.sha512",
     "C:\\Users\\travis\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\6.5.0\\swashbuckle.aspnetcore.swaggerui.6.5.0.nupkg.sha512",
     "C:\\Users\\travis\\.nuget\\packages\\system.diagnostics.diagnosticsource\\6.0.0\\system.diagnostics.diagnosticsource.6.0.0.nupkg.sha512",
     "C:\\Users\\travis\\.nuget\\packages\\system.identitymodel.tokens.jwt\\6.32.0\\system.identitymodel.tokens.jwt.6.32.0.nupkg.sha512",
+    "C:\\Users\\travis\\.nuget\\packages\\system.private.uri\\4.3.0\\system.private.uri.4.3.0.nupkg.sha512",
     "C:\\Users\\travis\\.nuget\\packages\\system.runtime\\4.3.0\\system.runtime.4.3.0.nupkg.sha512",
     "C:\\Users\\travis\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
     "C:\\Users\\travis\\.nuget\\packages\\system.security.cryptography.cng\\4.5.0\\system.security.cryptography.cng.4.5.0.nupkg.sha512",
     "C:\\Users\\travis\\.nuget\\packages\\system.text.encoding\\4.3.0\\system.text.encoding.4.3.0.nupkg.sha512",
     "C:\\Users\\travis\\.nuget\\packages\\system.text.encodings.web\\7.0.0\\system.text.encodings.web.7.0.0.nupkg.sha512",
     "C:\\Users\\travis\\.nuget\\packages\\system.text.json\\7.0.3\\system.text.json.7.0.3.nupkg.sha512",
-    "C:\\Users\\travis\\.nuget\\packages\\yamldotnet\\13.1.1\\yamldotnet.13.1.1.nupkg.sha512"
+    "C:\\Users\\travis\\.nuget\\packages\\yamldotnet\\13.1.1\\yamldotnet.13.1.1.nupkg.sha512",
+    "C:\\Users\\travis\\.nuget\\packages\\microsoft.netcore.app.runtime.linux-x64\\7.0.9\\microsoft.netcore.app.runtime.linux-x64.7.0.9.nupkg.sha512",
+    "C:\\Users\\travis\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.linux-x64\\7.0.9\\microsoft.aspnetcore.app.runtime.linux-x64.7.0.9.nupkg.sha512",
+    "C:\\Users\\travis\\.nuget\\packages\\microsoft.netcore.app.host.linux-x64\\7.0.9\\microsoft.netcore.app.host.linux-x64.7.0.9.nupkg.sha512"
   ],
   "logs": []
 }
