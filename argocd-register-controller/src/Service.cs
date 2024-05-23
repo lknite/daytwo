@@ -1,6 +1,7 @@
 ﻿using k8s;
 using System.Text.Json;
 using daytwo.K8sControllers;
+using k8s.KubeConfigModels;
 
 namespace daytwo
 {
@@ -82,6 +83,9 @@ namespace daytwo
             {
                 requiredLabelName = Environment.GetEnvironmentVariable("REQUIRED_LABEL_NAME");
                 requiredLabelValue = Environment.GetEnvironmentVariable("REQUIRED_LABEL_VALUE");
+
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"requiredLabelName: {requiredLabelName}");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"requiredLabelName: {requiredLabelValue}");
             }
 
             main = new Main.Main();
