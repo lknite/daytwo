@@ -358,7 +358,7 @@ namespace daytwo.K8sControllers
                 // Acquire TKC resource
                 foreach (ProviderK8sController provider in providers) {
                     Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"next provider: {provider.api}, {provider.group}, {provider.version}, {provider.plural}");
-                    var items = await provider.generic.ListAsync<CustomResourceList<CrdProviderCluster>>().ConfigureAwait(false);
+                    CustomResourceList<CrdProviderCluster> items = await provider.generic.ListAsync<CustomResourceList<CrdProviderCluster>>().ConfigureAwait(false);
                     foreach (var item in items.Items)
                     {
                         Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"next cluster: {item.Name()}, {item.Namespace()}");
