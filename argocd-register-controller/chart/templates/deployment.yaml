@@ -40,6 +40,10 @@ spec:
           value: "{{ .Values.argocdVersion }}"
         - name: LOOP_INTERVAL
           value: "{{ .Values.loopInterval }}"
+        - name: REQUIRED_LABEL_NAME
+          value: "{{ .Values.requiredLabelName }}"
+        - name: REQUIRED_LABEL_VALUE
+          value: "{{ .Values.requiredLabelValue }}"
         volumeMounts:
         {{- if .Values.extraVolumeMounts }}
           {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
