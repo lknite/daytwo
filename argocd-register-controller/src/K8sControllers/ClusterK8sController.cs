@@ -356,6 +356,7 @@ namespace daytwo.K8sControllers
             {
                 Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"RequiredLabelName is not empty, looking for labels ...");
                 // Acquire TKC resource
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"providers count: {providers.Count}");
                 foreach (ProviderK8sController provider in providers) {
                     Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"next provider: {provider.api}, {provider.group}, {provider.version}, {provider.plural}");
                     CustomResourceList<CrdProviderCluster> items = await provider.generic.ListAsync<CustomResourceList<CrdProviderCluster>>().ConfigureAwait(false);
