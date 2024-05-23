@@ -84,7 +84,7 @@ namespace daytwo.K8sControllers
             (new Thread(new ThreadStart(Timer))).Start();
 
             // Start up provider listeners
-            //await AddProviders();
+            await AddProviders();
         }
         public void Timer()
         {
@@ -813,8 +813,6 @@ namespace daytwo.K8sControllers
 
         public async Task AddProviders() //CrdCluster cluster)
         {
-            
-
             List<string> known = new List<string>();
             known.Add("vclusters.infrastructure.cluster.x-k8s.io");
             known.Add("tanzukubernetesclusters.run.tanzu.vmware.com");
