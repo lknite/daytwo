@@ -85,7 +85,7 @@ namespace daytwo
                 requiredLabelValue = Environment.GetEnvironmentVariable("REQUIRED_LABEL_VALUE");
 
                 Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"requiredLabelName: {requiredLabelName}");
-                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"requiredLabelName: {requiredLabelValue}");
+                Globals.log.LogInformation(new EventId(Thread.CurrentThread.ManagedThreadId), $"requiredLabelValue: {requiredLabelValue}");
             }
 
             main = new Main.Main();
