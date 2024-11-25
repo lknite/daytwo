@@ -15,7 +15,7 @@ global:
 ## ref: https://github.com/lknite/daytwo/tree/main/argocd-labels-controller
 image:
   repository: docker.io/lknite/argocd-labels-controller
-  tag: latest
+  tag: 0.0.6
   pullPolicy: Always
 
 ## @param managementCluster Comma separated list of names of clusterapi servers
