@@ -1,0 +1,4 @@
+---
+dependencies:
+  kasten.enabled: true
+  pinniped.enabled: true

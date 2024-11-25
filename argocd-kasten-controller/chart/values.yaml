@@ -15,7 +15,7 @@ global:
 ## ref: https://github.com/lknite/daytwo/tree/main/daytwo-argocd-kasten-controller
 image:
   repository: docker.io/lknite/argocd-kasten-controller
-  tag: latest
+  tag: 0.0.4
   pullPolicy: Always
 
 ## @param argocdNamespace Used if targeting an argocd installation in an alternative namespace
