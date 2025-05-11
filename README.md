@@ -1,3 +1,7 @@
+# deprecated, frozen
+replaced by:
+[argo-register](https://gitlab.com/lknite/argo-register)
+
 # daytwo
 A collection of controllers which perform work in response to a new cluster deployment.
 
